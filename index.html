@@ -1606,23 +1606,29 @@
 
 <script>
 // ============================================================
-// CONFIG — Replace this with your real $J33T token mint address
+// CONFIG — Replace TOKEN_MINT with your real $J33T mint address
 // ============================================================
 const CONFIG = {
   TOKEN_MINT: 'E2HNWS5L6gwmtC9SZPpRq6Yp3V5gzotFrL3dAEP2pump',
   TOKEN_SYMBOL: 'J33T',
   CHAIN: 'solana',
-  // DexScreener: free, no key, CORS-friendly
   DEXSCREENER_API: 'https://api.dexscreener.com/tokens/v1/solana/',
-  // Jupiter: backup price feed
+  DEXSCREENER_SEARCH: 'https://api.dexscreener.com/latest/dex/search?q=',
   JUPITER_API: 'https://api.jup.ag/price/v2?ids=',
-  // Solana RPC for real wallet balance
   SOLANA_RPC: 'https://api.mainnet-beta.solana.com',
-  // J33T SPL token program address (standard)
   TOKEN_PROGRAM: 'TokenkebQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
 };
 
-const IS_DEMO_MODE = CONFIG.TOKEN_MINT === 'YOUR_J33T_TOKEN_MINT_ADDRESS_HERE';
+// Trim whitespace + case-insensitive demo check (common mistake fix)
+CONFIG.TOKEN_MINT = CONFIG.TOKEN_MINT.trim();
+const IS_DEMO_MODE = CONFIG.TOKEN_MINT === 'YOUR_J33T_TOKEN_MINT_ADDRESS_HERE' || CONFIG.TOKEN_MINT.length < 32;
+
+// Debug logger — open browser console (F12) to see what's happening
+function dbg(label, data) {
+  const style = 'background:#f5c842;color:#0a0a0f;padding:2px 6px;border-radius:2px;font-weight:bold;';
+  console.log('%c J33T ', style, label, data || '');
+}
+dbg('CONFIG loaded', { mint: CONFIG.TOKEN_MINT, demoMode: IS_DEMO_MODE, mintLength: CONFIG.TOKEN_MINT.length });
 
 // ============================================================
 // CURSOR
@@ -1892,45 +1898,76 @@ function fmtChange(n) {
 }
 
 async function fetchDexScreener() {
-  if (IS_DEMO_MODE) return null;
+  if (IS_DEMO_MODE) { dbg('DexScreener skipped', 'DEMO MODE — set TOKEN_MINT in CONFIG'); return null; }
+  dbg('DexScreener fetching...', CONFIG.TOKEN_MINT);
   try {
-    const r = await fetch(CONFIG.DEXSCREENER_API + CONFIG.TOKEN_MINT, { signal: AbortSignal.timeout(6000) });
-    if (!r.ok) return null;
+    // Try primary tokens endpoint
+    const r = await fetch(CONFIG.DEXSCREENER_API + CONFIG.TOKEN_MINT, { signal: AbortSignal.timeout(8000) });
+    dbg('DexScreener response status', r.status);
+    if (!r.ok) { dbg('DexScreener HTTP error', r.status); return null; }
     const d = await r.json();
-    const pairs = d.pairs || [];
-    if (!pairs.length) return null;
-    // Pick pair with highest liquidity
+    dbg('DexScreener raw response', d);
+    let pairs = d.pairs || [];
+
+    // Fallback: try search endpoint if no pairs
+    if (!pairs.length) {
+      dbg('DexScreener no pairs on /tokens — trying /search...');
+      try {
+        const r2 = await fetch(CONFIG.DEXSCREENER_SEARCH + CONFIG.TOKEN_MINT, { signal: AbortSignal.timeout(6000) });
+        const d2 = await r2.json();
+        dbg('DexScreener search response', d2);
+        pairs = (d2.pairs || []).filter(p => p.chainId === 'solana');
+      } catch(e) { dbg('DexScreener search error', e.message); }
+    }
+
+    if (!pairs.length) {
+      dbg('DexScreener no pairs found for this token', 'Token may not be indexed yet — needs trading volume first');
+      return null;
+    }
+
     const pair = pairs.sort((a,b) => (b.liquidity?.usd||0) - (a.liquidity?.usd||0))[0];
+    dbg('DexScreener best pair', pair);
     return {
       price: parseFloat(pair.priceUsd) || null,
-      change24h: pair.priceChange?.h24 || null,
+      change24h: pair.priceChange?.h24 ?? null,
       mcap: pair.marketCap || pair.fdv || null,
       volume24h: pair.volume?.h24 || null,
       liquidity: pair.liquidity?.usd || null,
       source: 'DexScreener',
     };
-  } catch { return null; }
+  } catch(e) {
+    dbg('DexScreener exception', e.message);
+    return null;
+  }
 }
 
 async function fetchJupiter() {
-  if (IS_DEMO_MODE) return null;
+  if (IS_DEMO_MODE) { dbg('Jupiter skipped', 'DEMO MODE'); return null; }
+  dbg('Jupiter fetching...', CONFIG.TOKEN_MINT);
   try {
-    const r = await fetch(CONFIG.JUPITER_API + CONFIG.TOKEN_MINT, { signal: AbortSignal.timeout(5000) });
+    const r = await fetch(CONFIG.JUPITER_API + CONFIG.TOKEN_MINT, { signal: AbortSignal.timeout(6000) });
+    dbg('Jupiter status', r.status);
     if (!r.ok) return null;
     const d = await r.json();
+    dbg('Jupiter raw response', d);
     const item = d.data?.[CONFIG.TOKEN_MINT];
-    if (!item) return null;
+    if (!item || !item.price) {
+      dbg('Jupiter no price for this mint', 'Token may not be on Jupiter yet');
+      return null;
+    }
+    dbg('Jupiter price found', item.price);
     return {
       price: parseFloat(item.price) || null,
-      change24h: null,
-      mcap: null, volume24h: null, liquidity: null,
+      change24h: null, mcap: null, volume24h: null, liquidity: null,
       source: 'Jupiter',
     };
-  } catch { return null; }
+  } catch(e) {
+    dbg('Jupiter exception', e.message);
+    return null;
+  }
 }
 
 function getDemoData() {
-  // Slightly randomized demo data so it looks "live"
   const base = 0.00004269;
   const jitter = 1 + (Math.random() - 0.5) * 0.02;
   return {
@@ -1945,21 +1982,31 @@ function getDemoData() {
 }
 
 async function refreshPriceData() {
-  const dot = document.getElementById('pwDot');
-  const src = document.getElementById('pwSource');
-  if (dot) { dot.className = 'price-dot loading'; }
-  if (src) src.textContent = 'fetching...';
+  const dotEl = document.getElementById('pwDot');
+  const srcEl = document.getElementById('pwSource');
+  if (dotEl) dotEl.className = 'price-dot loading';
+  if (srcEl) srcEl.textContent = 'fetching...';
 
   let data = null;
 
   if (!IS_DEMO_MODE) {
+    dbg('--- Starting live price fetch ---');
     data = await fetchDexScreener();
-    if (!data) data = await fetchJupiter();
+    if (!data) {
+      dbg('DexScreener returned null, trying Jupiter...');
+      data = await fetchJupiter();
+    }
+    if (!data) {
+      dbg('⚠️ Both APIs returned null — falling back to demo data', 
+        'Possible reasons: (1) Token not indexed yet (needs liquidity/volume), (2) Mint address wrong, (3) Network error');
+    } else {
+      dbg('✅ Live data loaded!', data);
+    }
+  } else {
+    dbg('ℹ️ Running in DEMO MODE', 'To go live: set CONFIG.TOKEN_MINT to your real $J33T mint address');
   }
 
-  if (!data) {
-    data = getDemoData();
-  }
+  if (!data) data = getDemoData();
   data.lastUpdate = Date.now();
   priceData = data;
   updatePriceUI(data);
