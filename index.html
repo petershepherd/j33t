@@ -991,9 +991,133 @@
     100% { opacity: 0; transform: scale(0.5) rotate(360deg) translateY(-40px); }
   }
 
-  /* Ticker moon mode */
-  .ticker.moon-mode .ticker-item { color: var(--gold) !important; }
-  .ticker.moon-mode .ticker-item span { color: #fff !important; animation: rainbow-text 0.5s linear infinite; }
+  /* ── J33T CARD GENERATOR ── */
+  .card-gen-wrap { display: flex; flex-direction: column; gap: 16px; }
+  .card-gen-label { font-family: var(--pixel); font-size: 7px; color: var(--accent); letter-spacing: 3px; margin-bottom: 4px; }
+  .card-stage {
+    position: relative; width: 320px; height: 420px;
+    cursor: crosshair;
+    filter: drop-shadow(0 8px 32px rgba(245,200,66,0.25));
+    transition: filter 0.3s;
+    transform-style: preserve-3d;
+  }
+  .card-stage:hover { filter: drop-shadow(0 12px 48px rgba(245,200,66,0.45)); }
+  #cardCanvas { display: block; image-rendering: pixelated; border-radius: 12px; width: 320px; height: 420px; }
+  .card-hologram {
+    position: absolute; inset: 0; border-radius: 12px;
+    pointer-events: none; opacity: 0;
+    background: conic-gradient(from 0deg,rgba(255,0,128,0.18),rgba(255,200,0,0.18),rgba(0,255,200,0.18),rgba(100,0,255,0.18),rgba(255,0,128,0.18));
+    transition: opacity 0.3s; mix-blend-mode: screen;
+  }
+  .card-stage:hover .card-hologram { opacity: 1; }
+  .card-stage.animating .card-hologram { opacity: 1; animation: holo-spin 1.2s linear forwards; }
+  @keyframes holo-spin {
+    0%   { filter: hue-rotate(0deg);   opacity: 0.9; }
+    80%  { filter: hue-rotate(320deg); opacity: 0.7; }
+    100% { filter: hue-rotate(360deg); opacity: 0; }
+  }
+  .card-controls { display: flex; flex-direction: column; gap: 8px; width: 320px; }
+  .card-input {
+    background: var(--surface2); border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text); font-family: var(--mono); font-size: 11px;
+    padding: 10px 14px; width: 100%; transition: border-color 0.2s;
+  }
+  .card-input:focus { outline: none; border-color: var(--gold); }
+  .card-input::placeholder { color: var(--muted); opacity: 0.6; }
+  .card-btn-row { display: flex; gap: 8px; }
+  .card-btn {
+    flex: 1; background: var(--gold); color: var(--bg); border: none;
+    font-family: var(--pixel); font-size: 7px; padding: 11px 6px;
+    cursor: pointer; letter-spacing: 1px; transition: all 0.2s; white-space: nowrap;
+  }
+  .card-btn:hover { background: var(--gold2); transform: translateY(-2px); }
+  .card-btn-alt { background: var(--surface2); color: var(--text); border: 1px solid rgba(255,255,255,0.1); }
+  .card-btn-alt:hover { background: var(--surface); border-color: var(--gold); color: var(--gold); }
+  .card-btn-save { background: var(--accent); color: #fff; }
+  .card-btn-save:hover { background: #6a50ee; }
+  /* Card daily limit bar */
+  .card-limit-bar {
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .card-limit-info { display: flex; align-items: center; gap: 8px; }
+  .card-limit-icon { font-size: 14px; }
+  .card-limit-text { font-family: var(--pixel); font-size: 7px; color: var(--muted); letter-spacing: 1px; line-height: 1.6; }
+  .card-limit-text.ok { color: var(--green); }
+  .card-limit-text.warn { color: var(--gold); }
+  .card-limit-text.out { color: var(--red); }
+  .card-limit-pips { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
+  .card-pip {
+    width: 10px; height: 10px; border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: var(--surface);
+    transition: all 0.3s;
+  }
+  .card-pip.used { background: var(--muted); border-color: var(--muted); }
+  .card-pip.active { background: var(--green); border-color: var(--green); box-shadow: 0 0 6px rgba(0,255,170,0.5); }
+  .card-pip.unlimited { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 6px rgba(245,200,66,0.5); animation: pulse-pip 1.5s ease-in-out infinite; }
+  @keyframes pulse-pip { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  .card-tier-hint {
+    font-family: var(--pixel);
+    font-size: 6px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    padding: 6px 14px;
+    border: 1px solid rgba(123,97,255,0.2);
+    background: rgba(123,97,255,0.05);
+    line-height: 1.8;
+    display: none;
+  }
+  .card-tier-hint.visible { display: block; }
+
+  /* Rarity-specific card shimmer effects */
+  .card-stage.rarity-gold .card-hologram {
+    background: conic-gradient(from 0deg,rgba(255,200,0,0.35),rgba(255,255,200,0.35),rgba(255,160,0,0.35),rgba(255,200,0,0.35));
+  }
+  .card-stage.rarity-diamond .card-hologram {
+    background: conic-gradient(from 0deg,rgba(150,220,255,0.4),rgba(255,255,255,0.4),rgba(100,200,255,0.4),rgba(200,150,255,0.4),rgba(150,220,255,0.4));
+  }
+  .card-stage.rarity-legendary .card-hologram {
+    background: conic-gradient(from 0deg,rgba(245,200,66,0.3),rgba(255,100,0,0.3),rgba(245,200,66,0.3));
+  }
+
+  /* Rarity reveal overlay */
+  .rarity-reveal {
+    position: fixed;
+    inset: 0;
+    z-index: 9995;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    animation: reveal-in 0.3s ease;
+    cursor: pointer;
+  }
+  @keyframes reveal-in { from{opacity:0;transform:scale(1.05)} to{opacity:1;transform:scale(1)} }
+  .rarity-reveal-icon { font-size: 72px; animation: reveal-bounce 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes reveal-bounce { from{transform:scale(0) rotate(-20deg)} to{transform:scale(1) rotate(0deg)} }
+  .rarity-reveal-name {
+    font-family: var(--pixel);
+    font-size: clamp(18px, 4vw, 32px);
+    letter-spacing: 4px;
+    text-shadow: 0 0 30px currentColor;
+    animation: reveal-glow 1s ease-in-out infinite alternate;
+  }
+  @keyframes reveal-glow { from{text-shadow:0 0 20px currentColor} to{text-shadow:0 0 60px currentColor,0 0 100px currentColor} }
+  .rarity-reveal-sub { font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: 2px; }
+  .rarity-reveal-tap { font-family: var(--pixel); font-size: 8px; color: var(--muted); margin-top: 24px; animation: blink 1s step-end infinite; }
+
+
 
   .toast {
     position: fixed;
@@ -1258,13 +1382,36 @@
 <section id="about">
   <div class="about-grid">
     <div class="about-photo">
-      <div class="photo-frame">
-        <span class="photo-corner tl">2009</span>
-        <div class="photo-placeholder">
-          <div class="photo-placeholder-dog">🐕</div>
-          <div class="photo-placeholder-text">J33T · OG YORKIE</div>
+      <!-- J33T CARD GENERATOR -->
+      <div class="card-gen-wrap">
+        <div class="card-gen-label">// J33T CARD GENERATOR</div>
+
+        <!-- The card canvas -->
+        <div class="card-stage" id="cardStage">
+          <canvas id="cardCanvas" width="320" height="420"></canvas>
+          <div class="card-hologram" id="cardHologram"></div>
         </div>
-        <span class="photo-corner br">$J33T</span>
+
+        <!-- Controls -->
+        <div class="card-controls">
+          <!-- Daily limit status bar -->
+          <div class="card-limit-bar" id="cardLimitBar">
+            <div class="card-limit-info">
+              <span class="card-limit-icon" id="cardLimitIcon">🐾</span>
+              <span class="card-limit-text" id="cardLimitText">Loading...</span>
+            </div>
+            <div class="card-limit-pips" id="cardLimitPips"></div>
+          </div>
+          <!-- Holder tier bonus hint -->
+          <div class="card-tier-hint" id="cardTierHint"></div>
+          <input class="card-input" id="cardLine1" placeholder="YOUR TITLE (e.g. DIAMOND PAWS)" maxlength="22">
+          <input class="card-input" id="cardLine2" placeholder="YOUR SUBTITLE (e.g. HODLER SINCE 2009)" maxlength="26">
+          <div class="card-btn-row">
+            <button class="card-btn" id="cardGenBtn" onclick="generateCard()">⚡ GENERATE</button>
+            <button class="card-btn card-btn-alt" onclick="randomCard()">🎲 RANDOM</button>
+            <button class="card-btn card-btn-save" onclick="saveCard()">⬇ SAVE</button>
+          </div>
+        </div>
       </div>
     </div>
     <div>
@@ -1750,12 +1897,15 @@ const C = {
   'g': '#888888', 'Y': '#f5d070', 'n': '#3d1f08',
 };
 const frame1 = [
-  '_______bbbbbbbb________',
-  '______bBBBBBBBBb_______',
-  '_____bBTTTTTTTTBb______',
-  '____bBTGGGGGGGTTBb_____',
-  '___bBTGYYYYYYGTTTBb____',
-  '___bBTYYYYYYYYTTTBb____',
+  '______bbb_____bbb______',  // álló fül csúcsa (bal) + lógó fül csúcsa (jobb)
+  '_____bTTb____bTb_______',  // fülek teste
+  '_____bTbb___bbTbb______',  // fülek alja átmegy fejbe
+  '______bbbbbbbbbbb______',  // fejteteje
+  '_____bBBBBBBBBBBBb_____',
+  '____bBTTTTTTTTTTBBb____',
+  '___bBTGGGGGGGGTTTBb____',
+  '__bBBTGYYYYYYGTTTTBb___',
+  '__bBBTYYYYYYYYTTTTBb___',
   '__bBBTYkwYYkwYTTTTBb___',
   '__bBBTYYYYYYYYTTTTBb___',
   '__bBBTYYnnYYYYTTTTBb___',
@@ -1771,17 +1921,17 @@ const frame1 = [
   '____bBBTTTTTTBBb_______',
   '____bBTT____TTBb_______',
   '___bBBT_____TTBb_______',
-  '___bBBT_____TTBb_______',
-  '____bbb_____bbb________',
-  '________________________',
 ];
 const frame2 = [
-  '_______bbbbbbbb________',
-  '______bBBBBBBBBb_______',
-  '_____bBTTTTTTTTBb______',
-  '____bBTGGGGGGGTTBb_____',
-  '___bBTGYYYYYYGTTTBb____',
-  '___bBTYYYYYYYYTTTBb____',
+  '______bbb_____bbb______',
+  '_____bTTb____bTb_______',
+  '_____bTbb___bbTbb______',
+  '______bbbbbbbbbbb______',
+  '_____bBBBBBBBBBBBb_____',
+  '____bBTTTTTTTTTTBBb____',
+  '___bBTGGGGGGGGTTTBb____',
+  '__bBBTGYYYYYYGTTTTBb___',
+  '__bBBTYYYYYYYYTTTTBb___',
   '__bBBTYkwYYkwYTTTTBb___',
   '__bBBTYYYYYYYYTTTTBb___',
   '__bBBTYYnnYYYYTTTTBb___',
@@ -1797,17 +1947,17 @@ const frame2 = [
   '____bBBTTTTTTBBb_______',
   '____bBTT____TTBb_______',
   '__bBBBT_____TTBb_______',
-  '__bBBBT_____TTBb_______',
-  '____bbb_____bbb________',
-  '________________________',
 ];
 const frame3 = [
-  '_______bbbbbbbb________',
-  '______bBBBBBBBBb_______',
-  '_____bBTTTTTTTTBb______',
-  '____bBTGGGGGGGTTBb_____',
-  '___bBTGYYYYYYGTTTBb____',
-  '___bBTYYYYYYYYTTTBb____',
+  '______bbb_____bbb______',
+  '_____bTTb____bTb_______',
+  '_____bTbb___bbTbb______',
+  '______bbbbbbbbbbb______',
+  '_____bBBBBBBBBBBBb_____',
+  '____bBTTTTTTTTTTBBb____',
+  '___bBTGGGGGGGGTTTBb____',
+  '__bBBTGYYYYYYGTTTTBb___',
+  '__bBBTYYYYYYYYTTTTBb___',
   '__bBBTYkwYYkwYTTTTBb___',
   '__bBBTYYYYYYYYTTTTBb___',
   '__bBBTYYnnYYYYTTTTBb___',
@@ -1823,9 +1973,6 @@ const frame3 = [
   '____bBBTTTTTTBBb_______',
   '____bBTT____TTBb_______',
   '___bBBT_____TTBBBb_____',
-  '___bBBT_____TTBBBb_____',
-  '____bbb_____bbb________',
-  '________________________',
 ];
 const frames = [frame1, frame2];
 let currentFrame = 0;
@@ -1838,7 +1985,7 @@ function drawFrame(frameData, blink) {
       const ch = row[x];
       if (ch === '_' || ch === ' ') continue;
       let color = C[ch];
-      if (blink && ch === 'k' && y === 6) color = C['T'];
+      if (blink && ch === 'k' && y === 9) color = C['T']; // blink: close eyes
       if (color) { dogCtx.fillStyle = color; dogCtx.fillRect(x * S, y * S, S, S); }
     }
   });
@@ -2223,6 +2370,7 @@ function applyWalletState() {
   document.getElementById('walletActionBtn').style.borderColor = 'var(--green)';
   document.getElementById('walletActionBtn').style.color = 'var(--green)';
   unlockCards();
+  updateCardLimitUI(); // refresh card daily limit based on new balance
 }
 
 function unlockCards() {
@@ -2458,6 +2606,833 @@ document.addEventListener('keypress', e => {
   }
 });
 
+// ============================================================
+// J33T CARD GENERATOR
+// ============================================================
+const cardCanvas = document.getElementById('cardCanvas');
+const cardCtx = cardCanvas.getContext('2d');
+const cardStage = document.getElementById('cardStage');
+
+// Card theme palettes — each has bg gradient, accent, text colors
+const cardThemes = [
+  { name: 'GOLDEN',   bg1: '#1a0e00', bg2: '#3d2200', accent: '#f5c842', accent2: '#ffaa00', text: '#fff8e0', badge: '#f5c842', badgeTxt: '#0a0a0f' },
+  { name: 'VOID',     bg1: '#07070f', bg2: '#1a0a2e', accent: '#7b61ff', accent2: '#a084ff', text: '#e0d8ff', badge: '#7b61ff', badgeTxt: '#fff' },
+  { name: 'MATRIX',  bg1: '#001a0a', bg2: '#003018', accent: '#00ffaa', accent2: '#00cc88', text: '#ccffe8', badge: '#00ffaa', badgeTxt: '#001a0a' },
+  { name: 'BLOOD',    bg1: '#1a0007', bg2: '#2e0010', accent: '#ff4466', accent2: '#ff2244', text: '#ffd0d8', badge: '#ff4466', badgeTxt: '#fff' },
+  { name: 'ICE',      bg1: '#001828', bg2: '#003050', accent: '#60d0ff', accent2: '#30b0ee', text: '#d0f0ff', badge: '#60d0ff', badgeTxt: '#001828' },
+  { name: 'ONYX',     bg1: '#0a0a0a', bg2: '#1a1a1a', accent: '#888888', accent2: '#aaaaaa', text: '#ffffff', badge: '#ffffff', badgeTxt: '#0a0a0a' },
+  { name: 'RAINBOW',  bg1: '#0a0010', bg2: '#1a0030', accent: '#ff61ff', accent2: '#ffaa00', text: '#ffffff', badge: '#ff61ff', badgeTxt: '#fff' },
+];
+
+// Yorkie pixel art for the card (20×20, scale=10)
+// ── SHA-256 (pure JS, no crypto API needed on canvas) ───────────
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ── EASTER EGG DEFINITIONS ──────────────────────────────────────
+// keyword (lowercase) → { dogOverride, bgOverride, titleOverride, subtitleOverride, borderColor }
+const easterEggs = {
+  'evil': {
+    label: '👿 EVIL MODE',
+    dogColors: { '_':null,'b':'#1a0010','B':'#4a0030','T':'#cc0044','G':'#aa0033','Y':'#ff0066','k':'#ff0000','n':'#660022','p':'#ff44aa','w':'#fff' },
+    bgOverride: ['#1a0010','#3a0020'],
+    borderColor: '#ff0044',
+    borderAnim: 'evil',
+    titleSuffix: ' 😈',
+  },
+  'moon': {
+    label: '🌕 MOON MODE',
+    dogColors: { '_':null,'b':'#b8b8c8','B':'#d0d0e8','T':'#e8e8ff','G':'#f0f0ff','Y':'#ffffff','k':'#aaaacc','n':'#8888aa','p':'#ddddff','w':'#fff' },
+    bgOverride: ['#000010','#000830'],
+    borderColor: '#a8eeff',
+    borderAnim: 'pulse',
+    titleSuffix: ' 🚀',
+  },
+  'ghost': {
+    label: '👻 GHOST MODE',
+    dogColors: { '_':null,'b':'#334455','B':'#4a6070','T':'#88aacc','G':'#aaccee','Y':'#ddeeff','k':'#223344','n':'#334455','p':'#aabbcc','w':'#fff' },
+    bgOverride: ['#050a10','#0a1520'],
+    borderColor: '#88aacc',
+    borderAnim: 'flicker',
+    titleSuffix: ' 👻',
+  },
+  'laser': {
+    label: '🔴 LASER EYES',
+    extraDraw: 'laserEyes',
+    borderColor: '#ff2200',
+    borderAnim: 'pulse',
+    titleSuffix: ' 🔴🔴',
+  },
+  'doge': {
+    label: '🐶 SUCH DOGE',
+    bgOverride: ['#ffd700','#ff8c00'],
+    borderColor: '#ffd700',
+    borderAnim: 'rainbow',
+    titleSuffix: ' WOW',
+  },
+  'rug': {
+    label: '🚩 RUG DETECTED',
+    bgOverride: ['#1a0000','#3a0000'],
+    borderColor: '#ff0000',
+    borderAnim: 'evil',
+    titleOverride: 'THIS IS A RUG',
+    subtitleOverride: 'DEVS SOLD. BYE.',
+  },
+  'based': {
+    label: '😎 ULTRA BASED',
+    bgOverride: ['#001a00','#003300'],
+    borderColor: '#00ff44',
+    borderAnim: 'pulse',
+    titleSuffix: ' 😎',
+  },
+  'gm': {
+    label: '☀️ GM FREN',
+    borderColor: '#ffdd44',
+    borderAnim: 'pulse',
+    titleOverride: 'GM FRENS',
+    subtitleOverride: 'ANOTHER DAY. STILL HOLDING.',
+  },
+  'satoshi': {
+    label: '₿ SATOSHI',
+    dogColors: { '_':null,'b':'#1a1000','B':'#3a2800','T':'#f7931a','G':'#ffa832','Y':'#ffcc66','k':'#111','n':'#2a1800','p':'#ff9933','w':'#fff' },
+    bgOverride: ['#0a0800','#1a1200'],
+    borderColor: '#f7931a',
+    borderAnim: 'pulse',
+    titleSuffix: ' ₿',
+  },
+  'chaos': {
+    label: '🌀 CHAOS MODE',
+    borderAnim: 'rainbow',
+    borderColor: '#ff00ff',
+    titleSuffix: ' 🌀',
+    bgOverride: ['#0a0010','#10000a'],
+  },
+};
+
+let foundEasterEggs = new Set(JSON.parse(localStorage.getItem('j33t_eggs') || '[]'));
+let currentEasterEgg = null;
+
+function checkEasterEgg(line1, line2) {
+  const combined = (line1 + ' ' + line2).toLowerCase();
+  for (const [keyword, egg] of Object.entries(easterEggs)) {
+    if (combined.includes(keyword)) {
+      if (!foundEasterEggs.has(keyword)) {
+        foundEasterEggs.add(keyword);
+        localStorage.setItem('j33t_eggs', JSON.stringify([...foundEasterEggs]));
+        showToast('🥚 Easter egg found: ' + egg.label + ' (' + foundEasterEggs.size + ' total)');
+        if (foundEasterEggs.size >= 3) setTimeout(() => showToast('🌀 CHAOS UNLOCKED — try typing "chaos"!'), 1500);
+      }
+      return egg;
+    }
+  }
+  return null;
+}
+
+// ── ANIMATED BORDER CANVAS OVERLAY ──────────────────────────────
+let borderAnimRAF = null;
+let borderAnimStart = null;
+
+function startBorderAnim(rarity, eggOverride) {
+  stopBorderAnim();
+  const overlay = document.getElementById('cardHologram');
+  const stage = cardStage;
+  const animType = eggOverride?.borderAnim || rarityBorderAnim(rarity);
+  const color   = eggOverride?.borderColor || rarity.color;
+
+  if (animType === 'none') return;
+
+  // For rarity 1-2 (common/uncommon): subtle pulse only briefly
+  const duration = rarity.stars <= 2 ? 1200 : (rarity.stars >= 6 ? Infinity : 3000);
+
+  borderAnimStart = performance.now();
+  function frame(now) {
+    const elapsed = now - borderAnimStart;
+    const t = (elapsed % 2000) / 2000; // 0..1 loop
+
+    if (animType === 'pulse') {
+      const alpha = 0.3 + 0.5 * Math.abs(Math.sin(t * Math.PI * 2));
+      stage.style.filter = `drop-shadow(0 0 ${8 + 16 * alpha}px ${color})`;
+    } else if (animType === 'rainbow') {
+      const hue = (elapsed / 20) % 360;
+      stage.style.filter = `drop-shadow(0 0 18px hsl(${hue},100%,65%)) hue-rotate(${hue/3}deg)`;
+    } else if (animType === 'evil') {
+      const flicker = Math.random() > 0.95 ? 0 : 1;
+      const alpha = 0.4 + 0.6 * Math.abs(Math.sin(t * Math.PI * 6));
+      stage.style.filter = `drop-shadow(0 0 ${12 + 20 * alpha * flicker}px ${color}) saturate(1.5)`;
+    } else if (animType === 'flicker') {
+      const on = Math.random() > 0.05;
+      stage.style.filter = on ? `drop-shadow(0 0 14px ${color})` : 'drop-shadow(0 0 2px ${color})';
+    } else if (animType === 'diamond') {
+      const hue = (elapsed / 30) % 360;
+      const sz = 12 + 12 * Math.abs(Math.sin(t * Math.PI));
+      stage.style.filter = `drop-shadow(0 0 ${sz}px hsl(${hue},80%,85%)) brightness(1.05)`;
+    } else if (animType === 'gold') {
+      const sz = 10 + 18 * Math.abs(Math.sin(t * Math.PI * 2));
+      stage.style.filter = `drop-shadow(0 0 ${sz}px #ffcc00) sepia(0.2)`;
+    } else if (animType === 'legendary') {
+      const sz = 8 + 24 * Math.abs(Math.sin(t * Math.PI * 3));
+      stage.style.filter = `drop-shadow(0 0 ${sz}px #f5c842) drop-shadow(0 0 ${sz/2}px #ff8800)`;
+    }
+
+    if (duration === Infinity || elapsed < duration) {
+      borderAnimRAF = requestAnimationFrame(frame);
+    } else {
+      stopBorderAnim();
+    }
+  }
+  borderAnimRAF = requestAnimationFrame(frame);
+}
+
+function stopBorderAnim() {
+  if (borderAnimRAF) { cancelAnimationFrame(borderAnimRAF); borderAnimRAF = null; }
+  cardStage.style.filter = 'drop-shadow(0 8px 32px rgba(245,200,66,0.25))';
+}
+
+function rarityBorderAnim(r) {
+  if (r.stars === 7) return 'diamond';
+  if (r.stars === 6) return 'gold';
+  if (r.stars === 5) return 'legendary';
+  if (r.stars === 4) return 'evil';   // epic = red pulse
+  if (r.stars === 3) return 'pulse';  // rare = purple pulse
+  if (r.stars === 2) return 'pulse';  // uncommon = green pulse
+  return 'none';
+}
+
+const cardDog = [
+  '____bbb____bbb_____',
+  '___bTTb___bTb______',
+  '___bTbb__bbTbb_____',
+  '____bbbbbbbbb______',
+  '___bBBBBBBBBBb_____',
+  '__bBTTTTTTTTBBb____',
+  '_bBTGGGGGGTTTBb____',
+  '_bBTYYYYYYTTTTBb___',
+  '_bBTYkYYkYTTTTBb___',
+  '_bBTYYYYYYTTTTBb___',
+  '_bBTYnnYYYTTTTBb___',
+  '_bBTYYpYYYTTTTBb___',
+  '__bBTTTTTTTTTBb____',
+  '___bBBBBBBBBBb_____',
+  '____bBBBBBBBb______',
+  '_____bbbBBbbb______',
+  '______bBBBb________',
+  '____bBBBBBBBb______',
+  '___bBBTTTTBBb______',
+  '____bbb__bbb_______',
+];
+const cardDogColors = {
+  '_':null,'b':'#5a3410','B':'#8b5a2b','T':'#c8860a',
+  'G':'#d4950e','Y':'#f5d070','k':'#111','n':'#3d1f08','p':'#d98080',
+};
+
+let currentThemeIdx = 0;
+let cardAnimFrame = null;
+let cardHoloTimeout = null;
+
+// Random titles for the random button
+const randomTitles = [
+  ['DIAMOND PAWS', 'HODLER SINCE 2009'],
+  ['GOOD BOY CERTIFIED', 'VERIFIED ON-CHAIN'],
+  ['PAPER HANDS? NEVER', 'BORN JAN 2009'],
+  ['NOT YOUR KEYS', 'NOT YOUR KIBBLE'],
+  ['STILL NOT SELLING', 'NGMI IF YOU SELL'],
+  ['DEV SOLD?', 'NOPE. GOOD BOY.'],
+  ['WOOF WOOF WOOF', 'TO THE MOON 🌕'],
+  ['MINT AUTH REVOKED', 'UNLIKE YOUR LAST RUG'],
+  ['OG YORKIE', 'SOLANA CHAIN GANG'],
+  ['ZOOM OUT', 'ZOOM WAY OUT'],
+];
+
+// ── RARITY TIERS (7 szint, egyedi vizuálokkal) ──────────────────
+const rarities = [
+  { name: 'COMMON',    emoji: '🐾', color: '#6b6b88', glow: '#6b6b88', stars: 1, chance: 0.50,
+    desc: 'Every good boy starts somewhere.',        themeClass: '' },
+  { name: 'UNCOMMON',  emoji: '🦴', color: '#00ffaa', glow: '#00ffaa', stars: 2, chance: 0.25,
+    desc: 'A treat well earned.',                    themeClass: '' },
+  { name: 'RARE',      emoji: '💜', color: '#7b61ff', glow: '#9b81ff', stars: 3, chance: 0.12,
+    desc: 'Not every owner gets this.',              themeClass: '' },
+  { name: 'EPIC',      emoji: '🔥', color: '#ff4466', glow: '#ff6688', stars: 4, chance: 0.06,
+    desc: 'J33T is impressed. A little.',            themeClass: '' },
+  { name: 'LEGENDARY', emoji: '⚡', color: '#f5c842', glow: '#ffd966', stars: 5, chance: 0.04,
+    desc: 'The blockchain remembers this.',          themeClass: 'rarity-legendary' },
+  { name: 'GOLD',      emoji: '🥇', color: '#ffcc00', glow: '#ffe066', stars: 6, chance: 0.02,
+    desc: 'Only the degen elite hold this.',         themeClass: 'rarity-gold' },
+  { name: 'DIAMOND',   emoji: '💎', color: '#a8eeff', glow: '#d0f8ff', stars: 7, chance: 0.01,
+    desc: 'Ultra rare. Screenshot immediately.',     themeClass: 'rarity-diamond' },
+];
+
+// ── HOLDER TIERS → daily card limit ─────────────────────────────
+const holderTiers = [
+  { min: 0,         label: 'NO WALLET',       limit: 1,        color: '#6b6b88', icon: '🐾' },
+  { min: 100000,    label: 'PUPPY TIER',       limit: 2,        color: '#00ffaa', icon: '🦴' },
+  { min: 300000,    label: 'GOOD BOY TIER',    limit: 3,        color: '#7b61ff', icon: '💜' },
+  { min: 1000000,   label: 'DIAMOND PAWS',     limit: 4,        color: '#f5c842', icon: '💎' },
+  { min: 5000000,   label: 'ALPHA DOG 👑',     limit: 5,        color: '#ff4466', icon: '👑' },
+];
+
+function getHolderTier(balance) {
+  return holderTiers.slice().reverse().find(t => balance >= t.min) || holderTiers[0];
+}
+
+// ── DAILY LIMIT SYSTEM ───────────────────────────────────────────
+const CARD_STORAGE_KEY = 'j33t_cards_v1';
+
+function getTodayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+
+function getCardUsage() {
+  try {
+    const raw = localStorage.getItem(CARD_STORAGE_KEY);
+    const data = raw ? JSON.parse(raw) : {};
+    const today = getTodayKey();
+    return data[today] || 0;
+  } catch { return 0; }
+}
+
+function incrementCardUsage() {
+  try {
+    const raw = localStorage.getItem(CARD_STORAGE_KEY);
+    const data = raw ? JSON.parse(raw) : {};
+    const today = getTodayKey();
+    // Clean old keys (keep only today)
+    const fresh = {};
+    fresh[today] = (data[today] || 0) + 1;
+    localStorage.setItem(CARD_STORAGE_KEY, JSON.stringify(fresh));
+  } catch {}
+}
+
+function getDailyLimit() {
+  const balance = walletConnected ? j33tBalance : 0;
+  return getHolderTier(balance).limit;
+}
+
+function canGenerateCard() {
+  const limit = getDailyLimit();
+  if (limit === Infinity) return true;
+  return getCardUsage() < limit;
+}
+
+function updateCardLimitUI() {
+  const limit = getDailyLimit();
+  const used = getCardUsage();
+  const remaining = limit === Infinity ? Infinity : Math.max(0, limit - used);
+  const balance = walletConnected ? j33tBalance : 0;
+  const tier = getHolderTier(balance);
+
+  const icon = document.getElementById('cardLimitIcon');
+  const text = document.getElementById('cardLimitText');
+  const pips = document.getElementById('cardLimitPips');
+  const hint = document.getElementById('cardTierHint');
+  const btn  = document.getElementById('cardGenBtn');
+
+  if (!icon) return;
+
+  icon.textContent = tier.icon;
+
+  if (limit === Infinity) {
+    text.textContent = 'UNLIMITED · ' + tier.label;
+    text.className = 'card-limit-text ok';
+    pips.innerHTML = '<div class="card-pip unlimited"></div><div class="card-pip unlimited"></div><div class="card-pip unlimited"></div><span style="font-family:var(--pixel);font-size:6px;color:var(--gold);margin-left:4px;">∞</span>';
+    btn.disabled = false;
+    btn.textContent = '⚡ GENERATE';
+    btn.style.opacity = '1';
+  } else if (remaining === 0) {
+    text.textContent = 'DAILY LIMIT REACHED · RESETS MIDNIGHT';
+    text.className = 'card-limit-text out';
+    pips.innerHTML = Array.from({length: limit}, () => '<div class="card-pip used"></div>').join('');
+    btn.disabled = true;
+    btn.textContent = '🔒 COME BACK TOMORROW';
+    btn.style.opacity = '0.5';
+  } else {
+    text.textContent = `${remaining} OF ${limit} LEFT TODAY · ${tier.label}`;
+    text.className = remaining === 1 ? 'card-limit-text warn' : 'card-limit-text ok';
+    pips.innerHTML = Array.from({length: limit}, (_, i) =>
+      `<div class="card-pip ${i < used ? 'used' : 'active'}"></div>`
+    ).join('');
+    btn.disabled = false;
+    btn.textContent = '⚡ GENERATE';
+    btn.style.opacity = '1';
+  }
+
+  // Tier hint — show next tier if not max
+  const nextTierIdx = holderTiers.findIndex(t => t.min === tier.min) + 1;
+  if (!walletConnected && nextTierIdx < holderTiers.length) {
+    const next = holderTiers[nextTierIdx];
+    hint.textContent = `🔗 Connect wallet with ${next.min.toLocaleString()}+ $J33T → ${next.limit} cards/day`;
+    hint.className = 'card-tier-hint visible';
+  } else if (walletConnected && nextTierIdx < holderTiers.length) {
+    const next = holderTiers[nextTierIdx];
+    hint.textContent = `⬆ ${next.min.toLocaleString()} $J33T → ${next.limit === Infinity ? 'UNLIMITED' : next.limit} cards/day · You have ${j33tBalance.toLocaleString()}`;
+    hint.className = 'card-tier-hint visible';
+  } else {
+    hint.className = 'card-tier-hint';
+  }
+}
+
+// ── RARITY REVEAL OVERLAY ────────────────────────────────────────
+function showRarityReveal(rarity, onDone) {
+  // For common/uncommon — skip the dramatic reveal, just toast
+  if (rarity.stars <= 2) { onDone(); return; }
+
+  const overlay = document.createElement('div');
+  overlay.className = 'rarity-reveal';
+  overlay.innerHTML = `
+    <div class="rarity-reveal-icon">${rarity.emoji}</div>
+    <div class="rarity-reveal-name" style="color:${rarity.color}">${rarity.name}</div>
+    <div class="rarity-reveal-sub">${rarity.desc}</div>
+    <div class="rarity-reveal-tap">[ TAP TO CONTINUE ]</div>
+  `;
+  document.body.appendChild(overlay);
+
+  // Special effects for top rarities
+  if (rarity.stars >= 6) launchConfetti();
+  if (rarity.stars === 7) {
+    // Diamond: extra dramatic
+    setTimeout(() => launchConfetti(), 400);
+    setTimeout(() => launchConfetti(), 800);
+  }
+
+  overlay.addEventListener('click', () => {
+    overlay.style.animation = 'reveal-in 0.2s ease reverse';
+    setTimeout(() => { overlay.remove(); onDone(); }, 200);
+  });
+  setTimeout(() => { if (document.body.contains(overlay)) { overlay.remove(); onDone(); } }, 5000);
+}
+
+function drawCard(line1, line2, themeIdx, rarity, egg) {
+  const W = 320, H = 420;
+  const ctx = cardCtx;
+  const t = cardThemes[themeIdx % cardThemes.length];
+  const r = rarity || rarities[0];
+
+  // — Apply easter egg overrides
+  const activeBg   = egg?.bgOverride   || [t.bg1, t.bg2];
+  const activeDogC = egg?.dogColors    || cardDogColors;
+  const activeTitle    = egg?.titleOverride    || (line1 || 'GOOD BOY');
+  const activeSubtitle = egg?.subtitleOverride || (line2 || 'BORN JAN 2009 · SOLANA');
+  const displayTitle    = (activeTitle + (egg?.titleSuffix || '')).toUpperCase();
+  const displaySubtitle = activeSubtitle.toUpperCase();
+
+  ctx.clearRect(0, 0, W, H);
+
+  // — Background
+  const grad = ctx.createLinearGradient(0, 0, W, H);
+  grad.addColorStop(0, activeBg[0]);
+  grad.addColorStop(1, activeBg[1]);
+  ctx.fillStyle = grad;
+  roundRect(ctx, 0, 0, W, H, 12);
+  ctx.fill();
+
+  // — Scanlines
+  ctx.fillStyle = 'rgba(0,0,0,0.12)';
+  for (let sy = 0; sy < H; sy += 4) ctx.fillRect(0, sy, W, 1);
+
+  // — Rarity-specific border (drawn FIRST, then content on top)
+  drawRarityBorder(ctx, W, H, r, egg);
+
+  // — Top header bar
+  const headerGrad = ctx.createLinearGradient(0, 14, W, 54);
+  headerGrad.addColorStop(0, t.accent + '33');
+  headerGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = headerGrad;
+  ctx.fillRect(14, 14, W - 28, 40);
+
+  // — Series label top-left
+  ctx.font = '600 8px "Space Mono"';
+  ctx.fillStyle = egg?.borderColor || t.accent;
+  ctx.textAlign = 'left';
+  ctx.fillText(egg ? egg.label.toUpperCase() : 'J33T CARD SERIES // 2009', 22, 32);
+
+  // — Rarity badge top-right
+  ctx.font = 'bold 7px "Press Start 2P"';
+  ctx.textAlign = 'right';
+  ctx.fillStyle = r.color;
+  ctx.shadowColor = r.glow || r.color;
+  ctx.shadowBlur = r.stars >= 5 ? 18 : r.stars >= 3 ? 10 : 6;
+  ctx.fillText(r.name, W - 22, 32);
+  ctx.shadowBlur = 0;
+
+  // — Stars (7 max, solid★ + outline✦)
+  ctx.font = r.stars >= 6 ? '11px sans-serif' : '10px sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillStyle = r.color;
+  ctx.shadowColor = r.glow || r.color;
+  ctx.shadowBlur = r.stars >= 5 ? 12 : 0;
+  ctx.fillText('★'.repeat(r.stars) + '✦'.repeat(7 - r.stars), W - 22, 47);
+  ctx.shadowBlur = 0;
+
+  // — Dog art area
+  const dogAreaY = 60, dogAreaH = 220;
+  const dogAreaGrad = ctx.createRadialGradient(W/2, dogAreaY + dogAreaH/2, 10, W/2, dogAreaY + dogAreaH/2, 140);
+  dogAreaGrad.addColorStop(0, (egg?.borderColor || t.accent) + '22');
+  dogAreaGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = dogAreaGrad;
+  ctx.fillRect(14, dogAreaY, W - 28, dogAreaH);
+
+  // — Circuit lines
+  ctx.strokeStyle = (egg?.borderColor || t.accent) + '18';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 8]);
+  for (let ci = 0; ci < 5; ci++) {
+    const lx = 30 + ci * 55;
+    ctx.beginPath(); ctx.moveTo(lx, dogAreaY+10); ctx.lineTo(lx, dogAreaY+dogAreaH-10); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  // — Pixel Yorkie
+  const dogScale = 9;
+  const dogX = Math.floor((W - 19 * dogScale) / 2);
+  const dogY = dogAreaY + Math.floor((dogAreaH - 20 * dogScale) / 2);
+  cardDog.forEach((row, ry) => {
+    for (let rx = 0; rx < row.length; rx++) {
+      const col = activeDogC[row[rx]];
+      if (!col) continue;
+      ctx.fillStyle = col;
+      ctx.fillRect(dogX + rx * dogScale, dogY + ry * dogScale, dogScale, dogScale);
+    }
+  });
+
+  // — Laser eyes easter egg
+  if (egg?.extraDraw === 'laserEyes') {
+    const eyeY = dogY + 8 * dogScale + dogScale/2;
+    const eye1X = dogX + 5 * dogScale;
+    const eye2X = dogX + 8 * dogScale;
+    [eye1X, eye2X].forEach(ex => {
+      ctx.shadowColor = '#ff2200'; ctx.shadowBlur = 12;
+      ctx.fillStyle = '#ff2200';
+      ctx.fillRect(ex, eyeY, dogScale, dogScale);
+      // beam
+      const beamGrad = ctx.createLinearGradient(ex, eyeY, ex + 60, eyeY + 40);
+      beamGrad.addColorStop(0, '#ff2200cc');
+      beamGrad.addColorStop(1, '#ff220000');
+      ctx.fillStyle = beamGrad;
+      ctx.fillRect(ex, eyeY + dogScale/3, 60, dogScale/3);
+      ctx.shadowBlur = 0;
+    });
+  }
+
+  // — Glow under dog
+  const glowGrad = ctx.createRadialGradient(W/2, dogAreaY+dogAreaH-10, 5, W/2, dogAreaY+dogAreaH, 80);
+  glowGrad.addColorStop(0, (egg?.borderColor || t.accent) + '55');
+  glowGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = glowGrad;
+  ctx.fillRect(14, dogAreaY+dogAreaH-40, W-28, 60);
+
+  // — Divider
+  ctx.strokeStyle = (egg?.borderColor || t.accent) + '55';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(22, dogAreaY+dogAreaH+10); ctx.lineTo(W-22, dogAreaY+dogAreaH+10);
+  ctx.stroke();
+
+  // — Title
+  const titleY = dogAreaY + dogAreaH + 38;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = t.text;
+  ctx.shadowColor = egg?.borderColor || t.accent;
+  ctx.shadowBlur = 10;
+  fitText(ctx, displayTitle, W/2, titleY, W - 44, 13);
+  ctx.shadowBlur = 0;
+
+  // — Subtitle
+  ctx.font = '9px "Space Mono"';
+  ctx.fillStyle = egg?.borderColor || t.accent;
+  ctx.textAlign = 'center';
+  fitText(ctx, displaySubtitle, W/2, titleY + 26, W - 44, 9);
+
+  // — Stats bar
+  const statsY = titleY + 52;
+  const statItems = [
+    { label: 'BORN',  val: '01/2009' },
+    { label: 'CHAIN', val: 'SOLANA'  },
+    { label: 'TAX',   val: '0/0%'   },
+  ];
+  statItems.forEach((s, i) => {
+    const sx = 22 + i * ((W-44)/3) + (W-44)/6;
+    ctx.font = '7px "Press Start 2P"';
+    ctx.fillStyle = egg?.borderColor || t.accent;
+    ctx.textAlign = 'center';
+    ctx.fillText(s.val, sx, statsY);
+    ctx.font = '8px "Space Mono"';
+    ctx.fillStyle = t.text + '88';
+    ctx.fillText(s.label, sx, statsY + 14);
+    if (i < 2) {
+      ctx.strokeStyle = (egg?.borderColor || t.accent) + '33';
+      ctx.lineWidth = 1;
+      const dx = 22 + (i+1) * ((W-44)/3);
+      ctx.beginPath(); ctx.moveTo(dx, statsY-12); ctx.lineTo(dx, statsY+20); ctx.stroke();
+    }
+  });
+
+  // — Bottom bar
+  const botY = statsY + 40;
+  const botGrad = ctx.createLinearGradient(0, botY, W, botY);
+  botGrad.addColorStop(0, (egg?.borderColor || t.accent) + '22');
+  botGrad.addColorStop(0.5, (egg?.borderColor || t.accent) + '44');
+  botGrad.addColorStop(1, (egg?.borderColor || t.accent) + '22');
+  ctx.fillStyle = botGrad;
+  ctx.fillRect(14, botY, W-28, 28);
+
+  // — $J33T bottom left
+  ctx.font = 'bold 10px "Press Start 2P"';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = t.badge || t.accent;
+  ctx.shadowColor = t.badge || t.accent;
+  ctx.shadowBlur = 8;
+  ctx.fillText('$J33T', 24, botY + 19);
+  ctx.shadowBlur = 0;
+
+  // — Theme name bottom center
+  ctx.font = '7px "Space Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = t.text + '88';
+  ctx.fillText(t.name + ' EDITION', W/2, botY + 19);
+
+  // — Edition # (fingerprint from hash, set async below)
+  ctx.font = '7px "Press Start 2P"';
+  ctx.textAlign = 'right';
+  ctx.fillStyle = (egg?.borderColor || t.accent) + 'bb';
+  ctx.fillText('#' + cardCanvas.dataset.fp || '#----', W - 24, botY + 19);
+
+  // — SHA-256 hash line (async, drawn after)
+  const hashInput = [line1, line2, themeIdx, r.name, Date.now()].join('|');
+  sha256(hashInput).then(hash => {
+    const fp = hash.slice(0, 4) + '-' + hash.slice(4, 8);
+    cardCanvas.dataset.fp = fp.toUpperCase();
+    cardCanvas.dataset.hash = hash;
+
+    // Re-draw bottom bar cleanly then write hash
+    ctx.fillStyle = botGrad;
+    ctx.fillRect(14, botY, W-28, 28);
+
+    // $J33T re-draw
+    ctx.font = 'bold 10px "Press Start 2P"';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = t.badge || t.accent;
+    ctx.shadowColor = t.badge || t.accent; ctx.shadowBlur = 8;
+    ctx.fillText('$J33T', 24, botY + 19);
+    ctx.shadowBlur = 0;
+
+    // Theme center re-draw
+    ctx.font = '7px "Space Mono"';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = t.text + '88';
+    ctx.fillText(t.name + ' EDITION', W/2, botY + 19);
+
+    // Fingerprint right
+    ctx.font = '7px "Press Start 2P"';
+    ctx.textAlign = 'right';
+    ctx.fillStyle = (egg?.borderColor || t.accent) + 'bb';
+    ctx.fillText('#' + fp.toUpperCase(), W - 24, botY + 19);
+
+    // — Hash strip below bottom bar
+    const hashY = botY + 32;
+    ctx.font = '5px "Space Mono"';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    ctx.fillText(hash.slice(0, 64), W/2, hashY);
+  });
+}
+
+// ── RARITY BORDER DRAWING ────────────────────────────────────────
+function drawRarityBorder(ctx, W, H, r, egg) {
+  const borderColor = egg?.borderColor || r.color;
+  const stars = r.stars;
+
+  // All rarities get outer border
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = stars >= 6 ? 3 : stars >= 4 ? 2 : 1.5;
+  ctx.shadowColor = borderColor;
+  ctx.shadowBlur = stars >= 6 ? 24 : stars >= 4 ? 14 : 8;
+  roundRect(ctx, 1, 1, W-2, H-2, 12);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Inner border for Rare+
+  if (stars >= 3) {
+    ctx.strokeStyle = borderColor + '55';
+    ctx.lineWidth = 1;
+    ctx.shadowColor = borderColor; ctx.shadowBlur = 6;
+    roundRect(ctx, 6, 6, W-12, H-12, 10);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  // Corner ornaments for Epic+
+  if (stars >= 4) {
+    const corners = [[14,14],[W-14,14],[14,H-14],[W-14,H-14]];
+    const signs = [[-1,-1],[1,-1],[-1,1],[1,1]];
+    ctx.strokeStyle = borderColor + 'aa';
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = borderColor; ctx.shadowBlur = 8;
+    corners.forEach(([cx,cy],[sx,sy] = signs.shift()) => {
+      ctx.beginPath();
+      ctx.moveTo(cx + sx*12, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy + sy*12);
+      ctx.stroke();
+    });
+    ctx.shadowBlur = 0;
+  }
+
+  // Double border for Legendary+
+  if (stars >= 5) {
+    ctx.strokeStyle = borderColor + '33';
+    ctx.lineWidth = 6;
+    ctx.shadowColor = borderColor; ctx.shadowBlur = 30;
+    roundRect(ctx, 1, 1, W-2, H-2, 12);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  // Prismatic shimmer strips for Diamond
+  if (stars === 7) {
+    const shimmerColors = ['#ff6b9d','#ffd166','#06d6a0','#118ab2','#a8eeff'];
+    shimmerColors.forEach((c, i) => {
+      ctx.strokeStyle = c + '55';
+      ctx.lineWidth = 1;
+      const inset = 2 + i * 1.5;
+      roundRect(ctx, inset, inset, W-inset*2, H-inset*2, 12-i);
+      ctx.stroke();
+    });
+  }
+
+  // Gold radial corner glow
+  if (stars === 6) {
+    [[0,0],[W,0],[0,H],[W,H]].forEach(([cx,cy]) => {
+      const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 60);
+      cg.addColorStop(0, '#ffcc0044');
+      cg.addColorStop(1, 'transparent');
+      ctx.fillStyle = cg;
+      ctx.fillRect(0, 0, W, H);
+    });
+  }
+}
+
+function fitText(ctx, text, x, y, maxW, baseSize) {
+  let size = baseSize;
+  ctx.font = `bold ${size}px "Press Start 2P"`;
+  while (ctx.measureText(text).width > maxW && size > 6) {
+    size--;
+    ctx.font = `bold ${size}px "Press Start 2P"`;
+  }
+  ctx.fillText(text, x, y);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y); ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+function pickRarity() {
+  const roll = Math.random();
+  // cumulative from rarest to most common
+  if (roll < 0.01)  return rarities[6]; // DIAMOND  1%
+  if (roll < 0.03)  return rarities[5]; // GOLD     2%
+  if (roll < 0.07)  return rarities[4]; // LEGENDARY 4%
+  if (roll < 0.13)  return rarities[3]; // EPIC     6%
+  if (roll < 0.25)  return rarities[2]; // RARE    12%
+  if (roll < 0.50)  return rarities[1]; // UNCOMMON 25%
+  return rarities[0];                   // COMMON  50%
+}
+
+function triggerHolo(rarity, egg) {
+  clearTimeout(cardHoloTimeout);
+  cardStage.classList.remove('rarity-gold','rarity-diamond','rarity-legendary');
+  if (rarity?.themeClass) cardStage.classList.add(rarity.themeClass);
+  cardStage.classList.add('animating');
+  cardHoloTimeout = setTimeout(() => cardStage.classList.remove('animating'), 1300);
+  startBorderAnim(rarity, egg);
+}
+
+let lastRarity = rarities[1];
+let lastEgg = null;
+
+function _doGenerate(l1, l2) {
+  if (!canGenerateCard()) {
+    showToast('🔒 Daily limit reached! Get more $J33T for extra cards.');
+    return;
+  }
+  const egg    = checkEasterEgg(l1, l2);
+  const rarity = pickRarity();
+  lastRarity = rarity; lastEgg = egg;
+
+  showRarityReveal(rarity, () => {
+    drawCard(l1, l2, currentThemeIdx, rarity, egg);
+    triggerHolo(rarity, egg);
+    if (rarity.stars <= 2) {
+      const msgs = { COMMON:'📦 Common.', UNCOMMON:'🦴 Uncommon!' };
+      showToast((msgs[rarity.name]||'') + ' Theme: ' + cardThemes[currentThemeIdx].name);
+    }
+  });
+
+  incrementCardUsage();
+  updateCardLimitUI();
+}
+
+function generateCard() {
+  currentThemeIdx = (currentThemeIdx + 1) % cardThemes.length;
+  _doGenerate(
+    document.getElementById('cardLine1').value,
+    document.getElementById('cardLine2').value
+  );
+}
+
+function randomCard() {
+  const pick = randomTitles[Math.floor(Math.random() * randomTitles.length)];
+  document.getElementById('cardLine1').value = pick[0];
+  document.getElementById('cardLine2').value = pick[1];
+  currentThemeIdx = Math.floor(Math.random() * cardThemes.length);
+  _doGenerate(pick[0], pick[1]);
+}
+
+function saveCard() {
+  const hash = cardCanvas.dataset.hash || 'unknown';
+  const a = document.createElement('a');
+  a.download = 'j33t-card-' + hash.slice(0,8) + '.png';
+  a.href = cardCanvas.toDataURL('image/png');
+  a.click();
+  showToast('Card saved! Hash: ' + hash.slice(0,8) + '... 🐕');
+}
+
+// 3D tilt
+cardStage.addEventListener('mousemove', e => {
+  const rect = cardStage.getBoundingClientRect();
+  const dx = (e.clientX - rect.left - rect.width/2)  / (rect.width/2);
+  const dy = (e.clientY - rect.top  - rect.height/2) / (rect.height/2);
+  cardStage.style.transform = `perspective(600px) rotateY(${dx*10}deg) rotateX(${-dy*10}deg)`;
+  cardStage.style.transition = '';
+});
+cardStage.addEventListener('mouseleave', () => {
+  cardStage.style.transition = 'transform 0.5s ease';
+  cardStage.style.transform  = 'perspective(600px) rotateY(0deg) rotateX(0deg)';
+  setTimeout(() => cardStage.style.transition = '', 500);
+});
+
+// Click card → cycle theme (free)
+cardCanvas.addEventListener('click', () => {
+  currentThemeIdx = (currentThemeIdx + 1) % cardThemes.length;
+  drawCard(
+    document.getElementById('cardLine1').value,
+    document.getElementById('cardLine2').value,
+    currentThemeIdx, lastRarity, lastEgg
+  );
+  triggerHolo(lastRarity, lastEgg);
+});
+
+// Init
+drawCard('GOOD BOY CERTIFIED', 'BORN JAN 2009 · SOLANA', 0, rarities[1]);
+updateCardLimitUI();
 // ============================================================
 // SCROLL REVEAL
 // ============================================================
