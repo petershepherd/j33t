@@ -1,0 +1,2430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0f">
+<meta property="og:title" content="J33T — The Original Yorkie">
+<meta property="og:description" content="Born Jan 2009. Still not selling since 2009. $J33T on Solana.">
+<meta property="og:image" content="https://j33t.com/og-dog.png">
+<title>J33T — The Original Yorkie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #f5c842;
+    --gold2: #ffaa00;
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --accent: #7b61ff;
+    --green: #00ffaa;
+    --red: #ff4466;
+    --text: #e8e8f0;
+    --muted: #6b6b88;
+    --pixel: 'Press Start 2P', monospace;
+    --mono: 'Space Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 20px; height: 20px;
+    border: 2px solid var(--gold);
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  .cursor.active { width: 40px; height: 40px; background: rgba(245,200,66,0.15); }
+  .cursor-dot {
+    width: 4px; height: 4px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Canvas background */
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  /* Scanlines */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 998;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(245,200,66,0.12);
+    backdrop-filter: blur(20px);
+    background: rgba(10,10,15,0.8);
+  }
+
+  .nav-logo {
+    font-family: var(--pixel);
+    font-size: 14px;
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(245,200,66,0.6);
+    letter-spacing: 2px;
+    animation: glitch-text 4s infinite;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+
+  .nav-connect {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: var(--pixel);
+    font-size: 9px;
+    padding: 10px 18px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nav-connect::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: var(--gold);
+    transition: left 0.3s;
+    z-index: -1;
+  }
+
+  .nav-connect:hover { color: var(--bg); }
+  .nav-connect:hover::before { left: 0; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 120px 20px 60px;
+    overflow: hidden;
+  }
+
+  .hero-badge {
+    font-family: var(--pixel);
+    font-size: 8px;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 6px 14px;
+    letter-spacing: 2px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero-title {
+    font-family: var(--pixel);
+    font-size: clamp(24px, 6vw, 80px);
+    line-height: 1.3;
+    color: var(--gold);
+    text-shadow:
+      0 0 40px rgba(245,200,66,0.5),
+      4px 4px 0 rgba(123,97,255,0.4);
+    animation: fadeUp 0.8s 0.15s ease both;
+    position: relative;
+  }
+
+  .hero-title .glitch {
+    position: relative;
+    display: inline-block;
+  }
+
+  .hero-title .glitch::before,
+  .hero-title .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+  }
+  .hero-title .glitch::before {
+    color: var(--accent);
+    animation: glitch1 3s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  }
+  .hero-title .glitch::after {
+    color: var(--red);
+    animation: glitch2 3s infinite;
+    clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+  }
+
+  .hero-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 24px 0 48px;
+    letter-spacing: 1px;
+    line-height: 1.8;
+    max-width: 480px;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+
+  .hero-sub span { color: var(--gold); }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 0.8s 0.45s ease both;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    font-family: var(--pixel);
+    font-size: 9px;
+    padding: 16px 28px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+  .btn-primary:hover {
+    background: var(--gold2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(245,200,66,0.35);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.2);
+    font-family: var(--pixel);
+    font-size: 9px;
+    padding: 16px 28px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* Dog pixel art */
+  .dog-container {
+    position: relative;
+    margin: 48px 0;
+    animation: fadeUp 0.8s 0.2s ease both, float 3s ease-in-out infinite;
+  }
+
+  .dog-pixel {
+    image-rendering: pixelated;
+    width: 192px;
+    height: 192px;
+    filter: drop-shadow(0 0 30px rgba(245,200,66,0.4));
+  }
+
+  .dog-halo {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,200,66,0.12) 0%, transparent 70%);
+    animation: pulse-ring 2s ease-in-out infinite;
+  }
+
+  /* Stats ticker */
+  .ticker {
+    position: relative;
+    z-index: 10;
+    background: var(--surface);
+    border-top: 1px solid rgba(245,200,66,0.2);
+    border-bottom: 1px solid rgba(245,200,66,0.2);
+    padding: 12px 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .ticker-inner {
+    display: inline-flex;
+    gap: 64px;
+    animation: ticker 20s linear infinite;
+  }
+
+  .ticker-item {
+    font-family: var(--pixel);
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .ticker-item span { color: var(--green); }
+  .ticker-item .down { color: var(--red); }
+
+  /* SECTIONS */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 80px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: var(--pixel);
+    font-size: 8px;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: var(--pixel);
+    font-size: clamp(18px, 3vw, 28px);
+    color: var(--gold);
+    line-height: 1.6;
+    margin-bottom: 16px;
+    text-shadow: 0 0 20px rgba(245,200,66,0.3);
+  }
+
+  .section-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 540px;
+    margin-bottom: 48px;
+  }
+
+  /* Token holder gate */
+  .gate-wrapper {
+    border: 1px solid rgba(245,200,66,0.2);
+    background: var(--surface);
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gate-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    animation: scan-line 3s linear infinite;
+  }
+
+  .gate-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+  }
+
+  .gate-card {
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 28px;
+    position: relative;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .gate-card:hover {
+    border-color: rgba(245,200,66,0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+  }
+
+  .gate-card.locked::after {
+    content: '🔒';
+    position: absolute;
+    top: 16px; right: 16px;
+    font-size: 18px;
+  }
+
+  .gate-card.unlocked::after {
+    content: '✅';
+    position: absolute;
+    top: 16px; right: 16px;
+    font-size: 18px;
+  }
+
+  .card-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-family: var(--pixel);
+    font-size: 10px;
+    color: var(--gold);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .card-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .card-min {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--accent);
+    margin-top: 12px;
+  }
+
+  /* Wallet connect panel */
+  .wallet-panel {
+    background: var(--surface2);
+    border: 1px solid rgba(245,200,66,0.15);
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .wallet-status {
+    font-family: var(--pixel);
+    font-size: 8px;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+
+  .wallet-status.connected { color: var(--green); }
+  .wallet-status.disconnected { color: var(--muted); }
+
+  .wallet-btn {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--pixel);
+    font-size: 8px;
+    padding: 14px 24px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .wallet-btn:hover { background: var(--accent); color: var(--bg); }
+
+  /* Meme generator */
+  .meme-gen {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 32px;
+    display: none;
+  }
+  .meme-gen.visible { display: block; }
+
+  .meme-canvas-wrap {
+    background: #000;
+    border: 2px solid var(--gold);
+    margin: 24px auto;
+    width: 320px; height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .meme-canvas-wrap canvas {
+    image-rendering: pixelated;
+  }
+
+  .meme-controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  .meme-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 10px 14px;
+    min-width: 180px;
+  }
+
+  .meme-input:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+  .btn-sm {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    font-family: var(--pixel);
+    font-size: 8px;
+    padding: 10px 18px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn-sm:hover { background: var(--gold2); }
+
+  /* Wisdom Oracle */
+  .oracle-box {
+    background: var(--surface);
+    border: 1px solid rgba(245,200,66,0.25);
+    padding: 40px;
+    text-align: center;
+    display: none;
+    position: relative;
+  }
+  .oracle-box.visible { display: block; }
+  .oracle-box::before {
+    content: '✦';
+    color: var(--gold);
+    font-size: 24px;
+    display: block;
+    margin-bottom: 16px;
+    animation: spin 4s linear infinite;
+  }
+
+  .oracle-text {
+    font-family: var(--pixel);
+    font-size: 11px;
+    color: var(--gold);
+    line-height: 2;
+    min-height: 60px;
+    text-shadow: 0 0 12px rgba(245,200,66,0.4);
+  }
+
+  /* About section */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  @media (max-width: 640px) {
+    .about-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .gate-card { padding: 20px; }
+    .meme-controls { justify-content: center; }
+    .hero { padding: 100px 16px 48px; }
+    .hero-sub { font-size: 11px; }
+    nav { padding: 12px 16px; }
+    section { padding: 60px 16px; }
+    .gate-wrapper { padding: 24px 16px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; padding: 32px 16px; }
+    .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+  }
+
+  .about-photo {
+    position: relative;
+  }
+
+  .photo-frame {
+    border: 2px solid var(--gold);
+    padding: 12px;
+    background: var(--surface);
+    position: relative;
+    filter: drop-shadow(0 0 30px rgba(245,200,66,0.2));
+  }
+
+  .photo-frame img,
+  .photo-frame .photo-placeholder {
+    width: 100%;
+    aspect-ratio: 1;
+    display: block;
+  }
+
+  .photo-placeholder {
+    background: var(--surface2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    aspect-ratio: 1;
+  }
+
+  .photo-placeholder-dog {
+    font-size: 80px;
+    animation: float 2s ease-in-out infinite;
+  }
+
+  .photo-placeholder-text {
+    font-family: var(--pixel);
+    font-size: 8px;
+    color: var(--gold);
+    text-align: center;
+    letter-spacing: 1px;
+  }
+
+  .photo-corner {
+    position: absolute;
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--gold);
+    background: var(--bg);
+    padding: 4px 8px;
+  }
+  .photo-corner.tl { top: -12px; left: -12px; }
+  .photo-corner.br { bottom: -12px; right: -12px; }
+
+  .stat-row {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 32px;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: var(--surface);
+    border-left: 3px solid var(--gold);
+  }
+
+  .stat-num {
+    font-family: var(--pixel);
+    font-size: 20px;
+    color: var(--gold);
+    min-width: 80px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* Tokenomics */
+  .tokenomics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2px;
+    background: rgba(245,200,66,0.1);
+    border: 1px solid rgba(245,200,66,0.2);
+    margin-top: 32px;
+  }
+
+  .tnom-cell {
+    background: var(--surface);
+    padding: 28px 24px;
+    transition: background 0.2s;
+  }
+
+  .tnom-cell:hover { background: var(--surface2); }
+
+  .tnom-pct {
+    font-family: var(--pixel);
+    font-size: 22px;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 8px;
+    text-shadow: 0 0 16px rgba(245,200,66,0.4);
+  }
+
+  .tnom-name {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* Footer */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(245,200,66,0.1);
+    padding: 40px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+  }
+
+  .footer-logo {
+    font-family: var(--pixel);
+    font-size: 10px;
+    color: var(--gold);
+    opacity: 0.6;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+
+  .footer-copy {
+    font-size: 10px;
+    color: var(--muted);
+    opacity: 0.4;
+  }
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+  }
+  .modal.open { display: flex; }
+
+  .modal-box {
+    background: var(--surface);
+    border: 1px solid rgba(245,200,66,0.3);
+    padding: 48px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    animation: scaleIn 0.3s ease;
+  }
+
+  .modal-title {
+    font-family: var(--pixel);
+    font-size: 14px;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+
+  .wallet-option {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: var(--surface2);
+    border: 1px solid transparent;
+    cursor: pointer;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    width: 100%;
+  }
+
+  .wallet-option:hover {
+    border-color: var(--gold);
+    background: rgba(245,200,66,0.05);
+  }
+
+  .wallet-option-icon { font-size: 28px; }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: var(--pixel);
+    font-size: 9px;
+    cursor: pointer;
+    margin-top: 24px;
+    letter-spacing: 1px;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  /* Progress bar */
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.05);
+    margin: 16px 0;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold2));
+    width: 0%;
+    transition: width 1s ease;
+    box-shadow: 0 0 8px rgba(245,200,66,0.5);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  @keyframes pulse-ring {
+    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  }
+
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  @keyframes glitch1 {
+    0%, 90%, 100% { transform: translate(0); opacity: 0; }
+    92% { transform: translate(-3px, 1px); opacity: 0.7; }
+    94% { transform: translate(3px, -1px); opacity: 0.7; }
+    96% { transform: translate(-2px); opacity: 0; }
+  }
+
+  @keyframes glitch2 {
+    0%, 93%, 100% { transform: translate(0); opacity: 0; }
+    95% { transform: translate(3px, 1px); opacity: 0.6; }
+    97% { transform: translate(-3px); opacity: 0.6; }
+    99% { transform: translate(1px); opacity: 0; }
+  }
+
+  @keyframes glitch-text {
+    0%, 95%, 100% { text-shadow: 0 0 20px rgba(245,200,66,0.6); }
+    96% { text-shadow: -2px 0 var(--red), 2px 0 var(--accent), 0 0 20px rgba(245,200,66,0.6); }
+    98% { text-shadow: 2px 0 var(--accent), -2px 0 var(--red), 0 0 20px rgba(245,200,66,0.6); }
+  }
+
+  @keyframes scan-line {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(200%); }
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* Paw trail */
+  .paw-trail {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9997;
+    font-size: 14px;
+    opacity: 0.7;
+    animation: paw-fade 1s ease forwards;
+    transform-origin: center;
+  }
+  @keyframes paw-fade {
+    0% { opacity: 0.7; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.3) translateY(-20px); }
+  }
+
+  /* Woof popup */
+  .woof-popup {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    font-family: var(--pixel);
+    font-size: 13px;
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(245,200,66,0.8);
+    animation: woof-fly 0.8s ease forwards;
+    white-space: nowrap;
+  }
+  @keyframes woof-fly {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-60px) scale(1.4); }
+  }
+
+  /* Confetti canvas */
+  #confetti-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 997;
+  }
+
+  /* Age counter in hero */
+  .hero-age {
+    font-family: var(--pixel);
+    font-size: 8px;
+    color: var(--muted);
+    margin-top: -16px;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+    animation: fadeUp 0.8s 0.35s ease both;
+  }
+  .hero-age span { color: var(--green); }
+
+  /* Super Saiyan easter egg */
+  body.super-saiyan {
+    animation: rainbow-bg 0.2s linear infinite;
+  }
+  @keyframes rainbow-bg {
+    0%   { filter: hue-rotate(0deg) saturate(2); }
+    100% { filter: hue-rotate(360deg) saturate(2); }
+  }
+  body.super-saiyan .hero-title {
+    animation: rainbow-text 0.15s linear infinite, fadeUp 0s both !important;
+    font-size: clamp(28px, 9vw, 100px) !important;
+  }
+  @keyframes rainbow-text {
+    0%   { color: #ff0000; text-shadow: 0 0 60px #ff000099; }
+    25%  { color: #ffff00; text-shadow: 0 0 60px #ffff0099; }
+    50%  { color: #00ffaa; text-shadow: 0 0 60px #00ffaa99; }
+    75%  { color: #7b61ff; text-shadow: 0 0 60px #7b61ff99; }
+    100% { color: #ff0000; text-shadow: 0 0 60px #ff000099; }
+  }
+
+  /* Konami toast */
+  .konami-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9996;
+    background: rgba(0,0,0,0.9);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+    text-align: center;
+  }
+  .konami-overlay.show { display: flex; }
+  .konami-title {
+    font-family: var(--pixel);
+    font-size: clamp(16px, 4vw, 36px);
+    color: var(--gold);
+    text-shadow: 0 0 40px rgba(245,200,66,0.8);
+    animation: rainbow-text 0.3s linear infinite;
+  }
+  .konami-sub {
+    font-family: var(--pixel);
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  /* Oracle lick effect */
+  .lick-stars {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .lick-star {
+    position: absolute;
+    color: var(--gold);
+    font-size: 20px;
+    animation: star-burst 0.8s ease forwards;
+  }
+  @keyframes star-burst {
+    0% { opacity: 1; transform: scale(0) rotate(0deg); }
+    60% { opacity: 1; transform: scale(1.4) rotate(180deg); }
+    100% { opacity: 0; transform: scale(0.5) rotate(360deg) translateY(-40px); }
+  }
+
+  /* Ticker moon mode */
+  .ticker.moon-mode .ticker-item { color: var(--gold) !important; }
+  .ticker.moon-mode .ticker-item span { color: #fff !important; animation: rainbow-text 0.5s linear infinite; }
+
+  .toast {
+    position: fixed;
+    bottom: 32px; right: 32px;
+    background: var(--surface);
+    border: 1px solid var(--green);
+    padding: 16px 24px;
+    font-family: var(--pixel);
+    font-size: 9px;
+    color: var(--green);
+    z-index: 999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    letter-spacing: 1px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Live price widget */
+  .price-widget {
+    position: fixed;
+    top: 70px; right: 20px;
+    z-index: 99;
+    background: rgba(17,17,24,0.95);
+    border: 1px solid rgba(245,200,66,0.25);
+    padding: 12px 16px;
+    min-width: 170px;
+    backdrop-filter: blur(12px);
+    font-family: var(--pixel);
+    transition: border-color 0.3s;
+  }
+  .price-widget:hover { border-color: rgba(245,200,66,0.5); }
+  .price-widget-label { font-size: 6px; color: var(--muted); letter-spacing: 2px; margin-bottom: 4px; }
+  .price-widget-price { font-size: 12px; color: var(--gold); text-shadow: 0 0 8px rgba(245,200,66,0.4); margin-bottom: 4px; }
+  .price-widget-change { font-size: 7px; margin-bottom: 2px; }
+  .price-widget-change.up { color: var(--green); }
+  .price-widget-change.down { color: var(--red); }
+  .price-widget-mcap { font-size: 7px; color: var(--muted); margin-bottom: 2px; }
+  .price-widget-source { font-size: 6px; color: var(--muted); opacity: 0.5; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+  .price-dot {
+    display: inline-block; width: 5px; height: 5px;
+    border-radius: 50%; background: var(--green); flex-shrink: 0;
+    animation: pulse-dot 1.5s ease-in-out infinite;
+  }
+  .price-dot.loading { background: var(--gold); animation: blink 0.5s step-end infinite; }
+  .price-dot.error { background: var(--red); animation: none; }
+  @keyframes pulse-dot {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.6); }
+  }
+  @media (max-width: 780px) { .price-widget { display: none; } }
+
+  /* DYOR / Safety section */
+  .safety-section { position: relative; z-index: 1; padding: 80px 40px; border-top: 1px solid rgba(245,200,66,0.06); }
+  .safety-inner { max-width: 1100px; margin: 0 auto; }
+  .safety-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .safety-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 24px;
+  }
+  .safety-card.red-flag { border-color: rgba(255,68,102,0.25); background: rgba(255,68,102,0.04); }
+  .safety-card.green-flag { border-color: rgba(0,255,170,0.2); background: rgba(0,255,170,0.03); }
+  .safety-card-icon { font-size: 22px; margin-bottom: 10px; }
+  .safety-card-title { font-family: var(--pixel); font-size: 8px; letter-spacing: 1px; margin-bottom: 8px; color: var(--text); }
+  .safety-card.red-flag .safety-card-title { color: var(--red); }
+  .safety-card.green-flag .safety-card-title { color: var(--green); }
+  .safety-card-desc { font-size: 11px; color: var(--muted); line-height: 1.7; }
+
+  /* Pump.fun satire */
+  .pumpfun-section { position: relative; z-index: 1; padding: 80px 40px; background: var(--surface); border-top: 1px solid rgba(245,200,66,0.06); }
+  .pumpfun-inner { max-width: 1100px; margin: 0 auto; }
+  .crossed-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: rgba(255,68,102,0.12);
+    border: 1px solid rgba(255,68,102,0.3);
+    margin: 24px 0 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .crossed-grid::after {
+    content: '🚩 EVERY PUMP.FUN TOKEN HAS THIS 🚩';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(-6deg);
+    font-family: var(--pixel);
+    font-size: 9px;
+    color: var(--red);
+    background: rgba(10,10,15,0.94);
+    padding: 10px 18px;
+    border: 2px solid var(--red);
+    white-space: nowrap;
+    z-index: 2;
+    text-shadow: 0 0 10px rgba(255,68,102,0.6);
+    text-align: center;
+    line-height: 1.6;
+  }
+  @media (max-width:640px) { .crossed-grid::after { font-size:6px; padding:6px 10px; white-space:normal; width:80%; text-align:center; } }
+  .crossed-cell { background: var(--surface2); padding: 18px 14px; opacity: 0.35; position: relative; }
+  .crossed-cell .tnom-pct { font-family: var(--pixel); font-size: 18px; color: var(--red); display: block; margin-bottom: 4px; text-shadow: none; }
+  .crossed-cell .tnom-name { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  .real-tokenomics {
+    background: rgba(0,255,170,0.03);
+    border: 1px solid rgba(0,255,170,0.25);
+    padding: 28px 32px;
+    margin-top: 16px;
+  }
+  .real-tokenomics-title { font-family: var(--pixel); font-size: 10px; color: var(--green); margin-bottom: 20px; letter-spacing: 1px; }
+  .truth-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; font-size: 12px; color: var(--text); line-height: 1.6; }
+  .truth-check { font-size: 14px; flex-shrink: 0; }
+
+  .pumpfun-disclaimer {
+    margin-top: 24px;
+    padding: 16px 20px;
+    border: 1px solid rgba(245,200,66,0.15);
+    background: rgba(245,200,66,0.03);
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .pumpfun-disclaimer span { color: var(--gold); font-family: var(--pixel); font-size: 9px; }
+
+  /* Verify / mint address box */
+  .verify-box {
+    max-width: 1100px;
+    margin: 32px auto 0;
+    background: var(--surface2);
+    border: 1px solid rgba(245,200,66,0.2);
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .verify-box-text { flex: 1; min-width: 200px; }
+  .verify-label { font-family: var(--pixel); font-size: 7px; color: var(--gold); margin-bottom: 6px; letter-spacing: 2px; }
+  .verify-addr { font-size: 11px; color: var(--muted); word-break: break-all; line-height: 1.6; }
+  .verify-addr .addr-val { color: var(--text); font-family: var(--mono); }
+  .copy-btn {
+    background: transparent; border: 1px solid var(--gold); color: var(--gold);
+    font-family: var(--pixel); font-size: 7px; padding: 8px 14px; cursor: pointer;
+    letter-spacing: 1px; transition: all 0.2s; white-space: nowrap;
+  }
+  .copy-btn:hover { background: var(--gold); color: var(--bg); }
+
+  /* Wallet real-mode notice */
+  .wallet-real-notice {
+    font-size: 9px; color: var(--accent);
+    border: 1px solid rgba(123,97,255,0.3);
+    padding: 10px 14px; margin-bottom: 16px;
+    line-height: 1.7; font-family: var(--mono); display: none;
+  }
+  .wallet-real-notice.show { display: block; }
+
+  /* Data pulse anim for ticker live data */
+  @keyframes flash-update {
+    0% { background: rgba(245,200,66,0.15); }
+    100% { background: transparent; }
+  }
+  .ticker-item.updated { animation: flash-update 0.8s ease forwards; }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- Background canvas -->
+<canvas id="bg-canvas"></canvas>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- Konami overlay -->
+<div class="konami-overlay" id="konamiOverlay">
+  <div class="konami-title">J33T GOES<br>SUPER SAIYAN 🐕⚡</div>
+  <div class="konami-sub">↑↑↓↓←→←→BA — YOU FOUND IT</div>
+  <button class="btn-sm" onclick="document.getElementById('konamiOverlay').classList.remove('show'); document.body.classList.remove('super-saiyan');">BACK TO EARTH</button>
+</div>
+
+<!-- Live price widget -->
+<div class="price-widget" id="priceWidget">
+  <div class="price-widget-label">$J33T / USD</div>
+  <div class="price-widget-price" id="pwPrice">LOADING...</div>
+  <div class="price-widget-change" id="pwChange">—</div>
+  <div class="price-widget-mcap" id="pwMcap">MCap: —</div>
+  <div class="price-widget-source">
+    <span class="price-dot loading" id="pwDot"></span>
+    <span id="pwSource">connecting...</span>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">J33T<span class="blink">_</span></div>
+  <ul class="nav-links">
+    <li><a href="#about">Origin</a></li>
+    <li><a href="#utility">Utility</a></li>
+    <li><a href="#pumpfun">Trust</a></li>
+    <li><a href="#tokenomics">$J33T</a></li>
+  </ul>
+  <button class="nav-connect" onclick="openWalletModal()">CONNECT</button>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge">◈ SOLANA CHAIN ◈ BORN JAN 2009 ◈ YORKSHIRE TERRIER</div>
+
+  <div class="dog-container">
+    <div class="dog-halo"></div>
+    <canvas class="dog-pixel" id="dogCanvas" width="240" height="240" onclick="petTheDog(event)" style="cursor:pointer;"></canvas>
+  </div>
+
+  <h1 class="hero-title">
+    <span class="glitch" data-text="J33T">J33T</span>
+  </h1>
+
+  <p class="hero-sub">
+    Born <span>Jan 2009</span>. Still not selling since 2009.<br>
+    <span>$J33T</span> — small dog. big energy.
+  </p>
+
+  <div class="hero-age">Good boy for <span id="ageCounter">—</span> days and counting</div>
+
+  <div class="hero-cta">
+    <button class="btn-primary" onclick="openWalletModal()">GET $J33T</button>
+    <button class="btn-secondary" onclick="document.getElementById('utility').scrollIntoView()">HOLDER PERKS</button>
+  </div>
+</div>
+
+<!-- Ticker -->
+<div class="ticker" id="tickerEl" onclick="tickerMoonMode()" style="cursor:pointer;" title="click me...">
+  <div class="ticker-inner" id="ticker">
+    <span class="ticker-item">$J33T <span>+420.69%</span></span>
+    <span class="ticker-item">MARKET CAP <span>$1,337,000</span></span>
+    <span class="ticker-item">HOLDERS <span>8,888</span></span>
+    <span class="ticker-item">BORN <span>JAN 2009</span></span>
+    <span class="ticker-item">CHAIN <span>SOLANA</span></span>
+    <span class="ticker-item">GOOD BOY SCORE <span>100/100</span></span>
+    <span class="ticker-item">DEV SOLD? <span>NOPE, HE'S A GOOD BOY</span></span>
+    <span class="ticker-item">$J33T <span>+420.69%</span></span>
+    <span class="ticker-item">MARKET CAP <span>$1,337,000</span></span>
+    <span class="ticker-item">HOLDERS <span>8,888</span></span>
+    <span class="ticker-item">BORN <span>JAN 2009</span></span>
+    <span class="ticker-item">CHAIN <span>SOLANA</span></span>
+    <span class="ticker-item">GOOD BOY SCORE <span>100/100</span></span>
+    <span class="ticker-item">DEV SOLD? <span>NOPE, HE'S A GOOD BOY</span></span>
+  </div>
+</div>
+
+<!-- About -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-photo">
+      <div class="photo-frame">
+        <span class="photo-corner tl">2009</span>
+        <div class="photo-placeholder">
+          <div class="photo-placeholder-dog">🐕</div>
+          <div class="photo-placeholder-text">J33T · OG YORKIE</div>
+        </div>
+        <span class="photo-corner br">$J33T</span>
+      </div>
+    </div>
+    <div>
+      <div class="section-label">// ORIGIN STORY</div>
+      <h2 class="section-title">THE OG<br>YORKSHIRE<br>TERRIER</h2>
+      <p class="section-desc">
+        January 2009. A tiny Yorkshire Terrier was born.<br>
+        His name: J33T. His attitude: legendary.<br>
+        When Bitcoin was still a whitepaper, J33T was already running the block.
+      </p>
+      <div class="stat-row">
+        <div class="stat-item">
+          <span class="stat-num">16+</span>
+          <span class="stat-label">Years of based existence</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">100%</span>
+          <span class="stat-label">Good boy rating — verified</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">∞</span>
+          <span class="stat-label">On-chain legacy</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Utility / Holder Gate -->
+<section id="utility" style="max-width:100%; padding: 80px 40px; background: var(--surface);">
+  <div style="max-width:1100px; margin:0 auto;">
+    <div class="section-label">// HOLDER UTILITY</div>
+    <h2 class="section-title">$J33T HOLDER<br>EXCLUSIVE ACCESS</h2>
+    <p class="section-desc">
+      Connect your Solana wallet. If you hold $J33T, you unlock exclusive tools reserved for the inner circle.
+    </p>
+
+    <!-- Wallet panel -->
+    <div class="wallet-panel">
+      <div class="wallet-status disconnected" id="walletStatus">◉ WALLET NOT CONNECTED</div>
+      <div id="walletAddress" style="font-size:11px; color: var(--muted); margin-bottom: 16px; min-height:16px;"></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div style="font-family: var(--pixel); font-size: 7px; color: var(--muted); margin-bottom: 20px;" id="holdingStatus">Connect wallet to check $J33T balance</div>
+      <button class="wallet-btn" id="walletActionBtn" onclick="openWalletModal()">CONNECT WALLET</button>
+    </div>
+
+    <!-- Feature cards -->
+    <div class="gate-grid">
+      <div class="gate-card locked" id="card-meme" onclick="tryAccess('meme')">
+        <div class="card-icon">🎨</div>
+        <div class="card-title">MEME FORGE</div>
+        <div class="card-desc">Generate exclusive J33T memes with AI-powered captions. Download and spread the gospel.</div>
+        <div class="card-min">MIN: 1,000 $J33T</div>
+      </div>
+      <div class="gate-card locked" id="card-oracle" onclick="tryAccess('oracle')">
+        <div class="card-icon">🔮</div>
+        <div class="card-title">ORACLE OF J33T</div>
+        <div class="card-desc">Ancient Yorkshire wisdom. Ask and receive cryptic financial advice from the OG himself.</div>
+        <div class="card-min">MIN: 5,000 $J33T</div>
+      </div>
+      <div class="gate-card locked" id="card-whitelist" onclick="tryAccess('whitelist')">
+        <div class="card-icon">📋</div>
+        <div class="card-title">EARLY ACCESS LIST</div>
+        <div class="card-desc">Priority access to future J33T ecosystem drops, NFTs, and partner launches.</div>
+        <div class="card-min">MIN: 10,000 $J33T</div>
+      </div>
+      <div class="gate-card locked" id="card-staking" onclick="tryAccess('staking')">
+        <div class="card-icon">💎</div>
+        <div class="card-title">PAWS STAKING</div>
+        <div class="card-desc">Stake your $J33T and earn passive rewards. The longer you hold, the more the old boy likes you.</div>
+        <div class="card-min">MIN: 50,000 $J33T</div>
+      </div>
+    </div>
+
+    <!-- Meme generator (unlocked content) -->
+    <div class="meme-gen" id="memeForge">
+      <div class="section-label" style="margin-top:32px;">// MEME FORGE — UNLOCKED</div>
+      <div class="meme-canvas-wrap">
+        <canvas id="memeCanvas" width="320" height="320"></canvas>
+      </div>
+      <div class="meme-controls">
+        <input class="meme-input" id="memeText" placeholder="Enter your caption..." maxlength="50">
+        <button class="btn-sm" onclick="generateMeme()">GENERATE</button>
+        <button class="btn-sm" style="background: var(--accent); color:#fff;" onclick="downloadMeme()">SAVE</button>
+      </div>
+    </div>
+
+    <!-- Oracle box (unlocked content) -->
+    <div class="oracle-box" id="oracleBox" style="position:relative;">
+      <div class="lick-stars" id="lickStars"></div>
+      <div class="section-label" style="margin-top:32px;">// ORACLE OF J33T — UNLOCKED</div>
+      <div class="oracle-text" id="oracleText">Click to receive wisdom from the ancient Yorkie...</div>
+      <div style="display:flex; gap:12px; justify-content:center; margin-top:24px; flex-wrap:wrap;">
+        <button class="btn-sm" onclick="getWisdom()">ASK J33T</button>
+        <button class="btn-sm" style="background:var(--accent);color:#fff;" onclick="petJ33T()">🐾 PET J33T</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pump.fun Satire + Trust Section -->
+<section id="pumpfun" class="pumpfun-section">
+  <div class="pumpfun-inner">
+    <div class="section-label">// TOKENOMICS — WAIT, WHAT?</div>
+    <h2 class="section-title" style="max-width:700px;">LOL. OKAY FINE.<br>HERE'S THE "TOKENOMICS"<br>YOU WERE EXPECTING.</h2>
+    <p class="section-desc" style="max-width:600px;">
+      You know the drill. Every pump.fun token has a beautiful pie chart.
+      69% LP (sure), 20% community (lol), some % for the "dev team" (🚩🚩🚩).
+      We made one too. Enjoy.
+    </p>
+
+    <!-- The fake one, crossed out -->
+    <div class="crossed-grid">
+      <div class="crossed-cell">
+        <span class="tnom-pct">69%</span>
+        <div class="tnom-name">Liquidity Pool</div>
+      </div>
+      <div class="crossed-cell">
+        <span class="tnom-pct">20%</span>
+        <div class="tnom-name">"Community"</div>
+      </div>
+      <div class="crossed-cell">
+        <span class="tnom-pct">6%</span>
+        <div class="tnom-name">Dev Team 👀</div>
+      </div>
+      <div class="crossed-cell">
+        <span class="tnom-pct">5%</span>
+        <div class="tnom-name">Marketing 💅</div>
+      </div>
+    </div>
+
+    <!-- The real truth -->
+    <div class="real-tokenomics">
+      <div class="real-tokenomics-title">✅ THE ACTUAL TRUTH ABOUT $J33T:</div>
+      <div class="truth-row">
+        <span class="truth-check">🐾</span>
+        <span><strong style="color:var(--gold)">100% fair launch on pump.fun.</strong> No pre-sale. No private rounds. No "seed investors". J33T doesn't even know what a cap table is — he's a dog.</span>
+      </div>
+      <div class="truth-row">
+        <span class="truth-check">🐾</span>
+        <span><strong style="color:var(--gold)">No creator bundle.</strong> The dev didn't buy 10% at launch and wait to dump on you. That would make J33T a very bad boy. J33T is a good boy.</span>
+      </div>
+      <div class="truth-row">
+        <span class="truth-check">🐾</span>
+        <span><strong style="color:var(--gold)">No rug. No dev wallet.</strong> There is no secret wallet with 500M tokens waiting to be sold the moment you buy. J33T would never do that. He's been sitting since 2009.</span>
+      </div>
+      <div class="truth-row">
+        <span class="truth-check">🐾</span>
+        <span><strong style="color:var(--gold)">No "marketing wallet"</strong> that's actually the dev's second wallet. No "team allocation" for a team that's really just one guy in his bedroom who will disappear in 3 days.</span>
+      </div>
+      <div class="truth-row">
+        <span class="truth-check">🐾</span>
+        <span><strong style="color:var(--gold)">Verifiable on-chain.</strong> Every token is visible. Every wallet is public. Blockchain is transparent — unlike the 4,000 other tokens launched today on pump.fun.</span>
+      </div>
+    </div>
+
+    <div class="pumpfun-disclaimer">
+      <span>// IMPORTANT DISTINCTION</span><br><br>
+      We're not saying pump.fun is bad. It's a tool. We're saying that 99% of tokens launched on it are
+      designed to transfer money from your wallet to the dev's wallet as fast as possible.
+      The formula: cool name + dog/cat/meme image + fake tokenomics + Twitter bot army + exit in 48h.<br><br>
+      $J33T is different because J33T is a real dog, born January 2009, and real dogs don't rug.
+      <strong style="color:var(--text)"> DYOR. Always.</strong>
+    </div>
+
+    <!-- Verify mint address -->
+    <div class="verify-box" id="verifyBox">
+      <div class="verify-box-text">
+        <div class="verify-label">🔍 VERIFY THE MINT ADDRESS</div>
+        <div class="verify-addr">
+          Always verify before buying. The <strong style="color:var(--text)">only</strong> real $J33T mint address:<br>
+          <span class="addr-val" id="mintDisplay">Configure in CONFIG object → YOUR_J33T_TOKEN_MINT_ADDRESS_HERE</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button class="copy-btn" onclick="copyMint()">COPY ADDRESS</button>
+        <button class="copy-btn" style="border-color:var(--accent);color:var(--accent);" onclick="openSolscan()">VIEW ON-CHAIN ↗</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DYOR / Safety Education -->
+<section class="safety-section" id="dyor">
+  <div class="safety-inner">
+    <div class="section-label">// DYOR — DO YOUR OWN RESEARCH</div>
+    <h2 class="section-title">CRYPTO SAFETY 101<br>FROM J33T HIMSELF</h2>
+    <p class="section-desc" style="max-width:600px;">
+      J33T has survived 16+ years without being scammed. Here's his wisdom — free of charge.
+    </p>
+
+    <div class="safety-grid">
+      <div class="safety-card red-flag">
+        <div class="safety-card-icon">🚩</div>
+        <div class="safety-card-title">DEV WALLET > 5%</div>
+        <div class="safety-card-desc">If the dev controls more than 5% of supply at launch, that's a dump waiting to happen. Check the top holders on Solscan before buying anything.</div>
+      </div>
+      <div class="safety-card red-flag">
+        <div class="safety-card-icon">🚩</div>
+        <div class="safety-card-title">ANONYMOUS "TEAM"</div>
+        <div class="safety-card-desc">A Twitter account made 2 days ago with a cartoon avatar and 300 followers is not a "team". It's one person. They will disappear. This is not controversial — it's a pattern.</div>
+      </div>
+      <div class="safety-card red-flag">
+        <div class="safety-card-icon">🚩</div>
+        <div class="safety-card-title">LOCKED LIQUIDITY PROMISE</div>
+        <div class="safety-card-desc">"LP locked for 6 months" means nothing if the token is worthless in 6 days. Always check if LP is burned (verifiable) vs "locked" via a third-party they control.</div>
+      </div>
+      <div class="safety-card red-flag">
+        <div class="safety-card-icon">🚩</div>
+        <div class="safety-card-title">COORDINATED HYPE</div>
+        <div class="safety-card-desc">100 Telegram messages in 10 minutes all saying "LFG 🚀🚀🚀" is a bot army, not organic interest. Real communities build slowly. Fake ones pump and disappear.</div>
+      </div>
+      <div class="safety-card red-flag">
+        <div class="safety-card-icon">🚩</div>
+        <div class="safety-card-title">MINT AUTHORITY NOT REVOKED</div>
+        <div class="safety-card-desc">If the token's mint authority is still active, the dev can print infinite supply and destroy your bag. Always check on Solscan: "Mint Authority" should show "None".</div>
+      </div>
+      <div class="safety-card red-flag">
+        <div class="safety-card-icon">🚩</div>
+        <div class="safety-card-title">FREEZE AUTHORITY ACTIVE</div>
+        <div class="safety-card-desc">Freeze authority lets the dev freeze your tokens in your wallet. You literally cannot sell. This should always be revoked. If it's not, walk away.</div>
+      </div>
+      <div class="safety-card green-flag">
+        <div class="safety-card-icon">✅</div>
+        <div class="safety-card-title">ALWAYS CHECK SOLSCAN</div>
+        <div class="safety-card-desc">Go to solscan.io, search the mint address, check: top holders distribution, mint authority status, freeze authority status, and token age. Takes 2 minutes. Worth it.</div>
+      </div>
+      <div class="safety-card green-flag">
+        <div class="safety-card-icon">✅</div>
+        <div class="safety-card-title">USE DEXSCREENER</div>
+        <div class="safety-card-desc">dexscreener.com shows real liquidity, trading volume, wallet concentration, and price history. If liquidity is under $10k and one wallet holds 40%, you know what that is.</div>
+      </div>
+      <div class="safety-card green-flag">
+        <div class="safety-card-icon">✅</div>
+        <div class="safety-card-title">ONLY INVEST WHAT YOU CAN LOSE</div>
+        <div class="safety-card-desc">This is crypto. Even legit projects can go to zero. Even J33T could go to zero (he would be very sad about it). Never invest rent money. Never. Not even in $J33T.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:32px; padding:20px 24px; border:1px solid rgba(245,200,66,0.15); background:rgba(245,200,66,0.03); font-size:11px; color:var(--muted); line-height:1.8; max-width:700px;">
+      <strong style="font-family:var(--pixel);font-size:8px;color:var(--gold);">// ONE LAST THING</strong><br><br>
+      If someone DMs you on Telegram or Twitter saying "I can 10x your $J33T" or "airdrop claim available" or
+      "send SOL to verify your wallet" — that's a scam. <strong style="color:var(--text)">100% of the time.</strong>
+      J33T's official channels will never DM you first. J33T is a dog. Dogs don't DM.
+    </div>
+  </div>
+</section>
+
+<!-- Tokenomics -->
+<section id="tokenomics">
+  <div class="section-label">// THE REAL NUMBERS</div>
+  <h2 class="section-title">$J33T ON-CHAIN</h2>
+  <p class="section-desc">Everything verifiable. Everything public. Nothing to hide.</p>
+
+  <div class="tokenomics-grid">
+    <div class="tnom-cell">
+      <span class="tnom-pct" id="livePrice2">—</span>
+      <div class="tnom-name">Current Price</div>
+    </div>
+    <div class="tnom-cell">
+      <span class="tnom-pct" id="liveVol">—</span>
+      <div class="tnom-name">24h Volume</div>
+    </div>
+    <div class="tnom-cell">
+      <span class="tnom-pct" id="liveLiq">—</span>
+      <div class="tnom-name">Liquidity</div>
+    </div>
+    <div class="tnom-cell">
+      <span class="tnom-pct" id="liveMcap2">—</span>
+      <div class="tnom-name">Market Cap</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 48px; display: flex; gap: 24px; flex-wrap: wrap;">
+    <div style="flex:1; min-width:180px; padding:24px; background: var(--surface); border-left: 3px solid var(--accent);">
+      <div style="font-family: var(--pixel); font-size: 7px; color: var(--accent); margin-bottom:8px;">TOTAL SUPPLY</div>
+      <div style="font-family: var(--pixel); font-size: 18px; color: var(--gold);">1,000,000,000</div>
+    </div>
+    <div style="flex:1; min-width:180px; padding:24px; background: var(--surface); border-left: 3px solid var(--green);">
+      <div style="font-family: var(--pixel); font-size: 7px; color: var(--green); margin-bottom:8px;">BUY / SELL TAX</div>
+      <div style="font-family: var(--pixel); font-size: 18px; color: var(--gold);">0% / 0%</div>
+    </div>
+    <div style="flex:1; min-width:180px; padding:24px; background: var(--surface); border-left: 3px solid var(--gold);">
+      <div style="font-family: var(--pixel); font-size: 7px; color: var(--gold); margin-bottom:8px;">NETWORK</div>
+      <div style="font-family: var(--pixel); font-size: 18px; color: var(--gold);">SOLANA</div>
+    </div>
+    <div style="flex:1; min-width:180px; padding:24px; background: var(--surface); border-left: 3px solid var(--red);">
+      <div style="font-family: var(--pixel); font-size: 7px; color: var(--red); margin-bottom:8px;">MINT AUTH</div>
+      <div style="font-family: var(--pixel); font-size: 18px; color: var(--green);">REVOKED ✓</div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">J33T © 2009–∞</div>
+  <ul class="footer-links">
+    <li><a href="#">Twitter/X</a></li>
+    <li><a href="#">Telegram</a></li>
+    <li><a href="#">Dexscreener</a></li>
+    <li><a href="#">Raydium</a></li>
+  </ul>
+  <div class="footer-copy">Not financial advice. Just a good boy.<br>& his even better degens.</div>
+</footer>
+
+<!-- Wallet Modal -->
+<div class="modal" id="walletModal">
+  <div class="modal-box">
+    <div class="modal-title" id="walletModalTitle">CONNECT WALLET</div>
+
+    <!-- Demo mode notice (default) -->
+    <div id="demoNotice" style="font-size:9px; color:var(--green); border:1px solid rgba(0,255,170,0.3); padding:10px 14px; margin-bottom:20px; line-height:1.7; font-family:var(--mono); background:rgba(0,255,170,0.04);">
+      ⚠️ <strong>DEMO MODE</strong> — No real wallet needed.<br>
+      Click any option to simulate $J33T holdings and explore features.<br>
+      <span style="color:var(--muted);font-size:8px;">( click CONNECT 5× for real wallet mode 🐾 )</span>
+    </div>
+
+    <!-- Real mode notice (hidden until 5 clicks) -->
+    <div class="wallet-real-notice" id="realNotice">
+      🔗 <strong>REAL WALLET MODE</strong> — Your actual Phantom/Solflare/Backpack will be prompted. Your real $J33T balance will be read on-chain. No transactions will be made.
+    </div>
+
+    <button class="wallet-option" onclick="connectWallet('phantom')">
+      <span class="wallet-option-icon">👻</span>
+      <span id="phantomLabel">Phantom <span style="font-size:10px;color:var(--muted)">(simulated)</span></span>
+    </button>
+    <button class="wallet-option" onclick="connectWallet('solflare')">
+      <span class="wallet-option-icon">☀️</span>
+      <span id="solflareLabel">Solflare <span style="font-size:10px;color:var(--muted)">(simulated)</span></span>
+    </button>
+    <button class="wallet-option" onclick="connectWallet('backpack')">
+      <span class="wallet-option-icon">🎒</span>
+      <span id="backpackLabel">Backpack <span style="font-size:10px;color:var(--muted)">(simulated)</span></span>
+    </button>
+    <button class="modal-close" onclick="closeWalletModal()">CANCEL</button>
+    <div style="font-size:8px;color:var(--muted);margin-top:12px;font-family:var(--pixel);letter-spacing:1px;" id="walletClickCounter"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONFIG — Replace this with your real $J33T token mint address
+// ============================================================
+const CONFIG = {
+  TOKEN_MINT: 'YOUR_J33T_TOKEN_MINT_ADDRESS_HERE',
+  TOKEN_SYMBOL: 'J33T',
+  CHAIN: 'solana',
+  // DexScreener: free, no key, CORS-friendly
+  DEXSCREENER_API: 'https://api.dexscreener.com/tokens/v1/solana/',
+  // Jupiter: backup price feed
+  JUPITER_API: 'https://api.jup.ag/price/v2?ids=',
+  // Solana RPC for real wallet balance
+  SOLANA_RPC: 'https://api.mainnet-beta.solana.com',
+  // J33T SPL token program address (standard)
+  TOKEN_PROGRAM: 'TokenkebQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+};
+
+const IS_DEMO_MODE = CONFIG.TOKEN_MINT === 'YOUR_J33T_TOKEN_MINT_ADDRESS_HERE';
+
+// ============================================================
+// CURSOR
+// ============================================================
+const cursor = document.getElementById('cursor');
+const dot = document.getElementById('cursorDot');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+  dot.style.left = e.clientX + 'px';
+  dot.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('button, a, [onclick]').forEach(el => {
+  el.addEventListener('mouseenter', () => cursor.classList.add('active'));
+  el.addEventListener('mouseleave', () => cursor.classList.remove('active'));
+});
+
+// ============================================================
+// PAW CURSOR TRAIL
+// ============================================================
+let lastPawTime = 0;
+document.addEventListener('mousemove', e => {
+  const now = Date.now();
+  if (now - lastPawTime < 120) return;
+  lastPawTime = now;
+  const paw = document.createElement('div');
+  paw.className = 'paw-trail';
+  paw.textContent = '🐾';
+  paw.style.left = (e.clientX - 8) + 'px';
+  paw.style.top = (e.clientY - 8) + 'px';
+  paw.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
+  document.body.appendChild(paw);
+  setTimeout(() => paw.remove(), 1000);
+});
+
+// ============================================================
+// BACKGROUND PARTICLES
+// ============================================================
+const bgCanvas = document.getElementById('bg-canvas');
+const bgCtx = bgCanvas.getContext('2d');
+let particles = [];
+
+function resizeBg() {
+  bgCanvas.width = window.innerWidth;
+  bgCanvas.height = window.innerHeight;
+}
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * bgCanvas.width;
+    this.y = Math.random() * bgCanvas.height;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.size = Math.random() * 2 + 0.5;
+    this.alpha = Math.random() * 0.4 + 0.1;
+    this.color = Math.random() > 0.7 ? '#f5c842' : '#7b61ff';
+  }
+  update() {
+    this.x += this.vx; this.y += this.vy;
+    if (this.x < 0 || this.x > bgCanvas.width || this.y < 0 || this.y > bgCanvas.height) this.reset();
+  }
+  draw() {
+    bgCtx.beginPath();
+    bgCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    bgCtx.fillStyle = this.color;
+    bgCtx.globalAlpha = this.alpha;
+    bgCtx.fill();
+    bgCtx.globalAlpha = 1;
+  }
+}
+
+function initParticles() {
+  particles = Array.from({length: 80}, () => new Particle());
+}
+function animateParticles() {
+  bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+  bgCtx.strokeStyle = 'rgba(245,200,66,0.04)';
+  bgCtx.lineWidth = 1;
+  for (let x = 0; x < bgCanvas.width; x += 60) {
+    bgCtx.beginPath(); bgCtx.moveTo(x, 0); bgCtx.lineTo(x, bgCanvas.height); bgCtx.stroke();
+  }
+  for (let y = 0; y < bgCanvas.height; y += 60) {
+    bgCtx.beginPath(); bgCtx.moveTo(0, y); bgCtx.lineTo(bgCanvas.width, y); bgCtx.stroke();
+  }
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animateParticles);
+}
+window.addEventListener('resize', resizeBg);
+resizeBg(); initParticles(); animateParticles();
+
+// ============================================================
+// AGE COUNTER
+// ============================================================
+function updateAge() {
+  const born = new Date('2009-01-15');
+  const days = Math.floor((Date.now() - born) / 86400000);
+  const el = document.getElementById('ageCounter');
+  if (el) el.textContent = days.toLocaleString();
+}
+updateAge();
+
+// Update mint display if configured
+if (!IS_DEMO_MODE) {
+  const md = document.getElementById('mintDisplay');
+  if (md) md.textContent = CONFIG.TOKEN_MINT;
+}
+
+// ============================================================
+// PIXEL DOG ART — 24×24, 3-frame animated Yorkie
+// ============================================================
+const dogCanvas = document.getElementById('dogCanvas');
+const dogCtx = dogCanvas.getContext('2d');
+dogCtx.imageSmoothingEnabled = false;
+const S = 10;
+const C = {
+  '_': null, 'b': '#5a3410', 'B': '#8b5a2b', 'T': '#c8860a',
+  'G': '#d4950e', 'k': '#111111', 'w': '#ffffff', 'p': '#d98080',
+  'g': '#888888', 'Y': '#f5d070', 'n': '#3d1f08',
+};
+const frame1 = [
+  '_______bbbbbbbb________',
+  '______bBBBBBBBBb_______',
+  '_____bBTTTTTTTTBb______',
+  '____bBTGGGGGGGTTBb_____',
+  '___bBTGYYYYYYGTTTBb____',
+  '___bBTYYYYYYYYTTTBb____',
+  '__bBBTYkwYYkwYTTTTBb___',
+  '__bBBTYYYYYYYYTTTTBb___',
+  '__bBBTYYnnYYYYTTTTBb___',
+  '__bBBTYYpYYYYYTTTTBb___',
+  '___bBTTTTTTTTTTTTBb____',
+  '____bBBBTTTTTTBBBb_____',
+  '_____bBBBBBBBBBBb______',
+  '______bBBBBBBBBb_______',
+  '_______bbbBBbbb________',
+  '________bBBBb__________',
+  '______bBBBBBBBb________',
+  '_____bBBTTTTTBBb_______',
+  '____bBBTTTTTTBBb_______',
+  '____bBTT____TTBb_______',
+  '___bBBT_____TTBb_______',
+  '___bBBT_____TTBb_______',
+  '____bbb_____bbb________',
+  '________________________',
+];
+const frame2 = [
+  '_______bbbbbbbb________',
+  '______bBBBBBBBBb_______',
+  '_____bBTTTTTTTTBb______',
+  '____bBTGGGGGGGTTBb_____',
+  '___bBTGYYYYYYGTTTBb____',
+  '___bBTYYYYYYYYTTTBb____',
+  '__bBBTYkwYYkwYTTTTBb___',
+  '__bBBTYYYYYYYYTTTTBb___',
+  '__bBBTYYnnYYYYTTTTBb___',
+  '__bBBTYYpYYYYYTTTTBb___',
+  '___bBTTTTTTTTTTTTBb____',
+  '____bBBBTTTTTTBBBb_____',
+  '_____bBBBBBBBBBBb______',
+  '______bBBBBBBBBb_______',
+  '_______bbbBBbbb________',
+  '________bBBBb__________',
+  '______bBBBBBBBb________',
+  '_____bBBTTTTTBBb_______',
+  '____bBBTTTTTTBBb_______',
+  '____bBTT____TTBb_______',
+  '__bBBBT_____TTBb_______',
+  '__bBBBT_____TTBb_______',
+  '____bbb_____bbb________',
+  '________________________',
+];
+const frame3 = [
+  '_______bbbbbbbb________',
+  '______bBBBBBBBBb_______',
+  '_____bBTTTTTTTTBb______',
+  '____bBTGGGGGGGTTBb_____',
+  '___bBTGYYYYYYGTTTBb____',
+  '___bBTYYYYYYYYTTTBb____',
+  '__bBBTYkwYYkwYTTTTBb___',
+  '__bBBTYYYYYYYYTTTTBb___',
+  '__bBBTYYnnYYYYTTTTBb___',
+  '__bBBTYYwwYYYYTTTTBb___',
+  '___bBTTTTTTTTTTTTBb____',
+  '____bBBBTTTTTTBBBb_____',
+  '_____bBBBBBBBBBBb______',
+  '______bBBBBBBBBb_______',
+  '_______bbbBBbbb________',
+  '________bBBBb__________',
+  '______bBBBBBBBb________',
+  '_____bBBTTTTTBBb_______',
+  '____bBBTTTTTTBBb_______',
+  '____bBTT____TTBb_______',
+  '___bBBT_____TTBBBb_____',
+  '___bBBT_____TTBBBb_____',
+  '____bbb_____bbb________',
+  '________________________',
+];
+const frames = [frame1, frame2];
+let currentFrame = 0;
+let isPetting = false;
+let tailFrame = 0;
+function drawFrame(frameData, blink) {
+  dogCtx.clearRect(0, 0, dogCanvas.width, dogCanvas.height);
+  frameData.forEach((row, y) => {
+    for (let x = 0; x < row.length; x++) {
+      const ch = row[x];
+      if (ch === '_' || ch === ' ') continue;
+      let color = C[ch];
+      if (blink && ch === 'k' && y === 6) color = C['T'];
+      if (color) { dogCtx.fillStyle = color; dogCtx.fillRect(x * S, y * S, S, S); }
+    }
+  });
+}
+setInterval(() => {
+  if (isPetting) return;
+  tailFrame++;
+  drawFrame(frames[tailFrame % 2], (tailFrame % 18 < 2));
+}, 400);
+drawFrame(frames[0], false);
+
+function petTheDog(e) {
+  if (isPetting) return;
+  isPetting = true;
+  const rect = dogCanvas.getBoundingClientRect();
+  const woof = document.createElement('div');
+  woof.className = 'woof-popup';
+  woof.textContent = 'WOOF! 🐾';
+  woof.style.left = (rect.left + rect.width/2 - 30) + 'px';
+  woof.style.top = (rect.top - 10) + 'px';
+  document.body.appendChild(woof);
+  setTimeout(() => woof.remove(), 900);
+  let pf = 0;
+  const pi = setInterval(() => {
+    pf++;
+    drawFrame(pf % 2 === 0 ? frame2 : frame3, false);
+    if (pf >= 6) { clearInterval(pi); isPetting = false; }
+  }, 120);
+}
+
+// ============================================================
+// LIVE PRICE — DexScreener + Jupiter fallback
+// ============================================================
+let priceData = {
+  price: null, change24h: null, mcap: null,
+  volume24h: null, liquidity: null,
+  source: 'demo', lastUpdate: null
+};
+
+function fmtPrice(n) {
+  if (!n) return '—';
+  if (n < 0.000001) return '$' + n.toExponential(2);
+  if (n < 0.01) return '$' + n.toFixed(7);
+  if (n < 1) return '$' + n.toFixed(4);
+  return '$' + n.toFixed(2);
+}
+function fmtBig(n) {
+  if (!n) return '—';
+  if (n >= 1e9) return '$' + (n/1e9).toFixed(2) + 'B';
+  if (n >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
+  if (n >= 1e3) return '$' + (n/1e3).toFixed(1) + 'K';
+  return '$' + n.toFixed(0);
+}
+function fmtChange(n) {
+  if (n === null || n === undefined) return null;
+  return (n > 0 ? '+' : '') + n.toFixed(2) + '%';
+}
+
+async function fetchDexScreener() {
+  if (IS_DEMO_MODE) return null;
+  try {
+    const r = await fetch(CONFIG.DEXSCREENER_API + CONFIG.TOKEN_MINT, { signal: AbortSignal.timeout(6000) });
+    if (!r.ok) return null;
+    const d = await r.json();
+    const pairs = d.pairs || [];
+    if (!pairs.length) return null;
+    // Pick pair with highest liquidity
+    const pair = pairs.sort((a,b) => (b.liquidity?.usd||0) - (a.liquidity?.usd||0))[0];
+    return {
+      price: parseFloat(pair.priceUsd) || null,
+      change24h: pair.priceChange?.h24 || null,
+      mcap: pair.marketCap || pair.fdv || null,
+      volume24h: pair.volume?.h24 || null,
+      liquidity: pair.liquidity?.usd || null,
+      source: 'DexScreener',
+    };
+  } catch { return null; }
+}
+
+async function fetchJupiter() {
+  if (IS_DEMO_MODE) return null;
+  try {
+    const r = await fetch(CONFIG.JUPITER_API + CONFIG.TOKEN_MINT, { signal: AbortSignal.timeout(5000) });
+    if (!r.ok) return null;
+    const d = await r.json();
+    const item = d.data?.[CONFIG.TOKEN_MINT];
+    if (!item) return null;
+    return {
+      price: parseFloat(item.price) || null,
+      change24h: null,
+      mcap: null, volume24h: null, liquidity: null,
+      source: 'Jupiter',
+    };
+  } catch { return null; }
+}
+
+function getDemoData() {
+  // Slightly randomized demo data so it looks "live"
+  const base = 0.00004269;
+  const jitter = 1 + (Math.random() - 0.5) * 0.02;
+  return {
+    price: base * jitter,
+    change24h: 420.69 + (Math.random() - 0.5) * 5,
+    mcap: 1337000 + Math.random() * 10000,
+    volume24h: 88888 + Math.random() * 5000,
+    liquidity: 133700 + Math.random() * 2000,
+    source: 'DEMO',
+    lastUpdate: Date.now(),
+  };
+}
+
+async function refreshPriceData() {
+  const dot = document.getElementById('pwDot');
+  const src = document.getElementById('pwSource');
+  if (dot) { dot.className = 'price-dot loading'; }
+  if (src) src.textContent = 'fetching...';
+
+  let data = null;
+
+  if (!IS_DEMO_MODE) {
+    data = await fetchDexScreener();
+    if (!data) data = await fetchJupiter();
+  }
+
+  if (!data) {
+    data = getDemoData();
+  }
+  data.lastUpdate = Date.now();
+  priceData = data;
+  updatePriceUI(data);
+}
+
+function updatePriceUI(d) {
+  // Price widget
+  const pw = document.getElementById('pwPrice');
+  const pc = document.getElementById('pwChange');
+  const pm = document.getElementById('pwMcap');
+  const dot = document.getElementById('pwDot');
+  const src = document.getElementById('pwSource');
+
+  if (pw) pw.textContent = fmtPrice(d.price);
+  if (pc) {
+    const chg = fmtChange(d.change24h);
+    pc.textContent = chg ? `24h ${chg}` : '24h —';
+    pc.className = 'price-widget-change ' + (d.change24h > 0 ? 'up' : 'down');
+  }
+  if (pm) pm.textContent = 'MCap: ' + fmtBig(d.mcap);
+  if (dot) dot.className = 'price-dot ' + (d.source === 'DEMO' ? 'loading' : '');
+  if (src) src.textContent = d.source === 'DEMO' ? 'demo data' : `live · ${d.source}`;
+
+  // Tokenomics grid live values
+  const lp2 = document.getElementById('livePrice2');
+  const lv = document.getElementById('liveVol');
+  const ll = document.getElementById('liveLiq');
+  const lm2 = document.getElementById('liveMcap2');
+  if (lp2) lp2.textContent = fmtPrice(d.price);
+  if (lv) lv.textContent = fmtBig(d.volume24h);
+  if (ll) ll.textContent = fmtBig(d.liquidity);
+  if (lm2) lm2.textContent = fmtBig(d.mcap);
+
+  // Live ticker update
+  updateTicker(d);
+}
+
+function updateTicker(d) {
+  const items = document.querySelectorAll('.ticker-item');
+  const priceStr = d.source === 'DEMO' ? '~' + fmtPrice(d.price) : fmtPrice(d.price);
+  const mcapStr = d.source === 'DEMO' ? '~' + fmtBig(d.mcap) : fmtBig(d.mcap);
+  const chg = fmtChange(d.change24h);
+  // Update first and duplicate items (indexes 0 and 7 = price, 1 and 8 = mcap)
+  items.forEach((item, i) => {
+    const idx = i % 7;
+    if (idx === 0) { item.innerHTML = `$J33T <span>${chg || '+—'}</span>`; item.classList.add('updated'); setTimeout(() => item.classList.remove('updated'), 1000); }
+    if (idx === 1) { item.innerHTML = `MARKET CAP <span>${mcapStr}</span>`; }
+  });
+}
+
+// Initial fetch + 30s auto-refresh
+refreshPriceData();
+setInterval(refreshPriceData, 30000);
+
+// ============================================================
+// WALLET STATE — Demo + Real mode
+// ============================================================
+let walletConnected = false;
+let j33tBalance = 0;
+let walletAddr = '';
+let isRealMode = false;
+let connectClickCount = 0;
+
+// Restore demo session
+try {
+  const saved = localStorage.getItem('j33t_demo_v2');
+  if (saved) {
+    const d = JSON.parse(saved);
+    if (d.connected) {
+      walletConnected = d.connected;
+      j33tBalance = d.balance;
+      walletAddr = d.addr;
+      isRealMode = d.real || false;
+      setTimeout(() => applyWalletState(), 300);
+    }
+  }
+} catch(e) {}
+
+function openWalletModal() {
+  connectClickCount++;
+  const counter = document.getElementById('walletClickCounter');
+  const remaining = 5 - connectClickCount;
+
+  if (connectClickCount >= 5 && !isRealMode) {
+    // Unlock real mode!
+    isRealMode = true;
+    document.getElementById('demoNotice').style.display = 'none';
+    document.getElementById('realNotice').classList.add('show');
+    document.getElementById('walletModalTitle').textContent = '🔗 REAL WALLET';
+    document.getElementById('phantomLabel').innerHTML = 'Phantom <span style="font-size:10px;color:var(--green)">(real)</span>';
+    document.getElementById('solflareLabel').innerHTML = 'Solflare <span style="font-size:10px;color:var(--green)">(real)</span>';
+    document.getElementById('backpackLabel').innerHTML = 'Backpack <span style="font-size:10px;color:var(--green)">(real)</span>';
+    if (counter) counter.textContent = '🐾 REAL MODE UNLOCKED';
+    showToast('🐾 Real wallet mode unlocked! 5 clicks achieved.');
+  } else if (!isRealMode && counter && remaining > 0) {
+    counter.textContent = `${remaining} more click${remaining !== 1 ? 's' : ''} for real mode...`;
+  }
+
+  document.getElementById('walletModal').classList.add('open');
+}
+function closeWalletModal() { document.getElementById('walletModal').classList.remove('open'); }
+
+async function connectWallet(type) {
+  closeWalletModal();
+
+  if (isRealMode && !IS_DEMO_MODE) {
+    // Attempt real wallet connection
+    await connectRealWallet(type);
+    return;
+  }
+
+  // Demo mode
+  walletConnected = true;
+  const addr = '7xK' + Math.random().toString(36).substr(2,4).toUpperCase() + '...' + Math.random().toString(36).substr(2,4).toUpperCase() + 'pump';
+  walletAddr = addr;
+  j33tBalance = Math.floor(Math.random() * 80000) + 500;
+
+  try {
+    localStorage.setItem('j33t_demo_v2', JSON.stringify({connected: true, balance: j33tBalance, addr: walletAddr, real: false}));
+  } catch(e) {}
+
+  applyWalletState();
+
+  if (j33tBalance >= 20000) {
+    launchConfetti();
+    showToast(`💎 DIAMOND PAWS! ${j33tBalance.toLocaleString()} $J33T! 🎉`);
+  } else {
+    showToast(`Connected (demo)! ${j33tBalance.toLocaleString()} $J33T detected 🐕`);
+  }
+}
+
+async function connectRealWallet(type) {
+  // Real Phantom/Solflare/Backpack wallet connection
+  let provider = null;
+
+  try {
+    if (type === 'phantom' && window.solana?.isPhantom) {
+      provider = window.solana;
+    } else if (type === 'solflare' && window.solflare?.isSolflare) {
+      provider = window.solflare;
+    } else if (type === 'backpack' && window.backpack) {
+      provider = window.backpack;
+    }
+
+    if (!provider) {
+      showToast(`${type.charAt(0).toUpperCase()+type.slice(1)} not found — falling back to demo mode.`);
+      isRealMode = false;
+      await connectWallet(type);
+      return;
+    }
+
+    showToast('Connecting to ' + type + '...');
+    const resp = await provider.connect();
+    const pubkey = resp.publicKey.toString();
+    walletAddr = pubkey.slice(0,4) + '...' + pubkey.slice(-4);
+    walletConnected = true;
+
+    // Fetch real $J33T balance via Solana RPC
+    j33tBalance = await fetchRealBalance(pubkey);
+
+    try {
+      localStorage.setItem('j33t_demo_v2', JSON.stringify({connected: true, balance: j33tBalance, addr: walletAddr, real: true}));
+    } catch(e) {}
+
+    applyWalletState();
+    showToast(`Real wallet connected! ${j33tBalance.toLocaleString()} $J33T 🐕`);
+    if (j33tBalance >= 20000) launchConfetti();
+
+  } catch(err) {
+    console.error('Wallet connect error:', err);
+    showToast('Connection failed — running in demo mode.');
+    isRealMode = false;
+    await connectWallet(type);
+  }
+}
+
+async function fetchRealBalance(pubkey) {
+  // Use Solana JSON-RPC getTokenAccountsByOwner
+  try {
+    const body = {
+      jsonrpc: '2.0', id: 1,
+      method: 'getTokenAccountsByOwner',
+      params: [
+        pubkey,
+        { mint: CONFIG.TOKEN_MINT },
+        { encoding: 'jsonParsed' }
+      ]
+    };
+    const r = await fetch(CONFIG.SOLANA_RPC, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(8000),
+    });
+    const d = await r.json();
+    const accounts = d.result?.value || [];
+    if (!accounts.length) return 0;
+    const amount = accounts[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0;
+    return Math.floor(amount);
+  } catch(e) {
+    console.warn('RPC balance fetch failed:', e);
+    return 0;
+  }
+}
+
+function applyWalletState() {
+  document.getElementById('walletStatus').textContent = isRealMode ? '◉ REAL WALLET CONNECTED' : '◉ WALLET CONNECTED (DEMO)';
+  document.getElementById('walletStatus').className = 'wallet-status connected';
+  document.getElementById('walletAddress').textContent = walletAddr + ' · ' + j33tBalance.toLocaleString() + ' $J33T';
+  document.getElementById('holdingStatus').textContent = 'Balance: ' + j33tBalance.toLocaleString() + ' $J33T' + (isRealMode ? ' (on-chain)' : ' (simulated)');
+  const pct = Math.min((j33tBalance / 50000) * 100, 100);
+  setTimeout(() => { document.getElementById('progressFill').style.width = pct + '%'; }, 100);
+  document.getElementById('walletActionBtn').textContent = 'CONNECTED ✓';
+  document.getElementById('walletActionBtn').style.borderColor = 'var(--green)';
+  document.getElementById('walletActionBtn').style.color = 'var(--green)';
+  unlockCards();
+}
+
+function unlockCards() {
+  [['card-meme',1000],['card-oracle',5000],['card-whitelist',10000],['card-staking',50000]].forEach(([id,min]) => {
+    const card = document.getElementById(id);
+    if (card && j33tBalance >= min) { card.classList.remove('locked'); card.classList.add('unlocked'); }
+  });
+}
+
+function tryAccess(type) {
+  if (!walletConnected) { showToast('Connect your wallet first!'); openWalletModal(); return; }
+  const mins = { meme: 1000, oracle: 5000, whitelist: 10000, staking: 50000 };
+  if (j33tBalance < mins[type]) { showToast(`Need ${mins[type].toLocaleString()} $J33T to unlock!`); return; }
+  if (type === 'meme') {
+    const el = document.getElementById('memeForge');
+    el.classList.toggle('visible');
+    if (el.classList.contains('visible')) { initMemeCanvas(); el.scrollIntoView({behavior:'smooth'}); }
+  }
+  if (type === 'oracle') {
+    const el = document.getElementById('oracleBox');
+    el.classList.toggle('visible');
+    if (el.classList.contains('visible')) el.scrollIntoView({behavior:'smooth'});
+  }
+  if (type === 'whitelist') showToast("You're on the list! 📋 Early access secured.");
+  if (type === 'staking') showToast('Staking coming soon! 💎 Diamond paws detected.');
+}
+
+// ============================================================
+// MEME GENERATOR
+// ============================================================
+const memeTemplates = [
+  { top: 'WHEN YOU BUY THE DIP', bottom: 'AND IT KEEPS DIPPING', bg: '#0a0a0f', fg: '#f5c842' },
+  { top: 'STILL NOT SELLING', bottom: 'SINCE 2009', bg: '#0d1117', fg: '#00ffaa' },
+  { top: 'PRICE DOWN 90%', bottom: 'J33T DOES NOT CARE', bg: '#1a0a0a', fg: '#ff4466' },
+  { top: 'DEV SOLD?', bottom: 'NOPE. HE\'S A GOOD BOY.', bg: '#0a100a', fg: '#00ffaa' },
+  { top: 'MINT AUTH: REVOKED', bottom: 'UNLIKE YOUR LAST RUG', bg: '#0d0a1a', fg: '#7b61ff' },
+  { top: 'BORN BEFORE BITCOIN', bottom: 'STILL HOLDING', bg: '#0a0a0f', fg: '#f5c842' },
+];
+let memeIdx = 0;
+function initMemeCanvas() { generateMeme(); }
+function generateMeme() {
+  const c = document.getElementById('memeCanvas');
+  const ctx = c.getContext('2d');
+  const t = memeTemplates[memeIdx % memeTemplates.length];
+  const userText = document.getElementById('memeText').value;
+  ctx.fillStyle = t.bg; ctx.fillRect(0,0,320,320);
+  ctx.strokeStyle = t.fg + '22';
+  for (let i = 0; i < 320; i += 20) {
+    ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,320); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(320,i); ctx.stroke();
+  }
+  const ps = 12;
+  const dm = ['__bbbb___','_bTTTTb__','bTYkYkTb_','bTYnnYTb_','_bTTTTb__','__bbbb___','__bBBb___','_bBTTBb__','_bBTTBb__','___bb____'];
+  const dc = {'_':null,'b':'#8b5a2b','T':'#c8860a','Y':'#d4950e','k':'#111','n':'#3d1f08','B':'#5a3410'};
+  const ox = 320/2 - 4.5*ps, oy = 100;
+  dm.forEach((row, y) => { [...row].forEach((px, x) => { if (dc[px]) { ctx.fillStyle = dc[px]; ctx.fillRect(ox+x*ps, oy+y*ps, ps, ps); } }); });
+  ctx.font = 'bold 13px "Press Start 2P"';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = t.fg; ctx.shadowColor = t.fg; ctx.shadowBlur = 10;
+  wrapText(ctx, userText || t.top, 160, 52, 280, 17);
+  wrapText(ctx, t.bottom, 160, 278, 280, 17);
+  ctx.shadowBlur = 0; memeIdx++;
+}
+function wrapText(ctx, text, x, y, maxW, lineH) {
+  const words = text.split(' ');
+  let line = '', lines = [];
+  words.forEach(w => {
+    const test = line + w + ' ';
+    if (ctx.measureText(test).width > maxW && line !== '') { lines.push(line.trim()); line = w + ' '; } else { line = test; }
+  });
+  lines.push(line.trim());
+  const sy = y - (lines.length - 1) * lineH / 2;
+  lines.forEach((l, i) => ctx.fillText(l, x, sy + i * lineH));
+}
+function downloadMeme() {
+  const a = document.createElement('a');
+  a.download = 'j33t-meme.png';
+  a.href = document.getElementById('memeCanvas').toDataURL();
+  a.click();
+  showToast('Meme saved! Spread the gospel 🐕');
+}
+
+// ============================================================
+// ORACLE
+// ============================================================
+const wisdoms = [
+  "THE MARKET DIPS. J33T DOES NOT.",
+  "BUY THE WOOF. SELL THE BARK.",
+  "PAPER HANDS TASTE LIKE KIBBLE.",
+  "THOSE WHO HOLD GET BELLY RUBS.",
+  "THE BLOCKCHAIN REMEMBERS. J33T REMEMBERS.",
+  "ZOOM OUT. ZOOM WAY OUT. GOOD BOY.",
+  "NGMI IF YOU SELL. WAGMI IF YOU STAY.",
+  "IN THE BEGINNING THERE WAS J33T.",
+  "DIAMOND PAWS. STEEL RESOLVE. SMALL DOG.",
+  "FUD IS TEMPORARY. $J33T IS ETERNAL.",
+  "STILL NOT SELLING SINCE 2009.",
+  "BORN BEFORE THE WHITEPAPER. STILL HERE.",
+  "CHECK SOLSCAN BEFORE YOU BELIEVE ANYONE.",
+  "MINT AUTH REVOKED. UNLIKE YOUR HEART.",
+  "IF DEV DMS YOU FIRST — RUN.",
+];
+function getWisdom() {
+  const el = document.getElementById('oracleText');
+  el.style.opacity = 0;
+  setTimeout(() => {
+    el.textContent = wisdoms[Math.floor(Math.random() * wisdoms.length)];
+    el.style.transition = 'opacity 0.5s'; el.style.opacity = 1;
+  }, 300);
+}
+function petJ33T() {
+  const el = document.getElementById('oracleText');
+  el.style.opacity = 0;
+  setTimeout(() => {
+    el.textContent = '✨ J33T LICKS YOUR SCREEN ✨';
+    el.style.transition = 'opacity 0.3s'; el.style.opacity = 1;
+  }, 200);
+  const container = document.getElementById('lickStars');
+  container.innerHTML = '';
+  for (let i = 0; i < 10; i++) {
+    const star = document.createElement('div');
+    star.className = 'lick-star'; star.textContent = '★';
+    star.style.left = Math.random() * 90 + '%';
+    star.style.top = Math.random() * 80 + '%';
+    star.style.animationDelay = (Math.random() * 0.4) + 's';
+    container.appendChild(star);
+  }
+  setTimeout(() => container.innerHTML = '', 1500);
+}
+
+// ============================================================
+// CONFETTI
+// ============================================================
+const confCanvas = document.getElementById('confetti-canvas');
+const confCtx = confCanvas.getContext('2d');
+function resizeConf() { confCanvas.width = window.innerWidth; confCanvas.height = window.innerHeight; }
+resizeConf(); window.addEventListener('resize', resizeConf);
+let confPieces = [];
+let confRunning = false;
+function launchConfetti() {
+  confPieces = Array.from({length: 140}, () => ({
+    x: Math.random() * confCanvas.width, y: -20,
+    vx: (Math.random() - 0.5) * 5, vy: Math.random() * 3 + 2,
+    color: ['#f5c842','#7b61ff','#00ffaa','#ff4466','#fff'][Math.floor(Math.random()*5)],
+    w: Math.random() * 10 + 5, h: Math.random() * 6 + 3,
+    rot: Math.random() * 360, rotV: (Math.random() - 0.5) * 8,
+  }));
+  confRunning = true; animateConfetti();
+}
+function animateConfetti() {
+  if (!confRunning) return;
+  confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+  confPieces.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.rot += p.rotV;
+    confCtx.save(); confCtx.translate(p.x, p.y); confCtx.rotate(p.rot * Math.PI / 180);
+    confCtx.fillStyle = p.color; confCtx.fillRect(-p.w/2, -p.h/2, p.w, p.h); confCtx.restore();
+  });
+  confPieces = confPieces.filter(p => p.y < confCanvas.height + 20);
+  if (confPieces.length > 0) requestAnimationFrame(animateConfetti);
+  else { confRunning = false; confCtx.clearRect(0,0,confCanvas.width,confCanvas.height); }
+}
+
+// ============================================================
+// TICKER MOON MODE
+// ============================================================
+function tickerMoonMode() {
+  const t = document.getElementById('tickerEl');
+  t.classList.add('moon-mode');
+  const items = t.querySelectorAll('.ticker-item');
+  const orig = [...items].map(i => i.innerHTML);
+  const moon = ['$J33T 🚀 TO THE MOON','PAPER HANDS ELIMINATED','DIAMOND PAWS ACTIVATED','WOOF WOOF WOOF','STILL NOT SELLING','GOOD BOY SEASON'];
+  items.forEach((item, i) => { item.innerHTML = moon[i % moon.length] + ' <span>🌕</span>'; });
+  showToast('🌕 TO THE MOON MODE');
+  setTimeout(() => { t.classList.remove('moon-mode'); items.forEach((item, i) => item.innerHTML = orig[i]); }, 4000);
+}
+
+// ============================================================
+// VERIFY / COPY MINT ADDRESS
+// ============================================================
+function copyMint() {
+  const addr = IS_DEMO_MODE ? 'YOUR_J33T_TOKEN_MINT_ADDRESS_HERE' : CONFIG.TOKEN_MINT;
+  navigator.clipboard.writeText(addr).then(() => {
+    showToast(IS_DEMO_MODE ? 'Set your mint address in CONFIG first!' : 'Mint address copied! ✓');
+  }).catch(() => { showToast(IS_DEMO_MODE ? 'Add mint address to CONFIG' : addr); });
+}
+function openSolscan() {
+  if (IS_DEMO_MODE) { showToast('Configure TOKEN_MINT in CONFIG first!'); return; }
+  window.open('https://solscan.io/token/' + CONFIG.TOKEN_MINT, '_blank');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ============================================================
+// KONAMI CODE EASTER EGG
+// ============================================================
+const konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let ki = 0;
+document.addEventListener('keydown', e => {
+  if (e.key === konami[ki]) { ki++;
+    if (ki === konami.length) {
+      ki = 0;
+      document.body.classList.add('super-saiyan');
+      document.getElementById('konamiOverlay').classList.add('show');
+      launchConfetti();
+      showToast('⚡ SUPER SAIYAN MODE ⚡');
+      setTimeout(() => {
+        document.getElementById('konamiOverlay').classList.remove('show');
+        document.body.classList.remove('super-saiyan');
+      }, 8000);
+    }
+  } else { ki = 0; }
+});
+
+// ============================================================
+// HIDDEN EASTER EGG — type "woof" anywhere
+// ============================================================
+let woofBuffer = '';
+document.addEventListener('keypress', e => {
+  woofBuffer += e.key.toLowerCase();
+  woofBuffer = woofBuffer.slice(-4);
+  if (woofBuffer === 'woof') {
+    woofBuffer = '';
+    launchConfetti();
+    showToast('🐕 WOOF! J33T HEARD YOU!');
+    petTheDog({});
+  }
+});
+
+// ============================================================
+// SCROLL REVEAL
+// ============================================================
+document.getElementById('walletModal').addEventListener('click', function(e) {
+  if (e.target === this) closeWalletModal();
+});
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity=1; e.target.style.transform='translateY(0)'; } });
+}, { threshold: 0.08 });
+document.querySelectorAll('section, .safety-section, .pumpfun-section, .tokenomics-grid, .gate-grid, .safety-grid, .crossed-grid, .real-tokenomics').forEach(el => {
+  el.style.opacity=0; el.style.transform='translateY(28px)';
+  el.style.transition='opacity 0.7s ease, transform 0.7s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
