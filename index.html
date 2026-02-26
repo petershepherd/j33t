@@ -177,6 +177,51 @@
     animation: fadeUp 0.8s ease both;
   }
 
+  .ca-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    user-select: none;
+    border-radius: 4px;
+  }
+  .ca-badge:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(245,200,66,0.06);
+    transform: translateY(-1px);
+  }
+  .ca-badge:active { transform: scale(0.97); }
+  .ca-label {
+    color: var(--gold);
+    opacity: 0.8;
+    letter-spacing: 3px;
+    flex-shrink: 0;
+  }
+  .ca-addr {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    opacity: 0.85;
+    word-break: break-all;
+  }
+  .ca-copy-icon {
+    font-size: 13px;
+    opacity: 0.6;
+    flex-shrink: 0;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .ca-badge:hover .ca-copy-icon { opacity: 1; transform: scale(1.2); }
+  .ca-badge.copied {
+    border-color: var(--green) !important;
+    color: var(--green) !important;
+    background: rgba(0,255,170,0.07) !important;
+  }
+  @media (max-width: 640px) {
+    .ca-addr { font-size: 7px; letter-spacing: 0; }
+  }
+
   .hero-title {
     font-family: var(--pixel);
     font-size: clamp(24px, 6vw, 80px);
@@ -995,14 +1040,14 @@
   .card-gen-wrap { display: flex; flex-direction: column; gap: 16px; }
   .card-gen-label { font-family: var(--pixel); font-size: 7px; color: var(--accent); letter-spacing: 3px; margin-bottom: 4px; }
   .card-stage {
-    position: relative; width: 320px; height: 420px;
+    position: relative; width: 320px; height: 460px;
     cursor: crosshair;
     filter: drop-shadow(0 8px 32px rgba(245,200,66,0.25));
     transition: filter 0.3s;
     transform-style: preserve-3d;
   }
   .card-stage:hover { filter: drop-shadow(0 12px 48px rgba(245,200,66,0.45)); }
-  #cardCanvas { display: block; image-rendering: pixelated; border-radius: 12px; width: 320px; height: 420px; }
+  #cardCanvas { display: block; image-rendering: pixelated; border-radius: 12px; width: 320px; height: 460px; }
   .card-hologram {
     position: absolute; inset: 0; border-radius: 12px;
     pointer-events: none; opacity: 0;
@@ -1206,7 +1251,7 @@
     overflow: hidden;
   }
   .crossed-grid::after {
-    content: '🚩 EVERY PUMP.FUN TOKEN HAS THIS 🚩';
+    content: '🚩 98.6% OF PUMP.FUN TOKENS FOLLOW THIS PLAYBOOK 🚩';
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%) rotate(-6deg);
@@ -1224,7 +1269,7 @@
   }
   @media (max-width:640px) { .crossed-grid::after { font-size:6px; padding:6px 10px; white-space:normal; width:80%; text-align:center; } }
   .crossed-cell { background: var(--surface2); padding: 18px 14px; opacity: 0.35; position: relative; }
-  .crossed-cell .tnom-pct { font-family: var(--pixel); font-size: 18px; color: var(--red); display: block; margin-bottom: 4px; text-shadow: none; }
+  .crossed-cell .tnom-pct { font-family: var(--pixel); font-size: 28px; color: var(--red); display: block; margin-bottom: 4px; text-shadow: none; line-height: 1.2; }
   .crossed-cell .tnom-name { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
 
   .real-tokenomics {
@@ -1334,7 +1379,11 @@
 
 <!-- Hero -->
 <div class="hero">
-  <div class="hero-badge">◈ SOLANA CHAIN ◈ BORN JAN 2009 ◈ YORKSHIRE TERRIER</div>
+  <div class="hero-badge ca-badge" id="heroCaBadge" onclick="copyHeroCA()" title="Click to copy contract address">
+    <span class="ca-label">CA</span>
+    <span class="ca-addr" id="heroCaAddr">E2HNWS5L6gwmtC9SZPpRq6Yp3V5gzotFrL3dAEP2pump</span>
+    <span class="ca-copy-icon" id="heroCaIcon">⎘</span>
+  </div>
 
   <div class="dog-container">
     <div class="dog-halo"></div>
@@ -1350,7 +1399,7 @@
     <span>$J33T</span> — small dog. big energy.
   </p>
 
-  <div class="hero-age">Good boy for <span id="ageCounter">—</span> days and counting</div>
+  <div class="hero-age">Good girl for <span id="ageCounter">—</span> days and counting</div>
 
   <div class="hero-cta">
     <button class="btn-primary" onclick="openWalletModal()">GET $J33T</button>
@@ -1366,15 +1415,15 @@
     <span class="ticker-item">HOLDERS <span>8,888</span></span>
     <span class="ticker-item">BORN <span>JAN 2009</span></span>
     <span class="ticker-item">CHAIN <span>SOLANA</span></span>
-    <span class="ticker-item">GOOD BOY SCORE <span>100/100</span></span>
-    <span class="ticker-item">DEV SOLD? <span>NOPE, HE'S A GOOD BOY</span></span>
+    <span class="ticker-item">GOOD GIRL SCORE <span>100/100</span></span>
+    <span class="ticker-item">DEV SOLD? <span>NOPE, SHE'S A GOOD GIRL</span></span>
     <span class="ticker-item">$J33T <span>+420.69%</span></span>
     <span class="ticker-item">MARKET CAP <span>$1,337,000</span></span>
     <span class="ticker-item">HOLDERS <span>8,888</span></span>
     <span class="ticker-item">BORN <span>JAN 2009</span></span>
     <span class="ticker-item">CHAIN <span>SOLANA</span></span>
-    <span class="ticker-item">GOOD BOY SCORE <span>100/100</span></span>
-    <span class="ticker-item">DEV SOLD? <span>NOPE, HE'S A GOOD BOY</span></span>
+    <span class="ticker-item">GOOD GIRL SCORE <span>100/100</span></span>
+    <span class="ticker-item">DEV SOLD? <span>NOPE, SHE'S A GOOD GIRL</span></span>
   </div>
 </div>
 
@@ -1388,7 +1437,7 @@
 
         <!-- The card canvas -->
         <div class="card-stage" id="cardStage">
-          <canvas id="cardCanvas" width="320" height="420"></canvas>
+        <canvas id="cardCanvas" width="320" height="460"></canvas>
           <div class="card-hologram" id="cardHologram"></div>
         </div>
 
@@ -1404,8 +1453,8 @@
           </div>
           <!-- Holder tier bonus hint -->
           <div class="card-tier-hint" id="cardTierHint"></div>
-          <input class="card-input" id="cardLine1" placeholder="YOUR TITLE (e.g. DIAMOND PAWS)" maxlength="22">
-          <input class="card-input" id="cardLine2" placeholder="YOUR SUBTITLE (e.g. HODLER SINCE 2009)" maxlength="26">
+          <input class="card-input" id="cardLine1" placeholder="YOUR TITLE (e.g. WOOF CERTIFIED)" maxlength="22">
+          <input class="card-input" id="cardLine2" placeholder="SUBTITLE IS AUTO — OR TYPE KEYWORD" maxlength="26" style="opacity:0.6;" disabled>
           <div class="card-btn-row">
             <button class="card-btn" id="cardGenBtn" onclick="generateCard()">⚡ GENERATE</button>
             <button class="card-btn card-btn-alt" onclick="randomCard()">🎲 RANDOM</button>
@@ -1419,7 +1468,7 @@
       <h2 class="section-title">THE OG<br>YORKSHIRE<br>TERRIER</h2>
       <p class="section-desc">
         January 2009. A tiny Yorkshire Terrier was born.<br>
-        His name: J33T. His attitude: legendary.<br>
+        Her name: J33T. Her attitude: legendary.<br>
         When Bitcoin was still a whitepaper, J33T was already running the block.
       </p>
       <div class="stat-row">
@@ -1429,7 +1478,7 @@
         </div>
         <div class="stat-item">
           <span class="stat-num">100%</span>
-          <span class="stat-label">Good boy rating — verified</span>
+          <span class="stat-label">Good girl rating — verified</span>
         </div>
         <div class="stat-item">
           <span class="stat-num">∞</span>
@@ -1446,7 +1495,7 @@
     <div class="section-label">// HOLDER UTILITY</div>
     <h2 class="section-title">$J33T HOLDER<br>EXCLUSIVE ACCESS</h2>
     <p class="section-desc">
-      Connect your Solana wallet. If you hold $J33T, you unlock exclusive tools reserved for the inner circle.
+      Connect your Solana wallet. If you hold enough $J33T, you unlock exclusive features — including J33T's takes on meme coins. This is not financial advice. This is a Yorkshire Terrier.
     </p>
 
     <!-- Wallet panel -->
@@ -1462,33 +1511,33 @@
     <div class="gate-grid">
       <div class="gate-card locked" id="card-meme" onclick="tryAccess('meme')">
         <div class="card-icon">🎨</div>
-        <div class="card-title">MEME FORGE</div>
-        <div class="card-desc">Generate exclusive J33T memes with AI-powered captions. Download and spread the gospel.</div>
-        <div class="card-min">MIN: 1,000 $J33T</div>
+        <div class="card-title">RUG RADAR</div>
+        <div class="card-desc">Generate shareable J33T meme cards with crypto safety messages. Download and spread the word.</div>
+        <div class="card-min">MIN: 100,000 $J33T</div>
       </div>
       <div class="gate-card locked" id="card-oracle" onclick="tryAccess('oracle')">
-        <div class="card-icon">🔮</div>
-        <div class="card-title">ORACLE OF J33T</div>
-        <div class="card-desc">Ancient Yorkshire wisdom. Ask and receive cryptic financial advice from the OG himself.</div>
-        <div class="card-min">MIN: 5,000 $J33T</div>
+        <div class="card-icon">🐾</div>
+        <div class="card-title">J33T'S TAKE</div>
+        <div class="card-desc">J33T shares her personal thoughts on meme coins and market vibes. Never financial advice — just a dog's opinion.</div>
+        <div class="card-min">MIN: 500,000 $J33T</div>
       </div>
       <div class="gate-card locked" id="card-whitelist" onclick="tryAccess('whitelist')">
         <div class="card-icon">📋</div>
         <div class="card-title">EARLY ACCESS LIST</div>
         <div class="card-desc">Priority access to future J33T ecosystem drops, NFTs, and partner launches.</div>
-        <div class="card-min">MIN: 10,000 $J33T</div>
+        <div class="card-min">MIN: 1,000,000 $J33T</div>
       </div>
       <div class="gate-card locked" id="card-staking" onclick="tryAccess('staking')">
         <div class="card-icon">💎</div>
         <div class="card-title">PAWS STAKING</div>
-        <div class="card-desc">Stake your $J33T and earn passive rewards. The longer you hold, the more the old boy likes you.</div>
-        <div class="card-min">MIN: 50,000 $J33T</div>
+        <div class="card-desc">Stake your $J33T and earn passive rewards. The longer she waits, the more she approves.</div>
+        <div class="card-min">MIN: 5,000,000 $J33T</div>
       </div>
     </div>
 
     <!-- Meme generator (unlocked content) -->
     <div class="meme-gen" id="memeForge">
-      <div class="section-label" style="margin-top:32px;">// MEME FORGE — UNLOCKED</div>
+      <div class="section-label" style="margin-top:32px;">// RUG RADAR — UNLOCKED</div>
       <div class="meme-canvas-wrap">
         <canvas id="memeCanvas" width="320" height="320"></canvas>
       </div>
@@ -1502,10 +1551,15 @@
     <!-- Oracle box (unlocked content) -->
     <div class="oracle-box" id="oracleBox" style="position:relative;">
       <div class="lick-stars" id="lickStars"></div>
-      <div class="section-label" style="margin-top:32px;">// ORACLE OF J33T — UNLOCKED</div>
-      <div class="oracle-text" id="oracleText">Click to receive wisdom from the ancient Yorkie...</div>
+      <div class="section-label" style="margin-top:32px;">// J33T'S TAKE — UNLOCKED</div>
+      <div style="font-family:var(--mono); font-size:10px; color:var(--muted); text-align:center; margin-bottom:16px; line-height:1.7; padding:12px 20px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,68,102,0.05);">
+        ⚠️ J33T shares her thoughts on meme coins — but <strong style="color:var(--gold)">never gives financial advice.</strong><br>
+        This feature is under active development. We take no responsibility for any information presented here.<br>
+        <span style="color:var(--muted); font-size:9px;">NFA · DYOR · This is a dog's opinion, not investment advice.</span>
+      </div>
+      <div class="oracle-text" id="oracleText">Click to hear J33T's take on the market...</div>
       <div style="display:flex; gap:12px; justify-content:center; margin-top:24px; flex-wrap:wrap;">
-        <button class="btn-sm" onclick="getWisdom()">ASK J33T</button>
+        <button class="btn-sm" onclick="getWisdom()">🐾 J33T'S TAKE</button>
         <button class="btn-sm" style="background:var(--accent);color:#fff;" onclick="petJ33T()">🐾 PET J33T</button>
       </div>
     </div>
@@ -1515,31 +1569,31 @@
 <!-- Pump.fun Satire + Trust Section -->
 <section id="pumpfun" class="pumpfun-section">
   <div class="pumpfun-inner">
-    <div class="section-label">// TOKENOMICS — WAIT, WHAT?</div>
-    <h2 class="section-title" style="max-width:700px;">LOL. OKAY FINE.<br>HERE'S THE "TOKENOMICS"<br>YOU WERE EXPECTING.</h2>
-    <p class="section-desc" style="max-width:600px;">
-      You know the drill. Every pump.fun token has a beautiful pie chart.
-      69% LP (sure), 20% community (lol), some % for the "dev team" (🚩🚩🚩).
-      We made one too. Enjoy.
+    <div class="section-label">// PUMP.FUN — THE REALITY CHECK</div>
+    <h2 class="section-title" style="max-width:700px;">98.6% OF PUMP.FUN TOKENS<br>ARE RUGS OR PUMP-AND-DUMPS.<br>HERE'S WHAT THAT LOOKS LIKE.</h2>
+    <p class="section-desc" style="max-width:640px;">
+      According to a 2025 Solidus Labs report, 98.6% of tokens launched on pump.fun are rug pulls or pump-and-dump schemes.
+      They follow a predictable formula: cool name, meme image, fake hype, exit in 48 hours.
+      Below is the playbook they use — and what $J33T isn't.
     </p>
 
-    <!-- The fake one, crossed out -->
+    <!-- The typical scam playbook, crossed out -->
     <div class="crossed-grid">
       <div class="crossed-cell">
-        <span class="tnom-pct">69%</span>
-        <div class="tnom-name">Liquidity Pool</div>
+        <span class="tnom-pct">🎭</span>
+        <div class="tnom-name">Bundled Snipe</div>
       </div>
       <div class="crossed-cell">
-        <span class="tnom-pct">20%</span>
-        <div class="tnom-name">"Community"</div>
+        <span class="tnom-pct">🤖</span>
+        <div class="tnom-name">Bot Army Hype</div>
       </div>
       <div class="crossed-cell">
-        <span class="tnom-pct">6%</span>
-        <div class="tnom-name">Dev Team 👀</div>
+        <span class="tnom-pct">💀</span>
+        <div class="tnom-name">Dev Wallet Dump</div>
       </div>
       <div class="crossed-cell">
-        <span class="tnom-pct">5%</span>
-        <div class="tnom-name">Marketing 💅</div>
+        <span class="tnom-pct">🏃</span>
+        <div class="tnom-name">Exit in 48h</div>
       </div>
     </div>
 
@@ -1548,19 +1602,19 @@
       <div class="real-tokenomics-title">✅ THE ACTUAL TRUTH ABOUT $J33T:</div>
       <div class="truth-row">
         <span class="truth-check">🐾</span>
-        <span><strong style="color:var(--gold)">100% fair launch on pump.fun.</strong> No pre-sale. No private rounds. No "seed investors". J33T doesn't even know what a cap table is — he's a dog.</span>
+        <span><strong style="color:var(--gold)">100% fair launch on pump.fun.</strong> No pre-sale. No private rounds. No "seed investors". J33T doesn't even know what a cap table is — she's a good girl.</span>
       </div>
       <div class="truth-row">
         <span class="truth-check">🐾</span>
-        <span><strong style="color:var(--gold)">No creator bundle.</strong> The dev didn't buy 10% at launch and wait to dump on you. That would make J33T a very bad boy. J33T is a good boy.</span>
+        <span><strong style="color:var(--gold)">No creator bundle.</strong> The dev didn't buy 10% at launch and wait to dump on you. That would make J33T a very bad girl. J33T is a good girl.</span>
       </div>
       <div class="truth-row">
         <span class="truth-check">🐾</span>
-        <span><strong style="color:var(--gold)">No rug. No dev wallet.</strong> There is no secret wallet with 500M tokens waiting to be sold the moment you buy. J33T would never do that. He's been sitting since 2009.</span>
+        <span><strong style="color:var(--gold)">No rug. No dev wallet.</strong> There is no secret wallet with 500M tokens waiting to be sold the moment you buy. J33T would never do that. She's been sitting since 2009.</span>
       </div>
       <div class="truth-row">
         <span class="truth-check">🐾</span>
-        <span><strong style="color:var(--gold)">No "marketing wallet"</strong> that's actually the dev's second wallet. No "team allocation" for a team that's really just one guy in his bedroom who will disappear in 3 days.</span>
+        <span><strong style="color:var(--gold)">No "marketing wallet"</strong> that's actually the dev's second wallet. No "team allocation" for a team that's really just one person in their bedroom who will disappear in 3 days.</span>
       </div>
       <div class="truth-row">
         <span class="truth-check">🐾</span>
@@ -1569,10 +1623,10 @@
     </div>
 
     <div class="pumpfun-disclaimer">
-      <span>// IMPORTANT DISTINCTION</span><br><br>
-      We're not saying pump.fun is bad. It's a tool. We're saying that 99% of tokens launched on it are
-      designed to transfer money from your wallet to the dev's wallet as fast as possible.
-      The formula: cool name + dog/cat/meme image + fake tokenomics + Twitter bot army + exit in 48h.<br><br>
+      <span>// THE NUMBERS DON'T LIE</span><br><br>
+      According to Solidus Labs (2025), <strong style="color:var(--text)">98.6% of pump.fun tokens are rug pulls or pump-and-dump schemes.</strong>
+      93% of Raydium liquidity pools are soft rugs. The formula never changes: hype on launch,
+      bot volume to fake momentum, dev dumps on retail, everyone else holds the bag.<br><br>
       $J33T is different because J33T is a real dog, born January 2009, and real dogs don't rug.
       <strong style="color:var(--text)"> DYOR. Always.</strong>
     </div>
@@ -1598,56 +1652,61 @@
 <section class="safety-section" id="dyor">
   <div class="safety-inner">
     <div class="section-label">// DYOR — DO YOUR OWN RESEARCH</div>
-    <h2 class="section-title">CRYPTO SAFETY 101<br>FROM J33T HIMSELF</h2>
+    <h2 class="section-title">CRYPTO SAFETY 101<br>FROM J33T HERSELF</h2>
     <p class="section-desc" style="max-width:600px;">
-      J33T has survived 16+ years without being scammed. Here's his wisdom — free of charge.
+      J33T has survived 16+ years without being scammed. Here's her wisdom — free of charge.
     </p>
 
     <div class="safety-grid">
       <div class="safety-card red-flag">
         <div class="safety-card-icon">🚩</div>
+        <div class="safety-card-title">BUNDLED SNIPING AT LAUNCH</div>
+        <div class="safety-card-desc">The creator buys from multiple wallets simultaneously at launch (bundle tx), securing 20–90% of supply at the lowest price. Artificial pump follows, FOMO kicks in, you buy high — they sell. Use RugCheck.xyz or Flintr to detect bundles. Avoid the first 1–2 minutes after launch.</div>
+      </div>
+      <div class="safety-card red-flag">
+        <div class="safety-card-icon">🚩</div>
+        <div class="safety-card-title">WASH TRADING + VOLUME BOTS</div>
+        <div class="safety-card-desc">The same wallets trade back and forth in tiny amounts (e.g. 0.01 SOL) to generate fake volume. The chart looks active, "huge interest" — everyone piles in. Check Dexscreener and Solscan: repeated txs between the same wallets, identical trade sizes, all new wallets = red flag.</div>
+      </div>
+      <div class="safety-card red-flag">
+        <div class="safety-card-icon">🚩</div>
         <div class="safety-card-title">DEV WALLET > 5%</div>
-        <div class="safety-card-desc">If the dev controls more than 5% of supply at launch, that's a dump waiting to happen. Check the top holders on Solscan before buying anything.</div>
+        <div class="safety-card-desc">If the dev controls more than 5% of supply at launch, that's a dump waiting to happen. Check top holders on Birdeye or Solscan — if concentration is high or multiple wallets show the same transaction patterns, walk away.</div>
       </div>
       <div class="safety-card red-flag">
         <div class="safety-card-icon">🚩</div>
-        <div class="safety-card-title">ANONYMOUS "TEAM"</div>
-        <div class="safety-card-desc">A Twitter account made 2 days ago with a cartoon avatar and 300 followers is not a "team". It's one person. They will disappear. This is not controversial — it's a pattern.</div>
+        <div class="safety-card-title">MINT &amp; FREEZE AUTHORITY ACTIVE</div>
+        <div class="safety-card-desc">Mint authority lets the dev print unlimited new tokens, diluting your bag. Freeze authority lets them freeze your tokens so you literally can't sell. Both should always be revoked. Check on Solscan — if either shows anything other than "None", skip immediately.</div>
       </div>
       <div class="safety-card red-flag">
         <div class="safety-card-icon">🚩</div>
-        <div class="safety-card-title">LOCKED LIQUIDITY PROMISE</div>
-        <div class="safety-card-desc">"LP locked for 6 months" means nothing if the token is worthless in 6 days. Always check if LP is burned (verifiable) vs "locked" via a third-party they control.</div>
+        <div class="safety-card-title">CLONED TOKEN CONTRACTS</div>
+        <div class="safety-card-desc">When a token hits Raydium, scammers clone the contract with the same name and logo but a different address. You send funds to the fake — low or no liquidity, money gone. Always verify the exact contract address from official channels only. Never click Telegram links blindly.</div>
       </div>
       <div class="safety-card red-flag">
         <div class="safety-card-icon">🚩</div>
-        <div class="safety-card-title">COORDINATED HYPE</div>
-        <div class="safety-card-desc">100 Telegram messages in 10 minutes all saying "LFG 🚀🚀🚀" is a bot army, not organic interest. Real communities build slowly. Fake ones pump and disappear.</div>
+        <div class="safety-card-title">COORDINATED SHILLING</div>
+        <div class="safety-card-desc">Paid shillers, bot accounts and fake "influencers" push "next 100x" and "dev doxx later". Check follower accounts — created days ago, generic comments, zero real engagement. Real communities grow slowly. If it feels coordinated, it is.</div>
       </div>
       <div class="safety-card red-flag">
         <div class="safety-card-icon">🚩</div>
-        <div class="safety-card-title">MINT AUTHORITY NOT REVOKED</div>
-        <div class="safety-card-desc">If the token's mint authority is still active, the dev can print infinite supply and destroy your bag. Always check on Solscan: "Mint Authority" should show "None".</div>
-      </div>
-      <div class="safety-card red-flag">
-        <div class="safety-card-icon">🚩</div>
-        <div class="safety-card-title">FREEZE AUTHORITY ACTIVE</div>
-        <div class="safety-card-desc">Freeze authority lets the dev freeze your tokens in your wallet. You literally cannot sell. This should always be revoked. If it's not, walk away.</div>
+        <div class="safety-card-title">LIQUIDITY NOT BURNED</div>
+        <div class="safety-card-desc">After Raydium listing, if LP is not burned or properly locked, the dev can remove liquidity at any time — price collapses instantly. Check LP status on Dexscreener. "Locked" via a contract the dev controls is not the same as burned. 93% of Raydium pools are soft rugs.</div>
       </div>
       <div class="safety-card green-flag">
         <div class="safety-card-icon">✅</div>
-        <div class="safety-card-title">ALWAYS CHECK SOLSCAN</div>
-        <div class="safety-card-desc">Go to solscan.io, search the mint address, check: top holders distribution, mint authority status, freeze authority status, and token age. Takes 2 minutes. Worth it.</div>
+        <div class="safety-card-title">YOUR ESSENTIAL TOOLKIT</div>
+        <div class="safety-card-desc"><strong style="color:var(--green)">RugCheck.xyz</strong> — bundle detection, authority checks. <strong style="color:var(--green)">Birdeye.so</strong> — real holder distribution. <strong style="color:var(--green)">Solscan.io</strong> — contract truth, mint/freeze authority. <strong style="color:var(--green)">Dexscreener</strong> — LP status, volume, wallet concentration. <strong style="color:var(--green)">Bubblemaps.io</strong> — visualise connected wallets.</div>
       </div>
       <div class="safety-card green-flag">
         <div class="safety-card-icon">✅</div>
-        <div class="safety-card-title">USE DEXSCREENER</div>
-        <div class="safety-card-desc">dexscreener.com shows real liquidity, trading volume, wallet concentration, and price history. If liquidity is under $10k and one wallet holds 40%, you know what that is.</div>
+        <div class="safety-card-title">TIMING IS EVERYTHING</div>
+        <div class="safety-card-desc">Never FOMO into the first minutes. Wait 10–30 minutes minimum, or until after Raydium listing. Take partial profits on pumps. Set a loss limit and stick to it. Size every position as if it could go to zero — because in 98.6% of cases, it does.</div>
       </div>
       <div class="safety-card green-flag">
         <div class="safety-card-icon">✅</div>
         <div class="safety-card-title">ONLY INVEST WHAT YOU CAN LOSE</div>
-        <div class="safety-card-desc">This is crypto. Even legit projects can go to zero. Even J33T could go to zero (he would be very sad about it). Never invest rent money. Never. Not even in $J33T.</div>
+        <div class="safety-card-desc">This is crypto. Even legit projects can go to zero. Even J33T could go to zero (she would be very sad about it). Never invest rent money. Never. Not even in $J33T.</div>
       </div>
     </div>
 
@@ -1655,7 +1714,9 @@
       <strong style="font-family:var(--pixel);font-size:8px;color:var(--gold);">// ONE LAST THING</strong><br><br>
       If someone DMs you on Telegram or Twitter saying "I can 10x your $J33T" or "airdrop claim available" or
       "send SOL to verify your wallet" — that's a scam. <strong style="color:var(--text)">100% of the time.</strong>
-      J33T's official channels will never DM you first. J33T is a dog. Dogs don't DM.
+      J33T's official channels will never DM you first. J33T is a dog. Dogs don't DM.<br><br>
+      <span style="color:var(--gold);">98.6%</span> of pump.fun tokens rug or dump. The 1.4% that don't still require you to DYOR.
+      There are no shortcuts. Check the chain. Trust the data.
     </div>
   </div>
 </section>
@@ -1714,7 +1775,7 @@
     <li><a href="#">Dexscreener</a></li>
     <li><a href="#">Raydium</a></li>
   </ul>
-  <div class="footer-copy">Not financial advice. Just a good boy.<br>& his even better degens.</div>
+  <div class="footer-copy">Not financial advice. Just a good girl.<br>& her even better degens.</div>
 </footer>
 
 <!-- Wallet Modal -->
@@ -1768,6 +1829,11 @@ const CONFIG = {
 
 // Trim whitespace + case-insensitive demo check (common mistake fix)
 CONFIG.TOKEN_MINT = CONFIG.TOKEN_MINT.trim();
+// Sync hero CA badge with CONFIG
+(function() {
+  const el = document.getElementById('heroCaAddr');
+  if (el) el.textContent = CONFIG.TOKEN_MINT;
+})();
 const IS_DEMO_MODE = CONFIG.TOKEN_MINT === 'YOUR_J33T_TOKEN_MINT_ADDRESS_HERE' || CONFIG.TOKEN_MINT.length < 32;
 
 // Debug logger — open browser console (F12) to see what's happening
@@ -2269,7 +2335,7 @@ async function connectWallet(type) {
   walletConnected = true;
   const addr = '7xK' + Math.random().toString(36).substr(2,4).toUpperCase() + '...' + Math.random().toString(36).substr(2,4).toUpperCase() + 'pump';
   walletAddr = addr;
-  j33tBalance = Math.floor(Math.random() * 80000) + 500;
+  j33tBalance = Math.floor(Math.random() * 4500000) + 50000; // 50k–4.55M range for demo
 
   try {
     localStorage.setItem('j33t_demo_v2', JSON.stringify({connected: true, balance: j33tBalance, addr: walletAddr, real: false}));
@@ -2277,7 +2343,7 @@ async function connectWallet(type) {
 
   applyWalletState();
 
-  if (j33tBalance >= 20000) {
+  if (j33tBalance >= 1000000) {
     launchConfetti();
     showToast(`💎 DIAMOND PAWS! ${j33tBalance.toLocaleString()} $J33T! 🎉`);
   } else {
@@ -2320,7 +2386,7 @@ async function connectRealWallet(type) {
 
     applyWalletState();
     showToast(`Real wallet connected! ${j33tBalance.toLocaleString()} $J33T 🐕`);
-    if (j33tBalance >= 20000) launchConfetti();
+    if (j33tBalance >= 1000000) launchConfetti();
 
   } catch(err) {
     console.error('Wallet connect error:', err);
@@ -2374,7 +2440,12 @@ function applyWalletState() {
 }
 
 function unlockCards() {
-  [['card-meme',1000],['card-oracle',5000],['card-whitelist',10000],['card-staking',50000]].forEach(([id,min]) => {
+  [
+    ['card-meme',      100000],
+    ['card-oracle',    500000],
+    ['card-whitelist', 1000000],
+    ['card-staking',   5000000],
+  ].forEach(([id, min]) => {
     const card = document.getElementById(id);
     if (card && j33tBalance >= min) { card.classList.remove('locked'); card.classList.add('unlocked'); }
   });
@@ -2382,8 +2453,11 @@ function unlockCards() {
 
 function tryAccess(type) {
   if (!walletConnected) { showToast('Connect your wallet first!'); openWalletModal(); return; }
-  const mins = { meme: 1000, oracle: 5000, whitelist: 10000, staking: 50000 };
-  if (j33tBalance < mins[type]) { showToast(`Need ${mins[type].toLocaleString()} $J33T to unlock!`); return; }
+  const mins = { meme: 100000, oracle: 500000, whitelist: 1000000, staking: 5000000 };
+  if (j33tBalance < mins[type]) {
+    showToast(`Need ${mins[type].toLocaleString()} $J33T to unlock!`);
+    return;
+  }
   if (type === 'meme') {
     const el = document.getElementById('memeForge');
     el.classList.toggle('visible');
@@ -2405,7 +2479,7 @@ const memeTemplates = [
   { top: 'WHEN YOU BUY THE DIP', bottom: 'AND IT KEEPS DIPPING', bg: '#0a0a0f', fg: '#f5c842' },
   { top: 'STILL NOT SELLING', bottom: 'SINCE 2009', bg: '#0d1117', fg: '#00ffaa' },
   { top: 'PRICE DOWN 90%', bottom: 'J33T DOES NOT CARE', bg: '#1a0a0a', fg: '#ff4466' },
-  { top: 'DEV SOLD?', bottom: 'NOPE. HE\'S A GOOD BOY.', bg: '#0a100a', fg: '#00ffaa' },
+  { top: 'DEV SOLD?', bottom: 'NOPE. SHE\'S A GOOD GIRL.', bg: '#0a100a', fg: '#00ffaa' },
   { top: 'MINT AUTH: REVOKED', bottom: 'UNLIKE YOUR LAST RUG', bg: '#0d0a1a', fg: '#7b61ff' },
   { top: 'BORN BEFORE BITCOIN', bottom: 'STILL HOLDING', bg: '#0a0a0f', fg: '#f5c842' },
 ];
@@ -2457,21 +2531,41 @@ function downloadMeme() {
 // ORACLE
 // ============================================================
 const wisdoms = [
-  "THE MARKET DIPS. J33T DOES NOT.",
-  "BUY THE WOOF. SELL THE BARK.",
-  "PAPER HANDS TASTE LIKE KIBBLE.",
-  "THOSE WHO HOLD GET BELLY RUBS.",
-  "THE BLOCKCHAIN REMEMBERS. J33T REMEMBERS.",
-  "ZOOM OUT. ZOOM WAY OUT. GOOD BOY.",
-  "NGMI IF YOU SELL. WAGMI IF YOU STAY.",
-  "IN THE BEGINNING THERE WAS J33T.",
-  "DIAMOND PAWS. STEEL RESOLVE. SMALL DOG.",
-  "FUD IS TEMPORARY. $J33T IS ETERNAL.",
-  "STILL NOT SELLING SINCE 2009.",
-  "BORN BEFORE THE WHITEPAPER. STILL HERE.",
-  "CHECK SOLSCAN BEFORE YOU BELIEVE ANYONE.",
-  "MINT AUTH REVOKED. UNLIKE YOUR HEART.",
-  "IF DEV DMS YOU FIRST — RUN.",
+  "J33T'S TAKE: if you don't know what a bonding curve is, don't buy yet.",
+  "J33T OBSERVES: most pump.fun tokens die within 48 hours. Just saying.",
+  "J33T NOTICES: if all holders are 3 wallets, that's not a community.",
+  "J33T THINKS: opening rugcheck.xyz is not optional. It's mandatory.",
+  "J33T'S EXPERIENCE: whoever DMs you alpha wants alpha for themselves.",
+  "J33T'S OPINION: the word 'SAFU' alone doesn't make anything safe.",
+  "J33T SEES: if dev wallet > 5%, might be worth looking elsewhere.",
+  "J33T ASKS: is the LP burned? If not — why exactly not?",
+  "J33T'S TAKE: zoom out. Always. On every chart.",
+  "J33T THINKS: whitepaper written by ChatGPT? Skip.",
+  "J33T OBSERVES: real communities take time to build. 2 days isn't enough.",
+  "J33T'S OPINION: 10x in 5 minutes usually means -90% in 5 more.",
+  "J33T NOTES: mint authority revoked? That's the baseline, not a bonus.",
+  "J33T'S EXPERIENCE: freeze authority still active = dangerous.",
+  "J33T THINKS: only risk what you can afford to lose. Seriously.",
+  "J33T NOTICES: coordinated shilling ≠ organic growth.",
+  "J33T ASKS: who is the dev? Any history? Any past rugs?",
+  "J33T'S OPINION: Birdeye.so shows who actually holds the token.",
+  "J33T'S TAKE: wash trading = pretty chart, empty wallets.",
+  "J33T OBSERVES: Solscan is the truth. Twitter is not.",
+  "J33T THINKS: take profit. You don't always have to wait for the top.",
+  "J33T'S DATA: 93% of Raydium pools soft rug. Not J33T's words — that's the data.",
+  "J33T NOTES: anonymous dev + 'doxx later' usually means never.",
+  "J33T NOTICES: microbuy bots simulate what looks like organic momentum.",
+  "J33T'S OPINION: FDV >> MCAP means future dumps are already priced in.",
+  "J33T THINKS: vesting schedule = future dump dates. Read it.",
+  "J33T'S TAKE: 'stealth launch' is rarely transparent. Be careful.",
+  "J33T'S EXPERIENCE: copy-paste roadmap = copy-paste scam.",
+  "J33T NOTICES: if questions are banned in Telegram, that's a signal.",
+  "J33T ASKS: is there real utility? If not, why would anyone hold long term?",
+  "J33T'S OPINION: bubblemaps.io shows you connected wallet clusters.",
+  "J33T NOTES: cloned contract, same name, wrong address — that's the trap.",
+  "J33T'S TAKE: the first 2 minutes after launch are the riskiest. Wait.",
+  "J33T'S EXPERIENCE: if it sounds too good to be true, it usually is.",
+  "J33T OBSERVES: bot army ≠ real users. Check wallet age and history.",
 ];
 function getWisdom() {
   const el = document.getElementById('oracleText');
@@ -2541,7 +2635,7 @@ function tickerMoonMode() {
   t.classList.add('moon-mode');
   const items = t.querySelectorAll('.ticker-item');
   const orig = [...items].map(i => i.innerHTML);
-  const moon = ['$J33T 🚀 TO THE MOON','PAPER HANDS ELIMINATED','DIAMOND PAWS ACTIVATED','WOOF WOOF WOOF','STILL NOT SELLING','GOOD BOY SEASON'];
+  const moon = ['$J33T 🚀 TO THE MOON','PAPER HANDS ELIMINATED','DIAMOND PAWS ACTIVATED','WOOF WOOF WOOF','STILL NOT SELLING','GOOD GIRL SEASON'];
   items.forEach((item, i) => { item.innerHTML = moon[i % moon.length] + ' <span>🌕</span>'; });
   showToast('🌕 TO THE MOON MODE');
   setTimeout(() => { t.classList.remove('moon-mode'); items.forEach((item, i) => item.innerHTML = orig[i]); }, 4000);
@@ -2550,6 +2644,29 @@ function tickerMoonMode() {
 // ============================================================
 // VERIFY / COPY MINT ADDRESS
 // ============================================================
+function copyHeroCA() {
+  const addr = CONFIG.TOKEN_MINT;
+  navigator.clipboard.writeText(addr).then(() => {
+    const badge = document.getElementById('heroCaBadge');
+    const icon  = document.getElementById('heroCaIcon');
+    badge.classList.add('copied');
+    icon.textContent = '✓';
+    showToast('Contract address copied! 🐾');
+    setTimeout(() => {
+      badge.classList.remove('copied');
+      icon.textContent = '⎘';
+    }, 2000);
+  }).catch(() => {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = addr; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Contract address copied! 🐾');
+  });
+}
+
 function copyMint() {
   const addr = IS_DEMO_MODE ? 'YOUR_J33T_TOKEN_MINT_ADDRESS_HERE' : CONFIG.TOKEN_MINT;
   navigator.clipboard.writeText(addr).then(() => {
@@ -2716,13 +2833,23 @@ let currentEasterEgg = null;
 
 function checkEasterEgg(line1, line2) {
   const combined = (line1 + ' ' + line2).toLowerCase();
+
+  // CHAOS MODE: csak akkor elérhető, ha már megvan legalább 3 egg
+  if (combined.includes('chaos') && foundEasterEggs.size < 3) {
+    const missing = 3 - foundEasterEggs.size;
+    showToast(`🔒 CHAOS LOCKED — find ${missing} more easter egg${missing > 1 ? 's' : ''} first!`);
+    return null;
+  }
+
   for (const [keyword, egg] of Object.entries(easterEggs)) {
     if (combined.includes(keyword)) {
       if (!foundEasterEggs.has(keyword)) {
         foundEasterEggs.add(keyword);
         localStorage.setItem('j33t_eggs', JSON.stringify([...foundEasterEggs]));
-        showToast('🥚 Easter egg found: ' + egg.label + ' (' + foundEasterEggs.size + ' total)');
-        if (foundEasterEggs.size >= 3) setTimeout(() => showToast('🌀 CHAOS UNLOCKED — try typing "chaos"!'), 1500);
+        showToast('🥚 Easter egg found: ' + egg.label + ' (' + foundEasterEggs.size + '/9 total)');
+        if (foundEasterEggs.size === 3) {
+          setTimeout(() => showToast('🌀 CHAOS MODE UNLOCKED! Type "chaos" to activate!'), 1500);
+        }
       }
       return egg;
     }
@@ -2827,28 +2954,263 @@ const cardDogColors = {
   'G':'#d4950e','Y':'#f5d070','k':'#111','n':'#3d1f08','p':'#d98080',
 };
 
+// ── CARD SUBTITLE MESSAGES (crypto safety tips) ─────────────────
+const cardTips = [
+  // -- PUMP.FUN ALAP TUDÁS --
+  'CHECK RUGCHECK.XYZ BEFORE YOU BUY.',
+  'IF DEV WALLET > 5% — WALK AWAY.',
+  'MINT AUTHORITY NOT REVOKED? RED FLAG.',
+  'FREEZE AUTHORITY ACTIVE? SKIP IT.',
+  '98.6% OF PUMP.FUN TOKENS RUG. FACTS.',
+  'BONDING CURVE = DEV PROFIT MACHINE.',
+  'FAIR LAUNCH IS NOT ALWAYS FAIR.',
+  'NO UTILITY = NO REASON TO HOLD.',
+  'FIRST 2 MINUTES ON PUMP? HIGH RISK.',
+  'BUNDLED SNIPE = INSTANT EXIT AFTER.',
+  'CHECK TOP 10 HOLDERS ON SOLSCAN.',
+  'CONCENTRATED HOLDERS = TICKING BOMB.',
+  'IF LP NOT BURNED — DEV CAN RUG.',
+  'LOCKED ≠ BURNED. KNOW THE DIFF.',
+  'SOFT RUG: SLOW BLEED TILL ZERO.',
+  'HARD RUG: DEV DUMPS. YOU HOLD BAG.',
+  '93% OF RAYDIUM POOLS ARE SOFT RUGS.',
+  'TAKE PROFIT BEFORE OTHERS DO.',
+  'NEVER INVEST RENT MONEY. NEVER.',
+  'SMALL POSITION = SMALL LOSS.',
+  // -- SOCIAL ENGINEERING --
+  'IF THEY DM FIRST — IT\'S A SCAM.',
+  '"NEXT 100X" = NEXT 100% LOSS.',
+  'INFLUENCER SHILLING = PAID DUMP BAG.',
+  'TELEGRAM ALPHA = DEV SHILL CHANNEL.',
+  'FAKE FOLLOWERS ≠ REAL COMMUNITY.',
+  '"DEV DOXX LATER" = NEVER DOXXED.',
+  'FOMO KILLS WALLETS. PATIENCE WINS.',
+  'HYPE PEAKS WHEN INSIDERS EXIT.',
+  '"HUGE PARTNERSHIP" WITH NO LINK? SKIP.',
+  'COPY-PASTE WHITEPAPER = INSTANT SKIP.',
+  'BOT ARMY ≠ REAL USERS.',
+  'CHECK ACCOUNT AGE OF SHILLERS.',
+  'GENERIC COMMENTS = BOTS.',
+  '"GOING TO MOON" — SO WAS LUNA.',
+  'PAID TWITTER SPACES = EXIT SIGNAL.',
+  // -- WALLET & CONTRACT SAFETY --
+  'ALWAYS VERIFY CONTRACT ON SOLSCAN.',
+  'NEVER CLICK UNVERIFIED TELEGRAM LINKS.',
+  'CLONE CONTRACTS STEAL YOUR FUNDS.',
+  'SAME NAME, WRONG ADDRESS = FAKE.',
+  'ALWAYS CHECK OFFICIAL SOCIALS FOR CA.',
+  'ONE WRONG CHARACTER = LOST FOREVER.',
+  'USE A BURNER WALLET FOR DEGENS.',
+  'REVOKE TOKEN APPROVALS AFTER USE.',
+  'HARDWARE WALLET FOR REAL BAGS.',
+  'SEED PHRASE = YOUR LIFE. NEVER SHARE.',
+  'NO SUPPORT WILL EVER DM YOU FIRST.',
+  'VERIFY CA TWICE. BUY ONCE.',
+  // -- VOLUME & CHART TRICKS --
+  'WASH TRADING MAKES FAKE VOLUME.',
+  'SAME WALLETS TRADING = RED FLAG.',
+  'CHART LOOKS NICE? CHECK THE SELLERS.',
+  'VOLUME WITHOUT HOLDERS = BOTS.',
+  'MICROBUY BOTS FAKE ORGANIC GROWTH.',
+  'IDENTICAL TX SIZES = MANIPULATION.',
+  'NEW WALLET, INSTANT BUY = BUNDLED.',
+  'CHECK TX HISTORY, NOT JUST CHART.',
+  'GREEN CANDLES LIE. WALLETS DON\'T.',
+  'BIRDEYE.SO SHOWS WHO HOLDS WHAT.',
+  'DEXSCREENER: CHECK LP LOCK STATUS.',
+  // -- TIMING & BEHAVIOR --
+  'WAIT 30 MIN AFTER LAUNCH. MINIMUM.',
+  'BUY AFTER RAYDIUM LISTING. SAFER.',
+  'TAKE PROFIT AT 2X. ALWAYS.',
+  'NEVER GO ALL-IN ON A MEME COIN.',
+  'SET A LOSS LIMIT. STICK TO IT.',
+  'IF IT 10X IN 5 MIN — IT WILL -90% SOON.',
+  'THE FASTER THE PUMP, THE HARDER THE DUMP.',
+  'SELL HALF AT 2X. LET THE REST RIDE.',
+  'DON\'T AVERAGE DOWN ON RUGS.',
+  'PATIENCE > FOMO. EVERY. SINGLE. TIME.',
+  'PANIC SELL LOSES LESS THAN RUG.',
+  'EARLY = PROFIT. LATE = BAG.',
+  // -- HOLDER BEHAVIOR --
+  'DIAMOND HANDS ON RUGS = EMPTY HANDS.',
+  'HODLING A RUG IS NOT BASED.',
+  'KNOW WHEN TO CUT LOSSES.',
+  '"WAGMI" FROM DEVS = THEY\'VE EXITED.',
+  '"STILL BULLISH" = THEY ARE DUMPING.',
+  'CHECK IF DEV HAS PAST RUGS.',
+  'CREATOR WALLET HISTORY TELLS ALL.',
+  'ANON DEV + BIG PROMISES = RED FLAG.',
+  'DOXXED DEV ≠ SAFE TOKEN. VERIFY.',
+  'TEAM ALLOCATION = FUTURE DUMP.',
+  // -- SOLANA SPECIFIC --
+  'SOLANA FEES ARE LOW. SCAM COSTS TOO.',
+  'PUMP.FUN BONDING CURVE: DEV EXITS AT 100%.',
+  'RAYDIUM LISTING ≠ LEGITIMACY.',
+  'PROGRAM UPGRADE AUTH? CHECK IT.',
+  'MULTISIG ≠ SAFE WITHOUT TRANSPARENCY.',
+  'SOLSCAN: ALWAYS CHECK TOKEN PAGE.',
+  'RENT EXEMPT ACCOUNTS CAN HIDE SUPPLY.',
+  'SPL TOKENS ARE EASY TO CLONE.',
+  // -- J33T ORIGINAL LESSONS --
+  'J33T WAS BORN JAN 2009. SHE WAITS.',
+  'EVEN GOOD GIRLS DON\'T BUY THE TOP.',
+  'WOOF = NO TO RUGS. ALWAYS.',
+  'J33T NEVER DMs. IF SHE DOES — FAKE.',
+  'SMALL DOG. BIG LESSON.',
+  'BORN BEFORE DEFI. WISER THAN DEFI.',
+  'THE BLOCKCHAIN NEVER FORGETS.',
+  'HOLD WHAT YOU BELIEVE IN.',
+  'REAL UTILITY = REAL VALUE.',
+  'J33T APPROVED: DYOR ALWAYS.',
+  'NOT YOUR KEYS. NOT YOUR KIBBLE.',
+  'PATIENCE IS THE ONLY ALPHA.',
+  // -- MINDSET --
+  'ONLY RISK WHAT YOU CAN LOSE.',
+  'GREED BUILT THIS CASINO.',
+  'FEAR AND GREED INDEX: IGNORE IT.',
+  'DYOR: DO YOUR OWN RESEARCH.',
+  'NFA = NOT FINANCIAL ADVICE. EVER.',
+  'CRYPTO IS HIGH RISK. ALWAYS.',
+  'DIVERSIFY. NEVER ALL-IN ON MEMES.',
+  'PAST PERFORMANCE ≠ FUTURE RESULTS.',
+  '"TRUST ME BRO" IS NOT DUE DILIGENCE.',
+  'LEARN BEFORE YOU EARN.',
+  'MISTAKES ARE TUITION FEES IN CRYPTO.',
+  'THE HOUSE (DEV) ALWAYS WINS. UNLESS...',
+  'KNOWLEDGE IS YOUR BEST PROTECTION.',
+  'SKEPTICISM IS A FEATURE, NOT A BUG.',
+  // -- SHORT PUNCHY --
+  'NOT FINANCIAL ADVICE.',
+  'DYOR. ALWAYS.',
+  'TOOLS FIRST. VIBES SECOND.',
+  'VERIFY EVERYTHING.',
+  'TRUST NO ONE. CHECK THE CHAIN.',
+  'IF IN DOUBT — DON\'T.',
+  'DO THE WORK. SKIP THE FOMO.',
+  'PAPER HANDS LIVE ANOTHER DAY.',
+  'THE EXIT IS PART OF THE PLAN.',
+  'PROFIT EXISTS ONLY WHEN TAKEN.',
+  'RED FLAG = EXIT FLAG.',
+  'SLOW DOWN. READ THE CONTRACT.',
+  'ASK: WHO BENEFITS FROM MY BUY?',
+  'NO LP = NO TRADE. SKIP.',
+  'CHECK BEFORE YOU WRECK.',
+  // -- PUMP & DUMP MECHANICS --
+  'PUMP: INSIDERS EXIT ON YOUR ENTRY.',
+  'DUMP: HAPPENS WHEN YOU LEAST EXPECT.',
+  'COORDINATED SHILLS = COORDINATED EXIT.',
+  'IF EVERYONE\'S BUYING — ASK WHY.',
+  'MARKET MAKERS EXIST TO TAKE YOUR SOL.',
+  'SLIPPAGE TOLERANCE ≠ SAFETY NET.',
+  'PRICE ACTION LAGS INSIDER MOVES.',
+  'SMALL CAP ≠ UNDERVALUED.',
+  'LOW LIQUIDITY = HIGH PRICE IMPACT.',
+  'SNIPER BOTS FRONT-RUN YOUR BUY.',
+  // -- COMMUNITY RED FLAGS --
+  'REAL COMMUNITIES GROW SLOW.',
+  'MOD BANS QUESTIONS = BIG RED FLAG.',
+  'NO QUESTIONS ALLOWED = EXIT NOW.',
+  '"CHILL GUYS" IN TG = PAID MODS.',
+  'CHANNEL WITH 50K = MOSTLY BOTS.',
+  'COPIED ROADMAP = COPIED SCAM.',
+  'LOGO STOLEN FROM ELSEWHERE? SKIP.',
+  'LAUNCHING FAST = NO TIME TO CHECK.',
+  '"STEALTH LAUNCH" = NO TRANSPARENCY.',
+  'WHITELIST FOR EARLY ACCESS = RUG PREP.',
+  // -- META / FUNNY BUT TRUE --
+  'IF J33T CAN\'T VERIFY IT — SKIP IT.',
+  'SHE SURVIVED 16 YEARS. LEARN FROM HER.',
+  'YORKSHIRE TERRIER > MOST DEGENS.',
+  'J33T HOLDS LONGER THAN YOUR AVG DEV.',
+  'THIS CARD = MORE ALPHA THAN YOUR FEED.',
+  'WOOF IN DEFI MEANS NO RUGS ALLOWED.',
+  'EVEN YORKIE-SIZED BAGS MATTER.',
+  'SMALL DOG. MASSIVE DUE DILIGENCE.',
+  'SHE SNIFFS OUT RUGS. CAN YOU?',
+  'THE GOOD GIRL NEVER FOMO\'D.',
+  'BORN IN 2009: PRE-DATES MOST SCAMS.',
+  'J33T: PROOF THAT PATIENCE PAYS.',
+  'HER NOSE KNOWS A RUG BEFORE CHART.',
+  'ASK YOURSELF: WOULD J33T BUY THIS?',
+  // -- TOOLS --
+  'RUGCHECK.XYZ: USE BEFORE EVERY BUY.',
+  'BIRDEYE.SO: SEE WHO REALLY HOLDS.',
+  'SOLSCAN: YOUR CONTRACT TRUTH FINDER.',
+  'DEXSCREENER: CHECK LP, VOLUME, AGE.',
+  'HONEYPOT.IS: TEST BEFORE YOU ENTER.',
+  'BUBBLEMAPS: VISUALIZE WALLET LINKS.',
+  'CHECK BUBBLEMAPS FOR HOLDER CLUSTERS.',
+  'FLINTR.IO: SPOT BUNDLED LAUNCHES.',
+  'CIELO FINANCE: TRACK SMART MONEY.',
+  'ON-CHAIN = TRUTH. REST IS OPINION.',
+  // -- EXTRA WISDOM --
+  'NEVER APE INTO ANYTHING. EVER.',
+  'IF YOU\'RE LATE, THE PUMP IS OVER.',
+  'MCAP IS FULLY DILUTED? CHECK FDV.',
+  'FDV >> MCAP = FUTURE DUMP INCOMING.',
+  'VESTING SCHEDULE EXISTS? READ IT.',
+  'UNLOCK DATE = POTENTIAL DUMP DATE.',
+  'TOKEN AGE < 24H? EXTREME CAUTION.',
+  'NO AUDIT = NO ACCOUNTABILITY.',
+  'AUDIT BY UNKNOWN FIRM = WORTHLESS.',
+  '"SAFU" MEANS NOTHING WITHOUT PROOF.',
+  'CZ SAID FUNDS ARE SAFU. THEN FTX.',
+  'FTX HAPPENED. REMEMBER FTX.',
+  'LUNA HAPPENED. REMEMBER LUNA.',
+  'HISTORY RHYMES IN CRYPTO. LEARN IT.',
+  'EVERY CYCLE HAS THE SAME SCAMS.',
+  'NEW NAMES. SAME OLD RUG MECHANICS.',
+  'CRYPTO WINTER EXPOSES ALL RUGS.',
+  'BEAR MARKET TRUTH: MOST WERE SCAMS.',
+  'BULL MARKET HIDES EVERYTHING. CAREFUL.',
+  'IN BULL MARKET, IDIOTS LOOK SMART.',
+  'VOLATILITY ≠ OPPORTUNITY. SOMETIMES = TRAP.',
+  'LEVERAGE IN MEMES = LIQUIDATION SOON.',
+  'STOP LOSS IS NOT WEAKNESS.',
+  'SIZE YOUR POSITION LIKE IT COULD ZERO.',
+  'ONE BAG AT A TIME. NEVER ALL IN.',
+];
+
+function getRandomCardTip() {
+  return cardTips[Math.floor(Math.random() * cardTips.length)];
+}
+
+// Initial card titles (replace GOOD GIRL CERTIFIED etc.)
+const cardInitTitles = [
+  'WOOF CERTIFIED',
+  'ON-CHAIN VERIFIED',
+  'DYOR OR DIE',
+  'RUG-PROOF YORKIE',
+  'BASED & VERIFIED',
+  'HOLD OR FOLD',
+  '100% GOOD GIRL',
+];
+
 let currentThemeIdx = 0;
 let cardAnimFrame = null;
 let cardHoloTimeout = null;
 
-// Random titles for the random button
 const randomTitles = [
-  ['DIAMOND PAWS', 'HODLER SINCE 2009'],
-  ['GOOD BOY CERTIFIED', 'VERIFIED ON-CHAIN'],
-  ['PAPER HANDS? NEVER', 'BORN JAN 2009'],
+  ['WOOF CERTIFIED', 'DIAMOND PAWS ACTIVATED'],
+  ['DYOR OR REKT', 'CHECK BEFORE YOU BUY'],
+  ['ON-CHAIN VERIFIED', 'BORN JAN 2009'],
+  ['PAPER HANDS? NEVER', 'SOLANA NATIVE YORKIE'],
   ['NOT YOUR KEYS', 'NOT YOUR KIBBLE'],
   ['STILL NOT SELLING', 'NGMI IF YOU SELL'],
-  ['DEV SOLD?', 'NOPE. GOOD BOY.'],
+  ['DEV SOLD?', 'NOPE. GOOD GIRL.'],
   ['WOOF WOOF WOOF', 'TO THE MOON 🌕'],
   ['MINT AUTH REVOKED', 'UNLIKE YOUR LAST RUG'],
   ['OG YORKIE', 'SOLANA CHAIN GANG'],
   ['ZOOM OUT', 'ZOOM WAY OUT'],
+  ['RUG SNIFFED', 'J33T APPROVES NOT'],
+  ['HODL STRONG', 'SHE NEVER FOMO\'D'],
+  ['DIAMOND PAWS', 'HODLER SINCE 2009'],
 ];
 
 // ── RARITY TIERS (7 szint, egyedi vizuálokkal) ──────────────────
 const rarities = [
   { name: 'COMMON',    emoji: '🐾', color: '#6b6b88', glow: '#6b6b88', stars: 1, chance: 0.50,
-    desc: 'Every good boy starts somewhere.',        themeClass: '' },
+    desc: 'Every good girl starts somewhere.',        themeClass: '' },
   { name: 'UNCOMMON',  emoji: '🦴', color: '#00ffaa', glow: '#00ffaa', stars: 2, chance: 0.25,
     desc: 'A treat well earned.',                    themeClass: '' },
   { name: 'RARE',      emoji: '💜', color: '#7b61ff', glow: '#9b81ff', stars: 3, chance: 0.12,
@@ -2867,7 +3229,7 @@ const rarities = [
 const holderTiers = [
   { min: 0,         label: 'NO WALLET',       limit: 1,        color: '#6b6b88', icon: '🐾' },
   { min: 100000,    label: 'PUPPY TIER',       limit: 2,        color: '#00ffaa', icon: '🦴' },
-  { min: 300000,    label: 'GOOD BOY TIER',    limit: 3,        color: '#7b61ff', icon: '💜' },
+  { min: 300000,    label: 'GOOD GIRL TIER',    limit: 3,        color: '#7b61ff', icon: '💜' },
   { min: 1000000,   label: 'DIAMOND PAWS',     limit: 4,        color: '#f5c842', icon: '💎' },
   { min: 5000000,   label: 'ALPHA DOG 👑',     limit: 5,        color: '#ff4466', icon: '👑' },
 ];
@@ -3004,18 +3366,18 @@ function showRarityReveal(rarity, onDone) {
 }
 
 function drawCard(line1, line2, themeIdx, rarity, egg) {
-  const W = 320, H = 420;
+  const W = 320, H = 460;
   const ctx = cardCtx;
   const t = cardThemes[themeIdx % cardThemes.length];
   const r = rarity || rarities[0];
 
   // — Apply easter egg overrides
-  const activeBg   = egg?.bgOverride   || [t.bg1, t.bg2];
-  const activeDogC = egg?.dogColors    || cardDogColors;
-  const activeTitle    = egg?.titleOverride    || (line1 || 'GOOD BOY');
-  const activeSubtitle = egg?.subtitleOverride || (line2 || 'BORN JAN 2009 · SOLANA');
-  const displayTitle    = (activeTitle + (egg?.titleSuffix || '')).toUpperCase();
-  const displaySubtitle = activeSubtitle.toUpperCase();
+  const activeBg   = egg?.bgOverride || [t.bg1, t.bg2];
+  const activeDogC = egg?.dogColors  || cardDogColors;
+  const activeTitle    = egg?.titleOverride    || (line1 || 'WOOF CERTIFIED');
+  // Subtitle: easter egg override OR random tip (ignore line2 input for tip slot)
+  const activeTip = egg?.subtitleOverride || getRandomCardTip();
+  const displayTitle = (activeTitle + (egg?.titleSuffix || '')).toUpperCase();
 
   ctx.clearRect(0, 0, W, H);
 
@@ -3031,7 +3393,7 @@ function drawCard(line1, line2, themeIdx, rarity, egg) {
   ctx.fillStyle = 'rgba(0,0,0,0.12)';
   for (let sy = 0; sy < H; sy += 4) ctx.fillRect(0, sy, W, 1);
 
-  // — Rarity-specific border (drawn FIRST, then content on top)
+  // — Rarity border
   drawRarityBorder(ctx, W, H, r, egg);
 
   // — Top header bar
@@ -3056,7 +3418,7 @@ function drawCard(line1, line2, themeIdx, rarity, egg) {
   ctx.fillText(r.name, W - 22, 32);
   ctx.shadowBlur = 0;
 
-  // — Stars (7 max, solid★ + outline✦)
+  // — Stars
   ctx.font = r.stars >= 6 ? '11px sans-serif' : '10px sans-serif';
   ctx.textAlign = 'right';
   ctx.fillStyle = r.color;
@@ -3066,8 +3428,8 @@ function drawCard(line1, line2, themeIdx, rarity, egg) {
   ctx.shadowBlur = 0;
 
   // — Dog art area
-  const dogAreaY = 60, dogAreaH = 220;
-  const dogAreaGrad = ctx.createRadialGradient(W/2, dogAreaY + dogAreaH/2, 10, W/2, dogAreaY + dogAreaH/2, 140);
+  const dogAreaY = 60, dogAreaH = 200;
+  const dogAreaGrad = ctx.createRadialGradient(W/2, dogAreaY + dogAreaH/2, 10, W/2, dogAreaY + dogAreaH/2, 130);
   dogAreaGrad.addColorStop(0, (egg?.borderColor || t.accent) + '22');
   dogAreaGrad.addColorStop(1, 'transparent');
   ctx.fillStyle = dogAreaGrad;
@@ -3096,19 +3458,15 @@ function drawCard(line1, line2, themeIdx, rarity, egg) {
     }
   });
 
-  // — Laser eyes easter egg
+  // — Laser eyes
   if (egg?.extraDraw === 'laserEyes') {
     const eyeY = dogY + 8 * dogScale + dogScale/2;
-    const eye1X = dogX + 5 * dogScale;
-    const eye2X = dogX + 8 * dogScale;
-    [eye1X, eye2X].forEach(ex => {
+    [dogX + 5*dogScale, dogX + 8*dogScale].forEach(ex => {
       ctx.shadowColor = '#ff2200'; ctx.shadowBlur = 12;
       ctx.fillStyle = '#ff2200';
       ctx.fillRect(ex, eyeY, dogScale, dogScale);
-      // beam
-      const beamGrad = ctx.createLinearGradient(ex, eyeY, ex + 60, eyeY + 40);
-      beamGrad.addColorStop(0, '#ff2200cc');
-      beamGrad.addColorStop(1, '#ff220000');
+      const beamGrad = ctx.createLinearGradient(ex, eyeY, ex+60, eyeY+40);
+      beamGrad.addColorStop(0, '#ff2200cc'); beamGrad.addColorStop(1, '#ff220000');
       ctx.fillStyle = beamGrad;
       ctx.fillRect(ex, eyeY + dogScale/3, 60, dogScale/3);
       ctx.shadowBlur = 0;
@@ -3116,21 +3474,21 @@ function drawCard(line1, line2, themeIdx, rarity, egg) {
   }
 
   // — Glow under dog
-  const glowGrad = ctx.createRadialGradient(W/2, dogAreaY+dogAreaH-10, 5, W/2, dogAreaY+dogAreaH, 80);
+  const glowGrad = ctx.createRadialGradient(W/2, dogAreaY+dogAreaH-10, 5, W/2, dogAreaY+dogAreaH, 70);
   glowGrad.addColorStop(0, (egg?.borderColor || t.accent) + '55');
   glowGrad.addColorStop(1, 'transparent');
   ctx.fillStyle = glowGrad;
-  ctx.fillRect(14, dogAreaY+dogAreaH-40, W-28, 60);
+  ctx.fillRect(14, dogAreaY+dogAreaH-30, W-28, 50);
 
   // — Divider
   ctx.strokeStyle = (egg?.borderColor || t.accent) + '55';
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(22, dogAreaY+dogAreaH+10); ctx.lineTo(W-22, dogAreaY+dogAreaH+10);
+  ctx.moveTo(22, dogAreaY+dogAreaH+8); ctx.lineTo(W-22, dogAreaY+dogAreaH+8);
   ctx.stroke();
 
   // — Title
-  const titleY = dogAreaY + dogAreaH + 38;
+  const titleY = dogAreaY + dogAreaH + 32;
   ctx.textAlign = 'center';
   ctx.fillStyle = t.text;
   ctx.shadowColor = egg?.borderColor || t.accent;
@@ -3138,14 +3496,15 @@ function drawCard(line1, line2, themeIdx, rarity, egg) {
   fitText(ctx, displayTitle, W/2, titleY, W - 44, 13);
   ctx.shadowBlur = 0;
 
-  // — Subtitle
-  ctx.font = '9px "Space Mono"';
-  ctx.fillStyle = egg?.borderColor || t.accent;
+  // — Tip / subtitle (wraps to 2 lines if long)
+  const tipY = titleY + 22;
+  const tipColor = egg?.borderColor || t.accent;
+  ctx.fillStyle = tipColor;
   ctx.textAlign = 'center';
-  fitText(ctx, displaySubtitle, W/2, titleY + 26, W - 44, 9);
+  drawWrappedTip(ctx, activeTip, W/2, tipY, W - 36, 8);
 
   // — Stats bar
-  const statsY = titleY + 52;
+  const statsY = tipY + 42;
   const statItems = [
     { label: 'BORN',  val: '01/2009' },
     { label: 'CHAIN', val: 'SOLANA'  },
@@ -3168,73 +3527,105 @@ function drawCard(line1, line2, themeIdx, rarity, egg) {
     }
   });
 
-  // — Bottom bar
-  const botY = statsY + 40;
+  // — Bottom logo bar
+  const botY = statsY + 36;
   const botGrad = ctx.createLinearGradient(0, botY, W, botY);
   botGrad.addColorStop(0, (egg?.borderColor || t.accent) + '22');
   botGrad.addColorStop(0.5, (egg?.borderColor || t.accent) + '44');
   botGrad.addColorStop(1, (egg?.borderColor || t.accent) + '22');
   ctx.fillStyle = botGrad;
-  ctx.fillRect(14, botY, W-28, 28);
+  ctx.fillRect(14, botY, W-28, 26);
 
-  // — $J33T bottom left
   ctx.font = 'bold 10px "Press Start 2P"';
   ctx.textAlign = 'left';
   ctx.fillStyle = t.badge || t.accent;
-  ctx.shadowColor = t.badge || t.accent;
-  ctx.shadowBlur = 8;
-  ctx.fillText('$J33T', 24, botY + 19);
+  ctx.shadowColor = t.badge || t.accent; ctx.shadowBlur = 8;
+  ctx.fillText('$J33T', 24, botY + 18);
   ctx.shadowBlur = 0;
 
-  // — Theme name bottom center
   ctx.font = '7px "Space Mono"';
   ctx.textAlign = 'center';
   ctx.fillStyle = t.text + '88';
-  ctx.fillText(t.name + ' EDITION', W/2, botY + 19);
+  ctx.fillText(t.name + ' EDITION', W/2, botY + 18);
 
-  // — Edition # (fingerprint from hash, set async below)
   ctx.font = '7px "Press Start 2P"';
   ctx.textAlign = 'right';
   ctx.fillStyle = (egg?.borderColor || t.accent) + 'bb';
-  ctx.fillText('#' + cardCanvas.dataset.fp || '#----', W - 24, botY + 19);
+  ctx.fillText('#' + (cardCanvas.dataset.fp || '----'), W - 24, botY + 18);
 
-  // — SHA-256 hash line (async, drawn after)
-  const hashInput = [line1, line2, themeIdx, r.name, Date.now()].join('|');
+  // — SHA-256 hash strip (visible, dedicated zone)
+  const hashZoneY = botY + 30;
+  const hashZoneH = 34;
+
+  // Hash zone background
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  roundRect(ctx, 10, hashZoneY, W-20, hashZoneH, 4);
+  ctx.fill();
+
+  // Hash zone border
+  ctx.strokeStyle = (egg?.borderColor || t.accent) + '40';
+  ctx.lineWidth = 1;
+  roundRect(ctx, 10, hashZoneY, W-20, hashZoneH, 4);
+  ctx.stroke();
+
+  // Hash label left
+  ctx.font = '5px "Press Start 2P"';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = (egg?.borderColor || t.accent) + 'aa';
+  ctx.fillText('SHA256', 16, hashZoneY + 10);
+
+  // Hash value — drawn async below
+  ctx.font = '6px "Space Mono"';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.fillText('generating...', W/2, hashZoneY + 10);
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.fillText('................................', W/2, hashZoneY + 20);
+
+  // — Async SHA-256
+  const hashInput = [line1, activeTip, themeIdx, r.name, Date.now()].join('|');
   sha256(hashInput).then(hash => {
-    const fp = hash.slice(0, 4) + '-' + hash.slice(4, 8);
-    cardCanvas.dataset.fp = fp.toUpperCase();
     cardCanvas.dataset.hash = hash;
+    const fp = hash.slice(0,4).toUpperCase() + '-' + hash.slice(4,8).toUpperCase();
+    cardCanvas.dataset.fp = fp;
 
-    // Re-draw bottom bar cleanly then write hash
-    ctx.fillStyle = botGrad;
-    ctx.fillRect(14, botY, W-28, 28);
+    const accentColor = egg?.borderColor || t.accent;
 
-    // $J33T re-draw
-    ctx.font = 'bold 10px "Press Start 2P"';
+    // Clear and redraw hash zone only
+    ctx.clearRect(10, hashZoneY - 1, W - 20, hashZoneH + 2);
+
+    // Background
+    ctx.fillStyle = 'rgba(0,0,0,0.60)';
+    roundRect(ctx, 10, hashZoneY, W-20, hashZoneH, 4);
+    ctx.fill();
+
+    // Border
+    ctx.strokeStyle = accentColor + '50';
+    ctx.lineWidth = 1;
+    roundRect(ctx, 10, hashZoneY, W-20, hashZoneH, 4);
+    ctx.stroke();
+
+    // SHA256 label
+    ctx.font = '5px "Press Start 2P"';
     ctx.textAlign = 'left';
-    ctx.fillStyle = t.badge || t.accent;
-    ctx.shadowColor = t.badge || t.accent; ctx.shadowBlur = 8;
-    ctx.fillText('$J33T', 24, botY + 19);
-    ctx.shadowBlur = 0;
+    ctx.fillStyle = accentColor + 'cc';
+    ctx.fillText('SHA256', 16, hashZoneY + 10);
 
-    // Theme center re-draw
-    ctx.font = '7px "Space Mono"';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = t.text + '88';
-    ctx.fillText(t.name + ' EDITION', W/2, botY + 19);
-
-    // Fingerprint right
-    ctx.font = '7px "Press Start 2P"';
+    // Fingerprint right side of label row
+    ctx.font = '5px "Press Start 2P"';
     ctx.textAlign = 'right';
-    ctx.fillStyle = (egg?.borderColor || t.accent) + 'bb';
-    ctx.fillText('#' + fp.toUpperCase(), W - 24, botY + 19);
+    ctx.fillStyle = accentColor + 'cc';
+    ctx.fillText('#' + fp, W - 16, hashZoneY + 10);
 
-    // — Hash strip below bottom bar
-    const hashY = botY + 32;
-    ctx.font = '5px "Space Mono"';
+    // Hash row 1
+    ctx.font = '5.5px "Space Mono"';
     ctx.textAlign = 'center';
-    ctx.fillStyle = 'rgba(255,255,255,0.2)';
-    ctx.fillText(hash.slice(0, 64), W/2, hashY);
+    ctx.fillStyle = 'rgba(255,255,255,0.60)';
+    ctx.fillText(hash.slice(0, 32), W/2, hashZoneY + 20);
+
+    // Hash row 2
+    ctx.fillStyle = 'rgba(255,255,255,0.40)';
+    ctx.fillText(hash.slice(32, 64), W/2, hashZoneY + 28);
   });
 }
 
@@ -3311,6 +3702,34 @@ function drawRarityBorder(ctx, W, H, r, egg) {
   }
 }
 
+// Draws tip text wrapping to max 2 lines, 8px Space Mono
+function drawWrappedTip(ctx, text, x, y, maxW, fontSize) {
+  ctx.font = `${fontSize}px "Space Mono"`;
+  const words = text.split(' ');
+  let line1 = '', line2 = '';
+  for (const w of words) {
+    const test = line1 ? line1 + ' ' + w : w;
+    if (ctx.measureText(test).width <= maxW) {
+      line1 = test;
+    } else {
+      if (!line2) { line2 = w; }
+      else {
+        const t2 = line2 + ' ' + w;
+        if (ctx.measureText(t2).width <= maxW) line2 = t2;
+        // else truncate silently
+      }
+    }
+  }
+  ctx.textAlign = 'center';
+  if (line2) {
+    ctx.fillText(line1, x, y);
+    ctx.fillStyle = ctx.fillStyle; // keep color
+    ctx.fillText(line2, x, y + fontSize + 3);
+  } else {
+    ctx.fillText(line1, x, y + fontSize/2);
+  }
+}
+
 function fitText(ctx, text, x, y, maxW, baseSize) {
   let size = baseSize;
   ctx.font = `bold ${size}px "Press Start 2P"`;
@@ -3368,7 +3787,7 @@ function _doGenerate(l1, l2) {
   lastRarity = rarity; lastEgg = egg;
 
   showRarityReveal(rarity, () => {
-    drawCard(l1, l2, currentThemeIdx, rarity, egg);
+    drawCard(l1, '', currentThemeIdx, rarity, egg);
     triggerHolo(rarity, egg);
     if (rarity.stars <= 2) {
       const msgs = { COMMON:'📦 Common.', UNCOMMON:'🦴 Uncommon!' };
@@ -3382,18 +3801,14 @@ function _doGenerate(l1, l2) {
 
 function generateCard() {
   currentThemeIdx = (currentThemeIdx + 1) % cardThemes.length;
-  _doGenerate(
-    document.getElementById('cardLine1').value,
-    document.getElementById('cardLine2').value
-  );
+  _doGenerate(document.getElementById('cardLine1').value, '');
 }
 
 function randomCard() {
   const pick = randomTitles[Math.floor(Math.random() * randomTitles.length)];
   document.getElementById('cardLine1').value = pick[0];
-  document.getElementById('cardLine2').value = pick[1];
   currentThemeIdx = Math.floor(Math.random() * cardThemes.length);
-  _doGenerate(pick[0], pick[1]);
+  _doGenerate(pick[0], '');
 }
 
 function saveCard() {
@@ -3424,14 +3839,14 @@ cardCanvas.addEventListener('click', () => {
   currentThemeIdx = (currentThemeIdx + 1) % cardThemes.length;
   drawCard(
     document.getElementById('cardLine1').value,
-    document.getElementById('cardLine2').value,
+    '',
     currentThemeIdx, lastRarity, lastEgg
   );
   triggerHolo(lastRarity, lastEgg);
 });
 
 // Init
-drawCard('GOOD BOY CERTIFIED', 'BORN JAN 2009 · SOLANA', 0, rarities[1]);
+drawCard('WOOF CERTIFIED', '', 0, rarities[1]);
 updateCardLimitUI();
 // ============================================================
 // SCROLL REVEAL
@@ -3442,7 +3857,7 @@ document.getElementById('walletModal').addEventListener('click', function(e) {
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity=1; e.target.style.transform='translateY(0)'; } });
 }, { threshold: 0.08 });
-document.querySelectorAll('section, .safety-section, .pumpfun-section, .tokenomics-grid, .gate-grid, .safety-grid, .crossed-grid, .real-tokenomics').forEach(el => {
+document.querySelectorAll('section:not(#about), .safety-section, .pumpfun-section, .tokenomics-grid, .gate-grid, .safety-grid, .crossed-grid, .real-tokenomics').forEach(el => {
   el.style.opacity=0; el.style.transform='translateY(28px)';
   el.style.transition='opacity 0.7s ease, transform 0.7s ease';
   observer.observe(el);
