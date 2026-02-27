@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RUG OR NOT — J33T</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Press+Start+2P&display=swap');
+
+  :root {
+    --bg: #07080d;
+    --surface: #0d0f1a;
+    --surface2: #12151f;
+    --gold: #f5c842;
+    --green: #00ffaa;
+    --red: #ff3355;
+    --purple: #7b61ff;
+    --muted: #4a5068;
+    --text: #e8eaf0;
+    --pixel: 'Press Start 2P', monospace;
+    --mono: 'Share Tech Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 80px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(245,200,66,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,200,66,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 680px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .header-label {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--purple);
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+    opacity: 0.8;
+  }
+
+  .header-title {
+    font-family: var(--pixel);
+    font-size: clamp(18px, 5vw, 32px);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .header-title .rug { color: var(--red); text-shadow: 0 0 20px rgba(255,51,85,0.5); }
+  .header-title .or  { color: var(--muted); }
+  .header-title .not { color: var(--green); text-shadow: 0 0 20px rgba(0,255,170,0.5); }
+
+  .header-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+
+  .dog-icon {
+    font-size: 32px;
+    display: block;
+    margin-bottom: 16px;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  /* Input area */
+  .input-card {
+    background: var(--surface);
+    border: 1px solid rgba(245,200,66,0.15);
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+
+  .input-label {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .addr-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid rgba(245,200,66,0.2);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+    min-width: 0;
+  }
+
+  .addr-input::placeholder { color: var(--muted); }
+  .addr-input:focus { border-color: var(--gold); }
+
+  .scan-btn {
+    background: var(--gold);
+    border: none;
+    color: var(--bg);
+    font-family: var(--pixel);
+    font-size: 7px;
+    padding: 12px 16px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .scan-btn:hover { background: #ffe066; }
+  .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .example-tokens {
+    margin-top: 14px;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .example-tokens span {
+    color: var(--purple);
+    cursor: pointer;
+    transition: color 0.2s;
+    font-size: 9px;
+  }
+  .example-tokens span:hover { color: var(--gold); }
+
+  /* Loading */
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 40px;
+    background: var(--surface);
+    border: 1px solid rgba(245,200,66,0.1);
+    margin-bottom: 24px;
+  }
+
+  .loading.active { display: block; }
+
+  .loading-dog {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 16px;
+    animation: sniff 0.6s ease-in-out infinite alternate;
+  }
+
+  @keyframes sniff {
+    from { transform: rotate(-5deg) scale(1); }
+    to   { transform: rotate(5deg) scale(1.05); }
+  }
+
+  .loading-text {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--gold);
+    letter-spacing: 2px;
+  }
+
+  .loading-dots::after {
+    content: '';
+    animation: dots 1.5s steps(4) infinite;
+  }
+  @keyframes dots {
+    0%   { content: ''; }
+    25%  { content: '.'; }
+    50%  { content: '..'; }
+    75%  { content: '...'; }
+    100% { content: ''; }
+  }
+
+  /* Result card */
+  .result {
+    display: none;
+    margin-bottom: 24px;
+  }
+  .result.active { display: block; }
+
+  .verdict-banner {
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 2px;
+  }
+
+  .verdict-banner.rug {
+    background: rgba(255,51,85,0.12);
+    border: 1px solid rgba(255,51,85,0.4);
+    border-bottom: none;
+  }
+
+  .verdict-banner.safe {
+    background: rgba(0,255,170,0.08);
+    border: 1px solid rgba(0,255,170,0.35);
+    border-bottom: none;
+  }
+
+  .verdict-banner.caution {
+    background: rgba(245,200,66,0.08);
+    border: 1px solid rgba(245,200,66,0.35);
+    border-bottom: none;
+  }
+
+  .verdict-emoji { font-size: 36px; flex-shrink: 0; }
+
+  .verdict-text-wrap { flex: 1; }
+
+  .verdict-label {
+    font-family: var(--pixel);
+    font-size: 7px;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    opacity: 0.7;
+  }
+
+  .verdict-main {
+    font-family: var(--pixel);
+    font-size: clamp(12px, 3vw, 18px);
+    line-height: 1.5;
+  }
+
+  .verdict-banner.rug  .verdict-main { color: var(--red); }
+  .verdict-banner.safe .verdict-main { color: var(--green); }
+  .verdict-banner.caution .verdict-main { color: var(--gold); }
+
+  .risk-score {
+    font-family: var(--pixel);
+    font-size: 24px;
+    flex-shrink: 0;
+    text-align: center;
+    line-height: 1;
+  }
+  .risk-score small {
+    display: block;
+    font-size: 6px;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  /* Data grid */
+  .data-grid {
+    background: var(--surface);
+    border: 1px solid rgba(245,200,66,0.1);
+    border-top: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background-color: rgba(245,200,66,0.06);
+    margin-bottom: 2px;
+  }
+
+  .data-cell {
+    background: var(--surface);
+    padding: 14px 16px;
+  }
+
+  .data-cell-label {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+  }
+
+  .data-cell-value {
+    font-family: var(--pixel);
+    font-size: 9px;
+    line-height: 1.4;
+  }
+
+  .ok    { color: var(--green); }
+  .warn  { color: var(--gold); }
+  .bad   { color: var(--red); }
+  .na    { color: var(--muted); }
+
+  /* J33T's take */
+  .jeet-take {
+    background: var(--surface);
+    border: 1px solid rgba(123,97,255,0.25);
+    border-top: none;
+    padding: 24px 28px;
+  }
+
+  .jeet-take-header {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--purple);
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .jeet-take-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.9;
+    white-space: pre-wrap;
+  }
+
+  .nfa-tag {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 9px;
+    color: var(--muted);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 4px 10px;
+  }
+
+  /* Red flags list */
+  .flags-section {
+    background: var(--surface);
+    border: 1px solid rgba(255,51,85,0.15);
+    border-top: none;
+    padding: 18px 28px;
+  }
+
+  .flags-title {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--red);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+
+  .flag-item {
+    font-size: 11px;
+    color: var(--text);
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    gap: 10px;
+  }
+  .flag-item:last-child { border-bottom: none; }
+  .flag-item .flag-icon { flex-shrink: 0; }
+
+  /* Error */
+  .error-box {
+    display: none;
+    background: rgba(255,51,85,0.07);
+    border: 1px solid rgba(255,51,85,0.3);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    font-size: 12px;
+    color: var(--red);
+  }
+  .error-box.active { display: block; }
+
+  /* Footer */
+  .footer-note {
+    text-align: center;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-top: 8px;
+  }
+
+  @media (max-width: 520px) {
+    .input-row { flex-direction: column; }
+    .data-grid { grid-template-columns: 1fr; }
+    .verdict-banner { flex-wrap: wrap; }
+    .risk-score { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <span class="dog-icon">🐾</span>
+    <div class="header-label">// J33T PRESENTS</div>
+    <div class="header-title">
+      <span class="rug">RUG</span>
+      <span class="or"> OR </span>
+      <span class="not">NOT?</span>
+    </div>
+    <p class="header-sub">Paste a Solana token address. J33T sniffs it for red flags.</p>
+  </div>
+
+  <div class="input-card">
+    <label class="input-label">// TOKEN CONTRACT ADDRESS</label>
+    <div class="input-row">
+      <input
+        class="addr-input"
+        id="addrInput"
+        type="text"
+        placeholder="e.g. E2HNWS5L6gwmtC9SZPpRq6Yp3V5gzotFrL3dAEP2pump"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button class="scan-btn" id="scanBtn" onclick="startScan()">🔍 SNIFF</button>
+    </div>
+    <div class="example-tokens">
+      Try: 
+      <span onclick="loadExample('So11111111111111111111111111111111111111112')">SOL (safe)</span> · 
+      <span onclick="loadExample('E2HNWS5L6gwmtC9SZPpRq6Yp3V5gzotFrL3dAEP2pump')">$BUCKARU</span>
+    </div>
+  </div>
+
+  <div class="loading" id="loading">
+    <span class="loading-dog">🐶</span>
+    <div class="loading-text">J33T IS SNIFFING<span class="loading-dots"></span></div>
+  </div>
+
+  <div class="error-box" id="errorBox"></div>
+
+  <div class="result" id="result">
+    <div class="verdict-banner" id="verdictBanner">
+      <span class="verdict-emoji" id="verdictEmoji"></span>
+      <div class="verdict-text-wrap">
+        <div class="verdict-label">// J33T'S VERDICT</div>
+        <div class="verdict-main" id="verdictMain"></div>
+      </div>
+      <div class="risk-score" id="riskScore"></div>
+    </div>
+
+    <div class="data-grid" id="dataGrid"></div>
+
+    <div class="flags-section" id="flagsSection" style="display:none;">
+      <div class="flags-title">🚩 RED FLAGS DETECTED</div>
+      <div id="flagsList"></div>
+    </div>
+
+    <div class="jeet-take">
+      <div class="jeet-take-header">🐾 J33T'S TAKE — <span style="color:var(--muted)">AI ANALYSIS · NFA</span></div>
+      <div class="jeet-take-text" id="jeetTakeText"></div>
+      <div class="nfa-tag">⚠️ Not financial advice. This is a dog's opinion. DYOR always.</div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Data: DexScreener · Analysis: Claude AI · Character: J33T (born Jan 2009, Yorkshire Terrier)<br>
+    NFA · DYOR · J33T is a good girl but not a financial advisor
+  </div>
+
+</div>
+
+<script>
+function loadExample(addr) {
+  document.getElementById('addrInput').value = addr;
+  startScan();
+}
+
+async function startScan() {
+  const addr = document.getElementById('addrInput').value.trim();
+  if (!addr || addr.length < 32) {
+    showError('Please enter a valid Solana contract address (32+ characters).');
+    return;
+  }
+
+  setLoading(true);
+  hideError();
+  hideResult();
+
+  try {
+    // 1. Fetch on-chain data from DexScreener
+    const tokenData = await fetchTokenData(addr);
+
+    // 2. Ask Claude to analyze as J33T
+    const analysis = await askJeet(addr, tokenData);
+
+    // 3. Display
+    showResult(tokenData, analysis);
+  } catch(e) {
+    showError('Something went wrong: ' + e.message);
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function fetchTokenData(addr) {
+  const data = { addr, found: false, flags: [] };
+
+  try {
+    let pairs = [];
+
+    // Endpoint 1: /tokens/v1/solana/:address
+    try {
+      const r = await fetch(`https://api.dexscreener.com/tokens/v1/solana/${addr}`, { signal: AbortSignal.timeout(8000) });
+      const d = await r.json();
+      if (Array.isArray(d)) pairs = d;
+      else if (Array.isArray(d?.pairs)) pairs = d.pairs;
+    } catch(e) {}
+
+    // Endpoint 2: /latest/dex/tokens/:address
+    if (!pairs.length) {
+      try {
+        const r = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${addr}`, { signal: AbortSignal.timeout(8000) });
+        const d = await r.json();
+        if (Array.isArray(d?.pairs)) pairs = d.pairs;
+      } catch(e) {}
+    }
+
+    // Endpoint 3: /latest/dex/search?q=
+    if (!pairs.length) {
+      try {
+        const r = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${addr}`, { signal: AbortSignal.timeout(8000) });
+        const d = await r.json();
+        if (Array.isArray(d?.pairs)) {
+          const exact = d.pairs.filter(p => p.baseToken?.address?.toLowerCase() === addr.toLowerCase());
+          pairs = exact.length ? exact : d.pairs;
+        }
+      } catch(e) {}
+    }
+
+    if (pairs.length > 0) {
+      const pair = pairs.sort((a,b) => (b.liquidity?.usd||0) - (a.liquidity?.usd||0))[0];
+      data.found = true;
+      data.name      = pair.baseToken?.name || 'Unknown';
+      data.symbol    = pair.baseToken?.symbol || '???';
+      data.price     = pair.priceUsd ? parseFloat(pair.priceUsd) : null;
+      data.mcap      = pair.marketCap || null;
+      data.liquidity = pair.liquidity?.usd || null;
+      data.volume24h = pair.volume?.h24 || null;
+      data.change24h = pair.priceChange?.h24 || null;
+      data.change1h  = pair.priceChange?.h1 || null;
+      data.dex       = pair.dexId || null;
+      data.pairAge   = pair.pairCreatedAt ? Math.floor((Date.now() - pair.pairCreatedAt) / 86400000) : null;
+      data.buys24h   = pair.txns?.h24?.buys || 0;
+      data.sells24h  = pair.txns?.h24?.sells || 0;
+      data.pairUrl   = pair.url || null;
+
+      // Red flag analysis
+      if (data.liquidity !== null && data.liquidity < 10000) data.flags.push('Low liquidity (under $10k) — easy to manipulate price');
+      if (data.liquidity !== null && data.liquidity < 1000)  data.flags.push('Critically low liquidity (under $1k) — extreme rug risk');
+      if (data.pairAge !== null && data.pairAge < 2) data.flags.push('Token is less than 2 days old — very high risk');
+      if (data.change24h !== null && data.change24h < -50) data.flags.push(`Price dropped ${Math.abs(data.change24h).toFixed(0)}% in 24h — possible dump in progress`);
+      if (data.buys24h > 0 && data.sells24h > data.buys24h * 3) data.flags.push('Sells vastly outnumber buys — distribution pattern detected');
+      if (data.mcap && data.liquidity && (data.liquidity / data.mcap) < 0.02) data.flags.push('Liquidity is less than 2% of market cap — very thin floor');
+    } else {
+      data.found = false;
+      data.flags.push('Token not found on DexScreener after trying 3 endpoints');
+    }
+  } catch(e) {
+    data.fetchError = e.message;
+    data.flags.push('Could not fetch on-chain data: ' + e.message);
+  }
+
+  return data;
+}
+
+async function askJeet(addr, tokenData) {
+  const dataStr = tokenData.found ? `
+Token: ${tokenData.name} (${tokenData.symbol})
+Price: ${tokenData.price ? '$' + tokenData.price.toFixed(8) : 'unknown'}
+Market Cap: ${tokenData.mcap ? '$' + Math.round(tokenData.mcap).toLocaleString() : 'unknown'}
+Liquidity: ${tokenData.liquidity ? '$' + Math.round(tokenData.liquidity).toLocaleString() : 'unknown'}
+24h Volume: ${tokenData.volume24h ? '$' + Math.round(tokenData.volume24h).toLocaleString() : 'unknown'}
+24h Price Change: ${tokenData.change24h !== null ? tokenData.change24h + '%' : 'unknown'}
+1h Price Change: ${tokenData.change1h !== null ? tokenData.change1h + '%' : 'unknown'}
+Token Age: ${tokenData.pairAge !== null ? tokenData.pairAge + ' days' : 'unknown'}
+DEX: ${tokenData.dex || 'unknown'}
+Buys (24h): ${tokenData.buys24h}
+Sells (24h): ${tokenData.sells24h}
+Red flags detected by scanner: ${tokenData.flags.length > 0 ? tokenData.flags.join('; ') : 'none'}
+` : `Token address: ${addr}\nNot found on DexScreener. ${tokenData.flags.join('; ')}`;
+
+  const prompt = `You are J33T, a Yorkshire Terrier dog born in January 2009 who has seen every crypto cycle and survived without being scammed. You are analyzing a Solana token to determine if it's a rug pull or legitimate.
+
+Token data:
+${dataStr}
+
+Based on this data, provide:
+1. A VERDICT: one of "LIKELY RUG", "HIGH RISK", "PROCEED WITH CAUTION", or "LOOKS CLEAN" 
+2. A RISK SCORE from 0-100 (0=totally safe, 100=definite rug)
+3. Your analysis in J33T's voice — direct, no-nonsense, educational. 3-5 sentences. Reference specific data points. Always remind that this is not financial advice.
+
+Respond in this exact JSON format:
+{
+  "verdict": "LIKELY RUG",
+  "riskScore": 85,
+  "analysis": "Your analysis here..."
+}
+
+Important: Be honest and direct. If data is missing, say so. Always end with a reminder to DYOR. Never encourage buying. This is a dog's opinion, not financial advice.`;
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+
+  const d = await response.json();
+  const text = d.content?.[0]?.text || '';
+
+  try {
+    const clean = text.replace(/```json|```/g, '').trim();
+    return JSON.parse(clean);
+  } catch(e) {
+    return {
+      verdict: 'ANALYSIS ERROR',
+      riskScore: 50,
+      analysis: text || 'J33T could not analyze this token right now. Check the address and try again.'
+    };
+  }
+}
+
+function showResult(data, analysis) {
+  const verdict = analysis.verdict || 'UNKNOWN';
+  const score   = analysis.riskScore ?? 50;
+
+  // Verdict styling
+  const banner = document.getElementById('verdictBanner');
+  banner.className = 'verdict-banner';
+  if (verdict.includes('RUG') || score >= 70) banner.classList.add('rug');
+  else if (verdict.includes('CAUTION') || score >= 40) banner.classList.add('caution');
+  else banner.classList.add('safe');
+
+  document.getElementById('verdictEmoji').textContent =
+    score >= 70 ? '🚨' : score >= 40 ? '⚠️' : '✅';
+
+  document.getElementById('verdictMain').textContent = verdict;
+
+  const scoreEl = document.getElementById('riskScore');
+  scoreEl.style.color = score >= 70 ? 'var(--red)' : score >= 40 ? 'var(--gold)' : 'var(--green)';
+  scoreEl.innerHTML = score + '<small>RISK SCORE</small>';
+
+  // Data grid
+  const grid = document.getElementById('dataGrid');
+  const fmt = (v, prefix='$') => v != null ? prefix + Math.round(v).toLocaleString() : '—';
+  const fmtPct = v => v != null ? (v > 0 ? '+' : '') + v.toFixed(2) + '%' : '—';
+  const cls = v => v == null ? 'na' : v < -20 ? 'bad' : v > 0 ? 'ok' : 'warn';
+
+  if (data.found) {
+    grid.innerHTML = `
+      <div class="data-cell">
+        <div class="data-cell-label">Token</div>
+        <div class="data-cell-value ok">${data.name} (${data.symbol})</div>
+      </div>
+      <div class="data-cell">
+        <div class="data-cell-label">Token Age</div>
+        <div class="data-cell-value ${data.pairAge < 2 ? 'bad' : data.pairAge < 7 ? 'warn' : 'ok'}">
+          ${data.pairAge !== null ? data.pairAge + ' days' : '—'}
+        </div>
+      </div>
+      <div class="data-cell">
+        <div class="data-cell-label">Liquidity</div>
+        <div class="data-cell-value ${data.liquidity < 10000 ? 'bad' : data.liquidity < 50000 ? 'warn' : 'ok'}">
+          ${fmt(data.liquidity)}
+        </div>
+      </div>
+      <div class="data-cell">
+        <div class="data-cell-label">Market Cap</div>
+        <div class="data-cell-value na">${fmt(data.mcap)}</div>
+      </div>
+      <div class="data-cell">
+        <div class="data-cell-label">24h Volume</div>
+        <div class="data-cell-value na">${fmt(data.volume24h)}</div>
+      </div>
+      <div class="data-cell">
+        <div class="data-cell-label">24h Change</div>
+        <div class="data-cell-value ${cls(data.change24h)}">${fmtPct(data.change24h)}</div>
+      </div>
+      <div class="data-cell">
+        <div class="data-cell-label">Buys / Sells (24h)</div>
+        <div class="data-cell-value">
+          <span class="ok">${data.buys24h}</span> / <span class="bad">${data.sells24h}</span>
+        </div>
+      </div>
+      <div class="data-cell">
+        <div class="data-cell-label">DEX</div>
+        <div class="data-cell-value na">${data.dex || '—'}</div>
+      </div>
+    `;
+  } else {
+    grid.innerHTML = `
+      <div class="data-cell" style="grid-column:1/-1;">
+        <div class="data-cell-label">Status</div>
+        <div class="data-cell-value bad">Token not found on DexScreener</div>
+      </div>
+    `;
+  }
+
+  // Red flags
+  if (data.flags.length > 0) {
+    const flagsSection = document.getElementById('flagsSection');
+    flagsSection.style.display = 'block';
+    document.getElementById('flagsList').innerHTML = data.flags
+      .map(f => `<div class="flag-item"><span class="flag-icon">🚩</span><span>${f}</span></div>`)
+      .join('');
+  } else {
+    document.getElementById('flagsSection').style.display = 'none';
+  }
+
+  // J33T's analysis
+  document.getElementById('jeetTakeText').textContent = analysis.analysis || '';
+
+  document.getElementById('result').classList.add('active');
+}
+
+function setLoading(on) {
+  document.getElementById('loading').classList.toggle('active', on);
+  document.getElementById('scanBtn').disabled = on;
+  document.getElementById('scanBtn').textContent = on ? 'SNIFFING...' : '🔍 SNIFF';
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorBox');
+  el.textContent = '⚠️ ' + msg;
+  el.classList.add('active');
+}
+
+function hideError() { document.getElementById('errorBox').classList.remove('active'); }
+function hideResult() { document.getElementById('result').classList.remove('active'); }
+
+// Enter key support
+document.getElementById('addrInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') startScan();
+});
+</script>
+</body>
+</html>
