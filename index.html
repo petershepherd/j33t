@@ -2520,80 +2520,96 @@ async function connectRealWallet(type) {
 async function fetchRealBalance(pubkey) {
   dbg('fetchRealBalance called', pubkey);
 
-  // ── METHOD 1: Phantom's getAssets API (no CORS, most reliable)
-  const provider = window.solana || window.solflare || window.backpack;
-  if (provider?.request) {
+  // ── METHOD 1: Helius DAS searchAssets (böngészőbarát, CORS ok)
+  if (CONFIG.HELIUS_KEY) {
     try {
-      const res = await provider.request({
-        method: 'getAssets',
-        params: { ownerAddress: pubkey }
-      });
-      const asset = res?.items?.find(a => a.id === CONFIG.TOKEN_MINT || a.mint === CONFIG.TOKEN_MINT);
-      if (asset) {
-        const bal = parseFloat(asset.token_info?.balance ?? asset.balance ?? 0)
-                  / Math.pow(10, asset.token_info?.decimals ?? asset.decimals ?? 6);
-        dbg('Balance via getAssets', bal);
-        if (bal > 0) return Math.floor(bal);
+      const r = await fetch(
+        `https://mainnet.helius-rpc.com/?api-key=${CONFIG.HELIUS_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0', id: 1,
+            method: 'searchAssets',
+            params: {
+              ownerAddress: pubkey,
+              tokenType: 'fungible',
+              page: 1, limit: 100,
+            }
+          }),
+          signal: AbortSignal.timeout(8000),
+        }
+      );
+      const d = await r.json();
+      dbg('Helius searchAssets response', JSON.stringify(d).slice(0, 300));
+      if (d.result?.items) {
+        const item = d.result.items.find(a =>
+          a.id === CONFIG.TOKEN_MINT || a.content?.metadata?.symbol === CONFIG.TOKEN_SYMBOL
+        );
+        if (item) {
+          const bal = item.token_info?.balance ?? 0;
+          const dec = item.token_info?.decimals ?? 6;
+          const ui  = bal / Math.pow(10, dec);
+          dbg('Found via searchAssets', { bal, dec, ui });
+          if (ui > 0) return Math.floor(ui);
+        }
+        dbg('Token not found in searchAssets results', CONFIG.TOKEN_MINT);
+        return 0; // wallet connected, token just not held
       }
-    } catch(e) { dbg('getAssets failed', e.message); }
+    } catch(e) { dbg('searchAssets failed', e.message); }
   }
 
-  // ── METHOD 2: getTokenAccountsByOwner via public RPCs
-  const rpcs = [
-    CONFIG.HELIUS_KEY ? `https://mainnet.helius-rpc.com/?api-key=${CONFIG.HELIUS_KEY}` : null,
-    'https://rpc.ankr.com/solana',
-    CONFIG.SOLANA_RPC,
-  ].filter(Boolean);
-
-  const body = JSON.stringify({
-    jsonrpc: '2.0', id: 1,
-    method: 'getTokenAccountsByOwner',
-    params: [pubkey, { mint: CONFIG.TOKEN_MINT }, { encoding: 'jsonParsed' }]
-  });
-
-  for (const rpc of rpcs) {
+  // ── METHOD 2: Helius getTokenAccountsByOwner RPC
+  if (CONFIG.HELIUS_KEY) {
     try {
-      dbg('Trying RPC', rpc);
+      const r = await fetch(
+        `https://mainnet.helius-rpc.com/?api-key=${CONFIG.HELIUS_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0', id: 1,
+            method: 'getTokenAccountsByOwner',
+            params: [pubkey, { mint: CONFIG.TOKEN_MINT }, { encoding: 'jsonParsed' }]
+          }),
+          signal: AbortSignal.timeout(8000),
+        }
+      );
+      const d = await r.json();
+      dbg('Helius getTokenAccounts', JSON.stringify(d).slice(0, 300));
+      const accounts = d.result?.value || [];
+      if (!accounts.length) { dbg('No token account found'); return 0; }
+      const info = accounts[0]?.account?.data?.parsed?.info?.tokenAmount;
+      dbg('tokenAmount', JSON.stringify(info));
+      return Math.floor(parseFloat(info?.uiAmountString ?? info?.uiAmount ?? 0));
+    } catch(e) { dbg('Helius getTokenAccounts failed', e.message); }
+  }
+
+  // ── METHOD 3: Fallback public RPCs
+  for (const rpc of ['https://rpc.ankr.com/solana', CONFIG.SOLANA_RPC]) {
+    try {
+      dbg('Trying fallback RPC', rpc);
       const r = await fetch(rpc, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body,
+        body: JSON.stringify({
+          jsonrpc: '2.0', id: 1,
+          method: 'getTokenAccountsByOwner',
+          params: [pubkey, { mint: CONFIG.TOKEN_MINT }, { encoding: 'jsonParsed' }]
+        }),
         signal: AbortSignal.timeout(6000),
       });
-      if (!r.ok) { dbg('HTTP error', r.status); continue; }
+      if (!r.ok) continue;
       const d = await r.json();
-      if (d.error) { dbg('RPC error', d.error.message); continue; }
-
+      if (d.error) continue;
       const accounts = d.result?.value || [];
-      dbg('Token accounts found', accounts.length);
-      if (!accounts.length) return 0; // wallet has no account for this token
-
+      if (!accounts.length) return 0;
       const info = accounts[0]?.account?.data?.parsed?.info?.tokenAmount;
-      dbg('tokenAmount', JSON.stringify(info));
-      const bal = parseFloat(info?.uiAmountString ?? info?.uiAmount ?? 0);
-      return Math.floor(bal);
-    } catch(e) { dbg('RPC fetch error', e.message); }
+      return Math.floor(parseFloat(info?.uiAmountString ?? info?.uiAmount ?? 0));
+    } catch(e) { dbg('Fallback RPC failed', e.message); }
   }
 
-  // ── METHOD 3: Helius explicit fallback (if not already tried above)
-  if (CONFIG.HELIUS_KEY) {
-    try {
-      const r = await fetch(`https://mainnet.helius-rpc.com/?api-key=${CONFIG.HELIUS_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body,
-        signal: AbortSignal.timeout(6000),
-      });
-      const d = await r.json();
-      const accounts = d.result?.value || [];
-      if (accounts.length) {
-        const info = accounts[0]?.account?.data?.parsed?.info?.tokenAmount;
-        return Math.floor(parseFloat(info?.uiAmountString ?? info?.uiAmount ?? 0));
-      }
-    } catch(e) { dbg('Helius fallback failed', e.message); }
-  }
-
-  dbg('All balance methods failed — returning 0. Open F12 console for details.');
+  dbg('All methods failed. Check F12 → Console for J33T logs.');
   return 0;
 }
 
