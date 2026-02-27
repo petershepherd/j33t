@@ -152,6 +152,81 @@
   .nav-connect:hover { color: var(--bg); }
   .nav-connect:hover::before { left: 0; }
 
+  /* NAV WALLET WIDGET — connected state */
+  .nav-wallet-wrap { display: flex; align-items: center; }
+
+  .nav-connected {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    animation: fadeUp 0.3s ease both;
+  }
+
+  .nav-wallet-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(0,255,170,0.35);
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    background: rgba(0,255,170,0.04);
+  }
+  .nav-wallet-info:hover {
+    border-color: rgba(0,255,170,0.7);
+    background: rgba(0,255,170,0.09);
+  }
+
+  .nav-tier-icon { font-size: 14px; line-height: 1; }
+
+  .nav-wallet-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1;
+  }
+
+  .nav-balance {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--green);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  .nav-addr {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+
+  .nav-logout {
+    background: transparent;
+    border: 1px solid rgba(255,68,102,0.3);
+    color: rgba(255,68,102,0.6);
+    font-size: 14px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .nav-logout:hover {
+    border-color: var(--red);
+    color: var(--red);
+    background: rgba(255,68,102,0.08);
+  }
+
+  @media (max-width: 640px) {
+    .nav-wallet-info { padding: 5px 8px; }
+    .nav-balance { font-size: 6px; }
+    .nav-addr { display: none; }
+  }
+
   /* HERO */
   .hero {
     position: relative;
@@ -1374,7 +1449,21 @@
     <li><a href="#pumpfun">Trust</a></li>
     <li><a href="#tokenomics">$J33T</a></li>
   </ul>
-  <button class="nav-connect" onclick="openWalletModal()">CONNECT</button>
+  <div class="nav-wallet-wrap" id="navWalletWrap">
+    <!-- Disconnected state -->
+    <button class="nav-connect" id="navConnectBtn" onclick="openWalletModal()">CONNECT</button>
+    <!-- Connected state (hidden until wallet connects) -->
+    <div class="nav-connected" id="navConnected" style="display:none;">
+      <div class="nav-wallet-info" onclick="openWalletModal()">
+        <span class="nav-tier-icon" id="navTierIcon">🐾</span>
+        <div class="nav-wallet-details">
+          <span class="nav-balance" id="navBalance">0 $J33T</span>
+          <span class="nav-addr" id="navAddr">····</span>
+        </div>
+      </div>
+      <button class="nav-logout" onclick="disconnectWallet()" title="Disconnect wallet">⏻</button>
+    </div>
+  </div>
 </nav>
 
 <!-- Hero -->
@@ -2426,6 +2515,7 @@ async function fetchRealBalance(pubkey) {
 }
 
 function applyWalletState() {
+  // Modal state
   document.getElementById('walletStatus').textContent = isRealMode ? '◉ REAL WALLET CONNECTED' : '◉ WALLET CONNECTED (DEMO)';
   document.getElementById('walletStatus').className = 'wallet-status connected';
   document.getElementById('walletAddress').textContent = walletAddr + ' · ' + j33tBalance.toLocaleString() + ' $J33T';
@@ -2435,8 +2525,48 @@ function applyWalletState() {
   document.getElementById('walletActionBtn').textContent = 'CONNECTED ✓';
   document.getElementById('walletActionBtn').style.borderColor = 'var(--green)';
   document.getElementById('walletActionBtn').style.color = 'var(--green)';
+
+  // Nav widget
+  const tier = getHolderTier(j33tBalance);
+  document.getElementById('navConnectBtn').style.display = 'none';
+  document.getElementById('navConnected').style.display  = 'flex';
+  document.getElementById('navTierIcon').textContent  = tier.icon;
+  document.getElementById('navBalance').textContent   = j33tBalance.toLocaleString() + ' $J33T';
+  document.getElementById('navAddr').textContent      = walletAddr;
+
   unlockCards();
-  updateCardLimitUI(); // refresh card daily limit based on new balance
+  updateCardLimitUI();
+}
+
+function disconnectWallet() {
+  walletConnected = false;
+  j33tBalance = 0;
+  walletAddr = '';
+  isRealMode = false;
+  localStorage.removeItem('j33t_demo_v2');
+
+  // Reset nav widget
+  document.getElementById('navConnectBtn').style.display = '';
+  document.getElementById('navConnected').style.display  = 'none';
+
+  // Reset modal state
+  document.getElementById('walletStatus').textContent = '◉ WALLET NOT CONNECTED';
+  document.getElementById('walletStatus').className = 'wallet-status disconnected';
+  document.getElementById('walletAddress').textContent = '';
+  document.getElementById('holdingStatus').textContent = 'Connect wallet to check $J33T balance';
+  document.getElementById('walletActionBtn').textContent = 'SIMULATE DEMO CONNECTION';
+  document.getElementById('walletActionBtn').style.borderColor = '';
+  document.getElementById('walletActionBtn').style.color = '';
+  document.getElementById('progressFill').style.width = '0%';
+
+  // Re-lock cards
+  ['card-meme','card-oracle','card-whitelist','card-staking'].forEach(id => {
+    const card = document.getElementById(id);
+    if (card) { card.classList.remove('unlocked'); card.classList.add('locked'); }
+  });
+
+  updateCardLimitUI();
+  showToast('Wallet disconnected. 🐾');
 }
 
 function unlockCards() {
