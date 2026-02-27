@@ -2706,6 +2706,8 @@ async function refreshBalance() {
     : '0 $J33T found. Check F12 console for details.'
   );
 }
+
+function tryAccess(type) {
   if (!walletConnected) { showToast('Connect your wallet first!'); openWalletModal(); return; }
   const mins = { meme: 100000, oracle: 500000, whitelist: 1000000, staking: 5000000 };
   if (j33tBalance < mins[type]) {
