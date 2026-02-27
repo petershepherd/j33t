@@ -203,10 +203,12 @@
 
   .nav-logout {
     background: transparent;
-    border: 1px solid rgba(255,68,102,0.3);
-    color: rgba(255,68,102,0.6);
-    font-size: 14px;
-    width: 32px;
+    border: 1px solid rgba(255,68,102,0.35);
+    color: rgba(255,68,102,0.7);
+    font-family: var(--pixel);
+    font-size: 6px;
+    letter-spacing: 1px;
+    padding: 0 10px;
     height: 32px;
     cursor: pointer;
     transition: all 0.2s;
@@ -214,11 +216,39 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    white-space: nowrap;
   }
   .nav-logout:hover {
     border-color: var(--red);
     color: var(--red);
     background: rgba(255,68,102,0.08);
+  }
+
+  .nav-refresh {
+    background: transparent;
+    border: 1px solid rgba(245,200,66,0.25);
+    color: rgba(245,200,66,0.55);
+    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .nav-refresh:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(245,200,66,0.07);
+  }
+  .nav-refresh.spinning {
+    animation: spin360 0.5s linear;
+  }
+  @keyframes spin360 {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
   }
 
   @media (max-width: 640px) {
@@ -1454,14 +1484,15 @@
     <button class="nav-connect" id="navConnectBtn" onclick="openWalletModal()">CONNECT</button>
     <!-- Connected state (hidden until wallet connects) -->
     <div class="nav-connected" id="navConnected" style="display:none;">
-      <div class="nav-wallet-info" onclick="openWalletModal()">
+      <div class="nav-wallet-info" onclick="openWalletModal()" title="View wallet details">
         <span class="nav-tier-icon" id="navTierIcon">🐾</span>
         <div class="nav-wallet-details">
           <span class="nav-balance" id="navBalance">0 $J33T</span>
           <span class="nav-addr" id="navAddr">····</span>
         </div>
       </div>
-      <button class="nav-logout" onclick="disconnectWallet()" title="Disconnect wallet">⏻</button>
+      <button class="nav-refresh" id="navRefreshBtn" onclick="refreshBalance()" title="Refresh balance">↻</button>
+      <button class="nav-logout" onclick="disconnectWallet()" title="Disconnect wallet">LOG OUT</button>
     </div>
   </div>
 </nav>
@@ -1914,6 +1945,7 @@ const CONFIG = {
   JUPITER_API: 'https://api.jup.ag/price/v2?ids=',
   SOLANA_RPC: 'https://api.mainnet-beta.solana.com',
   TOKEN_PROGRAM: 'TokenkebQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+  HELIUS_KEY: 'd8290be6-073f-4afe-bc22-b9c29d0fb5c1', // helius.dev RPC
 };
 
 // Trim whitespace + case-insensitive demo check (common mistake fix)
@@ -2486,32 +2518,83 @@ async function connectRealWallet(type) {
 }
 
 async function fetchRealBalance(pubkey) {
-  // Use Solana JSON-RPC getTokenAccountsByOwner
-  try {
-    const body = {
-      jsonrpc: '2.0', id: 1,
-      method: 'getTokenAccountsByOwner',
-      params: [
-        pubkey,
-        { mint: CONFIG.TOKEN_MINT },
-        { encoding: 'jsonParsed' }
-      ]
-    };
-    const r = await fetch(CONFIG.SOLANA_RPC, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(8000),
-    });
-    const d = await r.json();
-    const accounts = d.result?.value || [];
-    if (!accounts.length) return 0;
-    const amount = accounts[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmount || 0;
-    return Math.floor(amount);
-  } catch(e) {
-    console.warn('RPC balance fetch failed:', e);
-    return 0;
+  dbg('fetchRealBalance called', pubkey);
+
+  // ── METHOD 1: Phantom's getAssets API (no CORS, most reliable)
+  const provider = window.solana || window.solflare || window.backpack;
+  if (provider?.request) {
+    try {
+      const res = await provider.request({
+        method: 'getAssets',
+        params: { ownerAddress: pubkey }
+      });
+      const asset = res?.items?.find(a => a.id === CONFIG.TOKEN_MINT || a.mint === CONFIG.TOKEN_MINT);
+      if (asset) {
+        const bal = parseFloat(asset.token_info?.balance ?? asset.balance ?? 0)
+                  / Math.pow(10, asset.token_info?.decimals ?? asset.decimals ?? 6);
+        dbg('Balance via getAssets', bal);
+        if (bal > 0) return Math.floor(bal);
+      }
+    } catch(e) { dbg('getAssets failed', e.message); }
   }
+
+  // ── METHOD 2: getTokenAccountsByOwner via public RPCs
+  const rpcs = [
+    CONFIG.HELIUS_KEY ? `https://mainnet.helius-rpc.com/?api-key=${CONFIG.HELIUS_KEY}` : null,
+    'https://rpc.ankr.com/solana',
+    CONFIG.SOLANA_RPC,
+  ].filter(Boolean);
+
+  const body = JSON.stringify({
+    jsonrpc: '2.0', id: 1,
+    method: 'getTokenAccountsByOwner',
+    params: [pubkey, { mint: CONFIG.TOKEN_MINT }, { encoding: 'jsonParsed' }]
+  });
+
+  for (const rpc of rpcs) {
+    try {
+      dbg('Trying RPC', rpc);
+      const r = await fetch(rpc, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+        signal: AbortSignal.timeout(6000),
+      });
+      if (!r.ok) { dbg('HTTP error', r.status); continue; }
+      const d = await r.json();
+      if (d.error) { dbg('RPC error', d.error.message); continue; }
+
+      const accounts = d.result?.value || [];
+      dbg('Token accounts found', accounts.length);
+      if (!accounts.length) return 0; // wallet has no account for this token
+
+      const info = accounts[0]?.account?.data?.parsed?.info?.tokenAmount;
+      dbg('tokenAmount', JSON.stringify(info));
+      const bal = parseFloat(info?.uiAmountString ?? info?.uiAmount ?? 0);
+      return Math.floor(bal);
+    } catch(e) { dbg('RPC fetch error', e.message); }
+  }
+
+  // ── METHOD 3: Helius explicit fallback (if not already tried above)
+  if (CONFIG.HELIUS_KEY) {
+    try {
+      const r = await fetch(`https://mainnet.helius-rpc.com/?api-key=${CONFIG.HELIUS_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+        signal: AbortSignal.timeout(6000),
+      });
+      const d = await r.json();
+      const accounts = d.result?.value || [];
+      if (accounts.length) {
+        const info = accounts[0]?.account?.data?.parsed?.info?.tokenAmount;
+        return Math.floor(parseFloat(info?.uiAmountString ?? info?.uiAmount ?? 0));
+      }
+    } catch(e) { dbg('Helius fallback failed', e.message); }
+  }
+
+  dbg('All balance methods failed — returning 0. Open F12 console for details.');
+  return 0;
 }
 
 function applyWalletState() {
@@ -2532,7 +2615,8 @@ function applyWalletState() {
   document.getElementById('navConnected').style.display  = 'flex';
   document.getElementById('navTierIcon').textContent  = tier.icon;
   document.getElementById('navBalance').textContent   = j33tBalance.toLocaleString() + ' $J33T';
-  document.getElementById('navAddr').textContent      = walletAddr;
+  const short = walletAddr.length > 10 ? walletAddr.slice(0,4) + '···' + walletAddr.slice(-4) : walletAddr;
+  document.getElementById('navAddr').textContent      = short;
 
   unlockCards();
   updateCardLimitUI();
@@ -2581,7 +2665,47 @@ function unlockCards() {
   });
 }
 
-function tryAccess(type) {
+async function refreshBalance() {
+  if (!walletConnected || !walletAddr) return;
+  const btn = document.getElementById('navRefreshBtn');
+  if (btn) { btn.classList.add('spinning'); btn.disabled = true; }
+
+  // Get full pubkey from provider (walletAddr is already shortened)
+  const provider = window.solana || window.solflare || window.backpack;
+  const pubkey = provider?.publicKey?.toString() || walletAddr;
+
+  const newBalance = await fetchRealBalance(pubkey);
+  j33tBalance = newBalance;
+
+  // Update nav
+  const tier = getHolderTier(j33tBalance);
+  document.getElementById('navTierIcon').textContent = tier.icon;
+  document.getElementById('navBalance').textContent  = j33tBalance.toLocaleString() + ' $J33T';
+
+  // Update modal
+  document.getElementById('walletAddress').textContent  = walletAddr + ' · ' + j33tBalance.toLocaleString() + ' $J33T';
+  document.getElementById('holdingStatus').textContent  = 'Balance: ' + j33tBalance.toLocaleString() + ' $J33T (refreshed)';
+
+  // Update card limit + unlock
+  unlockCards();
+  updateCardLimitUI();
+
+  // Update localStorage
+  try {
+    const stored = JSON.parse(localStorage.getItem('j33t_demo_v2') || '{}');
+    stored.balance = j33tBalance;
+    localStorage.setItem('j33t_demo_v2', JSON.stringify(stored));
+  } catch(e) {}
+
+  setTimeout(() => {
+    if (btn) { btn.classList.remove('spinning'); btn.disabled = false; }
+  }, 600);
+
+  showToast(j33tBalance > 0
+    ? `Balance refreshed: ${j33tBalance.toLocaleString()} $J33T 🐾`
+    : '0 $J33T found. Check F12 console for details.'
+  );
+}
   if (!walletConnected) { showToast('Connect your wallet first!'); openWalletModal(); return; }
   const mins = { meme: 100000, oracle: 500000, whitelist: 1000000, staking: 5000000 };
   if (j33tBalance < mins[type]) {
