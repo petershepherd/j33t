@@ -391,6 +391,198 @@
     .rug-section { padding: 60px 20px; }
   }
 
+
+  /* ============================================================
+     DAILY SNIFF SECTION
+  ============================================================ */
+  .sniff-section {
+    position: relative; z-index: 1;
+    padding: 80px 40px;
+    background: var(--surface);
+    border-top: 1px solid rgba(245,200,66,0.06);
+  }
+  .sniff-inner { max-width: 800px; margin: 0 auto; }
+
+  .sniff-disclaimer {
+    background: rgba(255,68,102,0.06);
+    border: 1px solid rgba(255,68,102,0.25);
+    padding: 14px 20px;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin: 32px 0 0;
+  }
+  .sniff-disclaimer strong { color: var(--red); font-family: var(--pixel); font-size: 7px; letter-spacing: 1px; }
+
+  .sniff-locked {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--surface2);
+    border: 1px solid rgba(245,200,66,0.08);
+    margin-top: 32px;
+  }
+  .sniff-locked-icon { font-size: 36px; display: block; margin-bottom: 14px; }
+  .sniff-locked-text { font-family: var(--pixel); font-size: 8px; color: var(--muted); line-height: 2; }
+  .sniff-locked-bal  { color: var(--gold); margin-top: 8px; font-size: 10px; }
+
+  .sniff-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+  .sniff-session-label {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .sniff-session-label span { color: var(--gold); }
+  .sniff-fetch-btn {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: var(--pixel);
+    font-size: 7px;
+    padding: 10px 20px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .sniff-fetch-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: var(--gold);
+    transition: left 0.3s;
+    z-index: -1;
+  }
+  .sniff-fetch-btn:hover { color: var(--bg); }
+  .sniff-fetch-btn:hover::before { left: 0; }
+  .sniff-fetch-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .sniff-loading {
+    display: none;
+    text-align: center;
+    padding: 40px;
+    margin-top: 4px;
+  }
+  .sniff-loading.active { display: block; }
+  .sniff-loading-dog { font-size: 40px; display: block; margin-bottom: 14px;
+    animation: sniffWag 0.4s ease-in-out infinite alternate; }
+  @keyframes sniffWag {
+    from { transform: rotate(-8deg) translateX(-4px); }
+    to   { transform: rotate(8deg) translateX(4px); }
+  }
+  .sniff-loading-text { font-family: var(--pixel); font-size: 7px; color: var(--gold); letter-spacing: 2px; }
+
+  /* Token cards grid */
+  .sniff-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  @media (max-width: 640px) { .sniff-grid { grid-template-columns: 1fr; } }
+
+  .sniff-token-card {
+    background: var(--surface2);
+    border: 1px solid rgba(245,200,66,0.1);
+    padding: 18px 20px;
+    position: relative;
+    transition: border-color 0.2s;
+    cursor: default;
+  }
+  .sniff-token-card:hover { border-color: rgba(245,200,66,0.3); }
+
+  .sniff-token-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 8px;
+  }
+  .sniff-token-name {
+    font-family: var(--pixel);
+    font-size: 9px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .sniff-token-symbol {
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .sniff-risk-badge {
+    font-family: var(--pixel);
+    font-size: 8px;
+    padding: 4px 8px;
+    flex-shrink: 0;
+  }
+  .risk-low    { background: rgba(0,255,170,0.1); color: var(--green); border: 1px solid rgba(0,255,170,0.3); }
+  .risk-medium { background: rgba(245,200,66,0.1); color: var(--gold); border: 1px solid rgba(245,200,66,0.3); }
+  .risk-high   { background: rgba(255,68,102,0.1); color: var(--red); border: 1px solid rgba(255,68,102,0.3); }
+
+  .sniff-token-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .sniff-stat { font-size: 9px; }
+  .sniff-stat-label { color: var(--muted); font-size: 8px; display: block; margin-bottom: 2px; }
+  .sniff-stat-val   { font-family: var(--pixel); font-size: 8px; }
+
+  .sniff-ai-text {
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.7;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 12px;
+    margin-bottom: 12px;
+  }
+
+  .sniff-token-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .sniff-flags-mini { font-size: 9px; color: var(--red); }
+  .sniff-dex-link {
+    font-family: var(--pixel);
+    font-size: 6px;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid rgba(123,97,255,0.3);
+    padding: 4px 8px;
+    transition: all 0.2s;
+  }
+  .sniff-dex-link:hover { background: rgba(123,97,255,0.1); }
+
+  .sniff-error {
+    display: none;
+    margin-top: 20px;
+    padding: 14px 18px;
+    background: rgba(255,68,102,0.07);
+    border: 1px solid rgba(255,68,102,0.3);
+    font-size: 11px;
+    color: var(--red);
+  }
+  .sniff-error.active { display: block; }
+
+  .sniff-timestamp {
+    margin-top: 16px;
+    font-size: 9px;
+    color: var(--muted);
+    text-align: right;
+  }
   /* HERO */
   .hero {
     position: relative;
@@ -1611,6 +1803,7 @@
     <li><a href="#about">Origin</a></li>
     <li><a href="#utility">Utility</a></li>
     <li><a href="#pumpfun">Trust</a></li>
+    <li><a href="#dailySniff">Sniff</a></li>
     <li><a href="#rugornotSection">Rug?</a></li>
     <li><a href="#tokenomics">$J33T</a></li>
   </ul>
@@ -2040,6 +2233,60 @@
       </div>
 
     </div>
+  </div>
+</section>
+
+
+<!-- Daily Sniff — Holder Exclusive -->
+<section class="sniff-section" id="dailySniff">
+  <div class="sniff-inner">
+
+    <div class="section-label">// HOLDER EXCLUSIVE — 100,000+ $J33T</div>
+    <h2 class="section-title">J33T'S DAILY<br>SNIFF 👃</h2>
+    <p class="section-desc" style="max-width:620px;">
+      J33T sniffs through Solana's trending tokens 3× a day and shows you the on-chain data. Not a recommendation — just a dog's nose applied to DexScreener.
+    </p>
+
+    <div class="sniff-disclaimer">
+      <strong>⚠️ IMPORTANT DISCLAIMER</strong><br>
+      J33T does not recommend tokens. This feature shows trending Solana tokens with on-chain data and AI commentary only.
+      98.6% of tokens lose value. Nothing here is financial advice. Every token shown could go to zero.
+      This is a dog's analysis — DYOR always, never invest more than you can afford to lose.
+    </div>
+
+    <!-- Locked state -->
+    <div class="sniff-locked" id="sniffLocked">
+      <span class="sniff-locked-icon">🔒</span>
+      <div class="sniff-locked-text">
+        CONNECT YOUR WALLET TO ACCESS<br>
+        MINIMUM 100,000 $J33T REQUIRED
+      </div>
+      <div class="sniff-locked-bal" id="sniffLockedBal"></div>
+    </div>
+
+    <!-- Unlocked state -->
+    <div id="sniffUnlocked" style="display:none;">
+      <div class="sniff-controls">
+        <div class="sniff-session-label">
+          SNIFFS TODAY: <span id="sniffUsedCount">0</span>/3 &nbsp;·&nbsp;
+          NEXT RESET: <span id="sniffResetTime">midnight UTC</span>
+        </div>
+        <button class="sniff-fetch-btn" id="sniffBtn" onclick="runDailySniff()">
+          👃 SNIFF NOW
+        </button>
+      </div>
+
+      <div class="sniff-loading" id="sniffLoading">
+        <span class="sniff-loading-dog">🐶</span>
+        <div class="sniff-loading-text">J33T IS SNIFFING THE TRENDING TOKENS<span class="ron-dots"></span></div>
+      </div>
+
+      <div class="sniff-error" id="sniffError"></div>
+
+      <div class="sniff-grid" id="sniffGrid"></div>
+      <div class="sniff-timestamp" id="sniffTimestamp"></div>
+    </div>
+
   </div>
 </section>
 
@@ -2823,6 +3070,7 @@ function applyWalletState() {
 
   unlockCards();
   updateCardLimitUI();
+  sniffUpdateUI();
 }
 
 function disconnectWallet() {
@@ -2853,6 +3101,7 @@ function disconnectWallet() {
   });
 
   updateCardLimitUI();
+  sniffUpdateUI();
   showToast('Wallet disconnected. 🐾');
 }
 
@@ -3103,6 +3352,234 @@ function tickerMoonMode() {
 // ============================================================
 // VERIFY / COPY MINT ADDRESS
 // ============================================================
+
+
+// ============================================================
+// DAILY SNIFF — Holder Exclusive
+// ============================================================
+const SNIFF_MIN_BALANCE = 100000;
+const SNIFF_MAX_PER_DAY = 3;
+
+function sniffGetToday() {
+  const d = new Date();
+  return `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`;
+}
+
+function sniffGetUsage() {
+  try {
+    const raw = localStorage.getItem('j33t_sniff_v1');
+    const data = raw ? JSON.parse(raw) : {};
+    return data[sniffGetToday()] || 0;
+  } catch(e) { return 0; }
+}
+
+function sniffIncUsage() {
+  try {
+    const today = sniffGetToday();
+    const raw = localStorage.getItem('j33t_sniff_v1');
+    const data = raw ? JSON.parse(raw) : {};
+    data[today] = (data[today] || 0) + 1;
+    localStorage.setItem('j33t_sniff_v1', JSON.stringify(data));
+  } catch(e) {}
+}
+
+function sniffUpdateUI() {
+  const connected  = walletConnected && j33tBalance >= SNIFF_MIN_BALANCE;
+  const locked     = document.getElementById('sniffLocked');
+  const unlocked   = document.getElementById('sniffUnlocked');
+  const balEl      = document.getElementById('sniffLockedBal');
+  const usedEl     = document.getElementById('sniffUsedCount');
+  const btn        = document.getElementById('sniffBtn');
+  const resetEl    = document.getElementById('sniffResetTime');
+
+  if (!connected) {
+    locked.style.display   = 'block';
+    unlocked.style.display = 'none';
+    if (walletConnected && j33tBalance < SNIFF_MIN_BALANCE) {
+      balEl.textContent = `Your balance: ${j33tBalance.toLocaleString()} $J33T — need ${(SNIFF_MIN_BALANCE - j33tBalance).toLocaleString()} more`;
+    } else {
+      balEl.textContent = '';
+    }
+    return;
+  }
+
+  locked.style.display   = 'none';
+  unlocked.style.display = 'block';
+
+  const used = sniffGetUsage();
+  usedEl.textContent = used;
+
+  // Next reset countdown
+  const now   = new Date();
+  const reset = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+  const diff  = reset - now;
+  const hh    = Math.floor(diff / 3600000);
+  const mm    = Math.floor((diff % 3600000) / 60000);
+  resetEl.textContent = `${hh}h ${mm}m`;
+
+  if (used >= SNIFF_MAX_PER_DAY) {
+    btn.disabled = true;
+    btn.textContent = '🔒 LIMIT REACHED';
+  } else {
+    btn.disabled = false;
+    btn.textContent = '👃 SNIFF NOW';
+  }
+}
+
+async function runDailySniff() {
+  if (!walletConnected || j33tBalance < SNIFF_MIN_BALANCE) {
+    showToast('Need 100,000 $J33T to use Daily Sniff!');
+    return;
+  }
+  if (sniffGetUsage() >= SNIFF_MAX_PER_DAY) {
+    showToast('Daily sniff limit reached! Resets at midnight UTC.');
+    return;
+  }
+
+  document.getElementById('sniffBtn').disabled = true;
+  document.getElementById('sniffLoading').classList.add('active');
+  document.getElementById('sniffGrid').innerHTML = '';
+  document.getElementById('sniffTimestamp').textContent = '';
+  document.getElementById('sniffError').classList.remove('active');
+
+  try {
+    // 1. Trending tokenek lekérése a Worker-ből
+    const trendRes = await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'trending' }),
+      signal: AbortSignal.timeout(20000),
+    });
+    const trendData = await trendRes.json();
+    if (trendData.error) throw new Error(trendData.error);
+
+    const tokens = trendData.tokens || [];
+    if (!tokens.length) throw new Error('No trending tokens found.');
+
+    // Top 4 token megjelenítése
+    const top4 = tokens.slice(0, 4);
+
+    // 2. AI elemzés minden tokenre párhuzamosan
+    const analysed = await Promise.all(top4.map(t => sniffAnalyseToken(t)));
+
+    // 3. Megjelenítés
+    sniffRenderCards(analysed);
+    sniffIncUsage();
+    sniffUpdateUI();
+
+    const now = new Date();
+    document.getElementById('sniffTimestamp').textContent =
+      `Last sniff: ${now.toUTCString()}`;
+
+  } catch(e) {
+    const errEl = document.getElementById('sniffError');
+    errEl.textContent = '⚠️ ' + e.message;
+    errEl.classList.add('active');
+  } finally {
+    document.getElementById('sniffLoading').classList.remove('active');
+    document.getElementById('sniffBtn').disabled = false;
+  }
+}
+
+async function sniffAnalyseToken(t) {
+  // Rug score számítás
+  let score = 20;
+  if (t.liquidity < 10000)  score += 30;
+  else if (t.liquidity < 50000) score += 15;
+  if (t.pairAge !== null && t.pairAge < 3) score += 25;
+  else if (t.pairAge !== null && t.pairAge < 7) score += 10;
+  if (t.change24h !== null && t.change24h < -30) score += 20;
+  if (t.buys24h > 0 && t.sells24h > t.buys24h * 2) score += 15;
+  if (t.mcap && t.liquidity && (t.liquidity / t.mcap) < 0.02) score += 15;
+  score = Math.min(score, 98);
+
+  const flags = [];
+  if (t.liquidity < 10000) flags.push('Low liquidity');
+  if (t.pairAge !== null && t.pairAge < 3) flags.push('Very new token');
+  if (t.change24h < -30) flags.push('Price dumping');
+  if (t.sells24h > t.buys24h * 2) flags.push('High sell pressure');
+
+  // AI kommentár
+  let aiText = '';
+  try {
+    const prompt = `You are J33T, a Yorkshire Terrier who analyzes crypto tokens. Give a 2-sentence on-chain commentary about this Solana token. Be direct and reference the actual data. Never recommend buying. End with one risk observation.
+
+Token: ${t.name} (${t.symbol})
+Liquidity: $${t.liquidity ? Math.round(t.liquidity).toLocaleString() : 'unknown'}
+Market Cap: $${t.mcap ? Math.round(t.mcap).toLocaleString() : 'unknown'}
+24h Change: ${t.change24h !== null ? t.change24h + '%' : 'unknown'}
+Age: ${t.pairAge !== null ? t.pairAge + ' days' : 'unknown'}
+Buys/Sells 24h: ${t.buys24h}/${t.sells24h}
+Risk score: ${score}/100
+
+Respond with ONLY the commentary text, no JSON, no labels, 2-3 sentences max.`;
+
+    const res = await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'groq', prompt }),
+      signal: AbortSignal.timeout(15000),
+    });
+    const d = await res.json();
+    aiText = d.result || '';
+  } catch(e) { aiText = 'AI analysis unavailable.'; }
+
+  return { ...t, score, flags, aiText };
+}
+
+function sniffRenderCards(tokens) {
+  const fmt    = v => v != null ? '$' + Math.round(v).toLocaleString() : '—';
+  const fmtPct = v => v != null ? (v > 0 ? '+' : '') + parseFloat(v).toFixed(2) + '%' : '—';
+  const pctCls = v => v == null ? 'c-na' : v < -20 ? 'c-bad' : v > 0 ? 'c-ok' : 'c-warn';
+  const riskCls = s => s < 40 ? 'risk-low' : s < 65 ? 'risk-medium' : 'risk-high';
+  const riskLabel = s => s < 40 ? 'LOW RISK' : s < 65 ? 'MEDIUM' : 'HIGH RISK';
+
+  document.getElementById('sniffGrid').innerHTML = tokens.map(t => `
+    <div class="sniff-token-card">
+      <div class="sniff-token-header">
+        <div>
+          <div class="sniff-token-name">${t.name}</div>
+          <div class="sniff-token-symbol">$${t.symbol} · ${t.dex || 'unknown dex'}</div>
+        </div>
+        <div class="sniff-risk-badge ${riskCls(t.score)}">${riskLabel(t.score)} ${t.score}</div>
+      </div>
+
+      <div class="sniff-token-stats">
+        <div class="sniff-stat">
+          <span class="sniff-stat-label">LIQUIDITY</span>
+          <span class="sniff-stat-val ${(t.liquidity||0) < 10000 ? 'c-bad' : (t.liquidity||0) < 50000 ? 'c-warn' : 'c-ok'}">${fmt(t.liquidity)}</span>
+        </div>
+        <div class="sniff-stat">
+          <span class="sniff-stat-label">MARKET CAP</span>
+          <span class="sniff-stat-val c-na">${fmt(t.mcap)}</span>
+        </div>
+        <div class="sniff-stat">
+          <span class="sniff-stat-label">24H CHANGE</span>
+          <span class="sniff-stat-val ${pctCls(t.change24h)}">${fmtPct(t.change24h)}</span>
+        </div>
+        <div class="sniff-stat">
+          <span class="sniff-stat-label">AGE</span>
+          <span class="sniff-stat-val ${t.pairAge < 3 ? 'c-bad' : t.pairAge < 7 ? 'c-warn' : 'c-ok'}">${t.pairAge !== null ? t.pairAge + 'd' : '—'}</span>
+        </div>
+        <div class="sniff-stat">
+          <span class="sniff-stat-label">BUYS / SELLS</span>
+          <span class="sniff-stat-val"><span class="c-ok">${t.buys24h}</span> / <span class="c-bad">${t.sells24h}</span></span>
+        </div>
+        <div class="sniff-stat">
+          <span class="sniff-stat-label">24H VOLUME</span>
+          <span class="sniff-stat-val c-na">${fmt(t.volume24h)}</span>
+        </div>
+      </div>
+
+      <div class="sniff-ai-text">🐾 ${t.aiText}</div>
+
+      <div class="sniff-token-footer">
+        <div class="sniff-flags-mini">${t.flags.length ? '🚩 ' + t.flags.join(' · ') : '✓ No major flags detected'}</div>
+        ${t.url ? `<a class="sniff-dex-link" href="${t.url}" target="_blank" rel="noopener">VIEW ON DEXSCREENER ↗</a>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
 
 // ============================================================
 // RUG OR NOT
