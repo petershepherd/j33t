@@ -745,7 +745,8 @@
     background: linear-gradient(90deg, var(--green), var(--gold));
     transform: translateY(-50%);
     z-index: 1;
-    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 100%;
   }
 
   .tier-node {
@@ -3899,12 +3900,36 @@ function buildTierTimeline() {
 
   tl.innerHTML = `<div class="tier-timeline-progress" id="tierProgressBar" style="width:0%"></div>` + nodes;
 
-  // Animate progress bar
+  // Progress bar: node pozíciók alapján számítjuk, nem token arány alapján
+  // Így pontosan a jelenlegi node közepéig ér a vonal
   requestAnimationFrame(() => {
     setTimeout(() => {
-      const bar = document.getElementById('tierProgressBar');
-      if (bar) bar.style.width = pct + '%';
-    }, 100);
+      const bar  = document.getElementById('tierProgressBar');
+      if (!bar) return;
+
+      const tlRect     = tl.getBoundingClientRect();
+      const allNodes   = tl.querySelectorAll('.tier-node');
+      const currentNode = allNodes[currentIdx];
+      const nextNode    = nextTier ? allNodes[currentIdx + 1] : null;
+
+      if (!currentNode) return;
+
+      const currentRect = currentNode.getBoundingClientRect();
+      const currentCenter = currentRect.left + currentRect.width / 2 - tlRect.left;
+
+      let targetPx = currentCenter;
+
+      // Ha van következő tier, interpolálunk az egyenleg alapján a két node között
+      if (nextNode && nextTier) {
+        const nextRect   = nextNode.getBoundingClientRect();
+        const nextCenter = nextRect.left + nextRect.width / 2 - tlRect.left;
+        const segmentPct = (bal - currentTier.min) / (nextTier.min - currentTier.min);
+        targetPx = currentCenter + (nextCenter - currentCenter) * Math.min(segmentPct, 0.95);
+      }
+
+      const totalWidth = tlRect.width;
+      bar.style.width = Math.min(targetPx, totalWidth) + 'px';
+    }, 150);
   });
 
   // Next tier message
