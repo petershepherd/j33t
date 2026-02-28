@@ -257,6 +257,140 @@
     .nav-addr { display: none; }
   }
 
+
+  /* ============================================================
+     RUG OR NOT SECTION
+  ============================================================ */
+  .rug-section {
+    position: relative; z-index: 1;
+    padding: 80px 40px;
+    border-top: 1px solid rgba(245,200,66,0.06);
+  }
+  .rug-inner { max-width: 720px; margin: 0 auto; }
+
+  .ron-card {
+    background: var(--surface);
+    border: 1px solid rgba(245,200,66,0.15);
+    padding: 24px 28px;
+    margin: 40px 0 0;
+  }
+  .ron-input-label {
+    font-family: var(--pixel); font-size: 7px;
+    color: var(--gold); letter-spacing: 2px; margin-bottom: 12px;
+  }
+  .ron-input-row { display: flex; gap: 10px; }
+  .ron-input {
+    flex: 1; min-width: 0;
+    background: var(--surface2);
+    border: 1px solid rgba(245,200,66,0.2);
+    color: var(--text); font-family: var(--mono); font-size: 11px;
+    padding: 12px 14px; outline: none; transition: border-color 0.2s;
+  }
+  .ron-input::placeholder { color: var(--muted); }
+  .ron-input:focus { border-color: var(--gold); }
+  .ron-btn {
+    background: var(--gold); border: none; color: var(--bg);
+    font-family: var(--pixel); font-size: 7px; letter-spacing: 1px;
+    padding: 12px 16px; cursor: pointer; white-space: nowrap;
+    transition: background 0.2s; flex-shrink: 0;
+  }
+  .ron-btn:hover { background: #ffe066; }
+  .ron-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Loading */
+  .ron-loading {
+    display: none; text-align: center; padding: 36px;
+    background: var(--surface); border: 1px solid rgba(245,200,66,0.08);
+    margin-top: 4px;
+  }
+  .ron-loading.active { display: block; }
+  .ron-loading-dog { font-size: 36px; display: block; margin-bottom: 14px;
+    animation: ronSniff 0.5s ease-in-out infinite alternate; }
+  @keyframes ronSniff {
+    from { transform: rotate(-6deg); }
+    to   { transform: rotate(6deg); }
+  }
+  .ron-loading-text { font-family: var(--pixel); font-size: 7px; color: var(--gold); letter-spacing: 2px; }
+  .ron-dots::after {
+    content: ''; animation: ronDots 1.4s steps(4) infinite;
+  }
+  @keyframes ronDots {
+    0%  { content: ''; } 25% { content: '.'; }
+    50% { content: '..'; } 75% { content: '...'; }
+  }
+
+  /* Error */
+  .ron-error {
+    display: none; margin-top: 4px; padding: 16px 20px;
+    background: rgba(255,68,102,0.07); border: 1px solid rgba(255,68,102,0.3);
+    font-size: 11px; color: var(--red);
+  }
+  .ron-error.active { display: block; }
+
+  /* Result */
+  .ron-result { display: none; margin-top: 4px; }
+  .ron-result.active { display: block; }
+
+  /* Verdict */
+  .ron-verdict {
+    display: flex; align-items: center; gap: 16px;
+    padding: 20px 24px; border-bottom: none;
+  }
+  .ron-verdict.v-rug    { background: rgba(255,68,102,0.1); border: 1px solid rgba(255,68,102,0.4); }
+  .ron-verdict.v-caution{ background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.35); }
+  .ron-verdict.v-safe   { background: rgba(0,255,170,0.07); border: 1px solid rgba(0,255,170,0.3); }
+  .ron-verdict-emoji { font-size: 34px; flex-shrink: 0; }
+  .ron-verdict-body { flex: 1; }
+  .ron-verdict-label { font-family: var(--pixel); font-size: 6px; color: var(--muted); letter-spacing: 2px; margin-bottom: 6px; }
+  .ron-verdict-main  { font-family: var(--pixel); font-size: clamp(10px, 2.5vw, 16px); line-height: 1.5; }
+  .v-rug     .ron-verdict-main { color: var(--red); }
+  .v-caution .ron-verdict-main { color: var(--gold); }
+  .v-safe    .ron-verdict-main { color: var(--green); }
+  .ron-risk {
+    font-family: var(--pixel); font-size: 22px;
+    text-align: center; flex-shrink: 0; line-height: 1;
+  }
+  .ron-risk small { display: block; font-size: 5px; color: var(--muted); margin-top: 4px; letter-spacing: 1px; }
+
+  /* Data grid */
+  .ron-data-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: rgba(245,200,66,0.06);
+    border: 1px solid rgba(245,200,66,0.1); border-top: none;
+  }
+  .ron-cell { background: var(--surface); padding: 12px 16px; }
+  .ron-cell-label { font-size: 8px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
+  .ron-cell-val   { font-family: var(--pixel); font-size: 8px; line-height: 1.5; }
+  .c-ok  { color: var(--green); }
+  .c-warn{ color: var(--gold); }
+  .c-bad { color: var(--red); }
+  .c-na  { color: var(--muted); }
+
+  /* Flags */
+  .ron-flags {
+    background: var(--surface); padding: 16px 24px;
+    border: 1px solid rgba(255,68,102,0.15); border-top: none;
+  }
+  .ron-flags-title { font-family: var(--pixel); font-size: 7px; color: var(--red); letter-spacing: 2px; margin-bottom: 10px; }
+  .ron-flag-item { font-size: 11px; color: var(--text); padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; gap: 10px; }
+  .ron-flag-item:last-child { border-bottom: none; }
+
+  /* J33T take */
+  .ron-take {
+    background: var(--surface); padding: 22px 24px;
+    border: 1px solid rgba(123,97,255,0.2); border-top: none;
+  }
+  .ron-take-header { font-family: var(--pixel); font-size: 7px; color: var(--accent); letter-spacing: 2px; margin-bottom: 14px; }
+  .ron-take-text { font-size: 12px; color: var(--text); line-height: 1.9; white-space: pre-wrap; }
+  .ron-nfa { margin-top: 14px; font-size: 9px; color: var(--muted); border: 1px solid rgba(255,255,255,0.06); display: inline-block; padding: 4px 10px; }
+
+  @media (max-width: 560px) {
+    .ron-input-row { flex-direction: column; }
+    .ron-data-grid { grid-template-columns: 1fr; }
+    .ron-risk { display: none; }
+    .rug-section { padding: 60px 20px; }
+  }
+
   /* HERO */
   .hero {
     position: relative;
@@ -1477,6 +1611,7 @@
     <li><a href="#about">Origin</a></li>
     <li><a href="#utility">Utility</a></li>
     <li><a href="#pumpfun">Trust</a></li>
+    <li><a href="#rugornotSection">Rug?</a></li>
     <li><a href="#tokenomics">$J33T</a></li>
   </ul>
   <div class="nav-wallet-wrap" id="navWalletWrap">
@@ -1837,6 +1972,73 @@
       J33T's official channels will never DM you first. J33T is a dog. Dogs don't DM.<br><br>
       <span style="color:var(--gold);">98.6%</span> of pump.fun tokens rug or dump. The 1.4% that don't still require you to DYOR.
       There are no shortcuts. Check the chain. Trust the data.
+    </div>
+  </div>
+</section>
+
+
+<!-- RUG OR NOT -->
+<section class="rug-section" id="rugornotSection">
+  <div class="rug-inner">
+    <div class="section-label">// J33T PRESENTS — AI POWERED</div>
+    <h2 class="section-title">RUG<span style="color:var(--muted)"> OR </span>NOT?</h2>
+    <p class="section-desc" style="max-width:600px;">
+      Paste any Solana token address. J33T sniffs the on-chain data and gives her honest opinion. NFA — this is a dog's analysis.
+    </p>
+
+    <div class="ron-card">
+      <div class="ron-input-label">// TOKEN CONTRACT ADDRESS</div>
+      <div class="ron-input-row">
+        <input
+          class="ron-input"
+          id="ronInput"
+          type="text"
+          placeholder="e.g. E2HNWS5L6gwmtC9SZPpRq6Yp3V5gzotFrL3dAEP2pump"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="ron-btn" id="ronBtn" onclick="runRugOrNot()">🔍 SNIFF</button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="ron-loading" id="ronLoading">
+      <span class="ron-loading-dog">🐶</span>
+      <div class="ron-loading-text">J33T IS SNIFFING<span class="ron-dots"></span></div>
+    </div>
+
+    <!-- Error -->
+    <div class="ron-error" id="ronError"></div>
+
+    <!-- Result -->
+    <div class="ron-result" id="ronResult">
+
+      <!-- Verdict banner -->
+      <div class="ron-verdict" id="ronVerdict">
+        <span class="ron-verdict-emoji" id="ronEmoji"></span>
+        <div class="ron-verdict-body">
+          <div class="ron-verdict-label">// J33T'S VERDICT</div>
+          <div class="ron-verdict-main" id="ronVerdictMain"></div>
+        </div>
+        <div class="ron-risk" id="ronRisk"></div>
+      </div>
+
+      <!-- Data grid -->
+      <div class="ron-data-grid" id="ronDataGrid"></div>
+
+      <!-- Red flags -->
+      <div class="ron-flags" id="ronFlags" style="display:none;">
+        <div class="ron-flags-title">🚩 RED FLAGS DETECTED</div>
+        <div id="ronFlagsList"></div>
+      </div>
+
+      <!-- J33T AI take -->
+      <div class="ron-take">
+        <div class="ron-take-header">🐾 J33T'S TAKE &nbsp;<span style="color:var(--muted);font-size:6px;">AI ANALYSIS · GROQ · NFA</span></div>
+        <div class="ron-take-text" id="ronTakeText"></div>
+        <div class="ron-nfa">⚠️ Not financial advice. This is a dog's opinion. Always DYOR.</div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -2901,6 +3103,194 @@ function tickerMoonMode() {
 // ============================================================
 // VERIFY / COPY MINT ADDRESS
 // ============================================================
+
+// ============================================================
+// RUG OR NOT
+// ============================================================
+const RON_WORKER = 'https://j33t-proxy.juhasz-peter1986.workers.dev';
+
+document.getElementById('ronInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') runRugOrNot();
+});
+
+async function runRugOrNot() {
+  const addr = document.getElementById('ronInput').value.trim();
+  if (!addr || addr.length < 32) {
+    ronShowError('Please enter a valid Solana contract address.');
+    return;
+  }
+
+  ronSetLoading(true);
+  ronHideError();
+  ronHideResult();
+
+  try {
+    const tokenData = await ronFetchToken(addr);
+    const analysis  = await ronAskGroq(addr, tokenData);
+    ronShowResult(tokenData, analysis);
+  } catch(e) {
+    ronShowError('Something went wrong: ' + e.message);
+  } finally {
+    ronSetLoading(false);
+  }
+}
+
+async function ronFetchToken(addr) {
+  const data = { addr, found: false, flags: [] };
+  let pairs = [];
+
+  // Try 3 DexScreener endpoints
+  const endpoints = [
+    `https://api.dexscreener.com/tokens/v1/solana/${addr}`,
+    `https://api.dexscreener.com/latest/dex/tokens/${addr}`,
+    `https://api.dexscreener.com/latest/dex/search?q=${addr}`,
+  ];
+
+  for (const url of endpoints) {
+    if (pairs.length) break;
+    try {
+      const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      const d = await r.json();
+      if (Array.isArray(d)) pairs = d;
+      else if (Array.isArray(d?.pairs)) {
+        pairs = url.includes('search')
+          ? (d.pairs.filter(p => p.baseToken?.address?.toLowerCase() === addr.toLowerCase()) || d.pairs)
+          : d.pairs;
+      }
+    } catch(e) {}
+  }
+
+  if (pairs.length) {
+    const pair = pairs.sort((a,b) => (b.liquidity?.usd||0) - (a.liquidity?.usd||0))[0];
+    data.found     = true;
+    data.name      = pair.baseToken?.name || 'Unknown';
+    data.symbol    = pair.baseToken?.symbol || '???';
+    data.price     = pair.priceUsd ? parseFloat(pair.priceUsd) : null;
+    data.mcap      = pair.marketCap || null;
+    data.liquidity = pair.liquidity?.usd || null;
+    data.volume24h = pair.volume?.h24 || null;
+    data.change24h = pair.priceChange?.h24 || null;
+    data.change1h  = pair.priceChange?.h1 || null;
+    data.dex       = pair.dexId || null;
+    data.pairAge   = pair.pairCreatedAt ? Math.floor((Date.now() - pair.pairCreatedAt) / 86400000) : null;
+    data.buys24h   = pair.txns?.h24?.buys || 0;
+    data.sells24h  = pair.txns?.h24?.sells || 0;
+
+    if (data.liquidity !== null && data.liquidity < 10000) data.flags.push('Low liquidity (under $10k) — easy to manipulate');
+    if (data.liquidity !== null && data.liquidity < 1000)  data.flags.push('Critically low liquidity (under $1k) — extreme rug risk');
+    if (data.pairAge !== null && data.pairAge < 2)         data.flags.push('Token is less than 2 days old — very high risk');
+    if (data.change24h !== null && data.change24h < -50)   data.flags.push(`Price dropped ${Math.abs(data.change24h).toFixed(0)}% in 24h`);
+    if (data.buys24h > 0 && data.sells24h > data.buys24h * 3) data.flags.push('Sells vastly outnumber buys — distribution pattern');
+    if (data.mcap && data.liquidity && (data.liquidity / data.mcap) < 0.02) data.flags.push('Liquidity < 2% of market cap — very thin floor');
+  } else {
+    data.flags.push('Token not found on DexScreener after 3 attempts — verify the address');
+  }
+
+  return data;
+}
+
+async function ronAskGroq(addr, td) {
+  const dataStr = td.found ? `
+Token: ${td.name} (${td.symbol})
+Price: ${td.price ? '$' + td.price.toFixed(8) : 'unknown'}
+Market Cap: ${td.mcap ? '$' + Math.round(td.mcap).toLocaleString() : 'unknown'}
+Liquidity: ${td.liquidity ? '$' + Math.round(td.liquidity).toLocaleString() : 'unknown'}
+24h Volume: ${td.volume24h ? '$' + Math.round(td.volume24h).toLocaleString() : 'unknown'}
+24h Change: ${td.change24h !== null ? td.change24h + '%' : 'unknown'}
+Token Age: ${td.pairAge !== null ? td.pairAge + ' days' : 'unknown'}
+DEX: ${td.dex || 'unknown'}
+Buys/Sells 24h: ${td.buys24h} / ${td.sells24h}
+Red flags: ${td.flags.length ? td.flags.join('; ') : 'none'}
+` : `Address: ${addr}\nNot found on DexScreener. ${td.flags.join('; ')}`;
+
+  const prompt = `You are J33T, a Yorkshire Terrier born January 2009 who has seen every crypto cycle and survived without being scammed. Analyze this Solana token and give your honest opinion.
+
+Token data:
+${dataStr}
+
+Respond ONLY with valid JSON in this exact format (no markdown, no extra text):
+{"verdict":"LIKELY RUG","riskScore":85,"analysis":"Your 3-4 sentence analysis in J33T voice here."}
+
+Verdict must be one of: LIKELY RUG, HIGH RISK, PROCEED WITH CAUTION, LOOKS CLEAN
+Risk score: 0 (totally safe) to 100 (definite rug)
+Be direct, reference specific data points, always end with NFA reminder.`;
+
+  const res = await fetch(RON_WORKER, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt }),
+    signal: AbortSignal.timeout(20000),
+  });
+
+  const d = await res.json();
+  if (d.error) throw new Error(d.error);
+
+  try {
+    const clean = (d.result || '').replace(/```json|```/g, '').trim();
+    return JSON.parse(clean);
+  } catch(e) {
+    return { verdict: 'ANALYSIS ERROR', riskScore: 50, analysis: d.result || 'Could not parse response.' };
+  }
+}
+
+function ronShowResult(td, analysis) {
+  const score   = analysis.riskScore ?? 50;
+  const verdict = analysis.verdict || 'UNKNOWN';
+
+  // Verdict banner
+  const banner = document.getElementById('ronVerdict');
+  banner.className = 'ron-verdict ' + (score >= 70 ? 'v-rug' : score >= 40 ? 'v-caution' : 'v-safe');
+  document.getElementById('ronEmoji').textContent = score >= 70 ? '🚨' : score >= 40 ? '⚠️' : '✅';
+  document.getElementById('ronVerdictMain').textContent = verdict;
+  const riskEl = document.getElementById('ronRisk');
+  riskEl.style.color = score >= 70 ? 'var(--red)' : score >= 40 ? 'var(--gold)' : 'var(--green)';
+  riskEl.innerHTML = score + '<small>RISK</small>';
+
+  // Data grid
+  const fmt    = v => v != null ? '$' + Math.round(v).toLocaleString() : '—';
+  const fmtPct = v => v != null ? (v > 0 ? '+' : '') + parseFloat(v).toFixed(2) + '%' : '—';
+  const pctCls = v => v == null ? 'c-na' : v < -20 ? 'c-bad' : v > 0 ? 'c-ok' : 'c-warn';
+  const liqCls = v => v == null ? 'c-na' : v < 1000 ? 'c-bad' : v < 10000 ? 'c-warn' : 'c-ok';
+  const ageCls = v => v == null ? 'c-na' : v < 2 ? 'c-bad' : v < 7 ? 'c-warn' : 'c-ok';
+
+  document.getElementById('ronDataGrid').innerHTML = td.found ? `
+    <div class="ron-cell"><div class="ron-cell-label">Token</div><div class="ron-cell-val c-ok">${td.name} (${td.symbol})</div></div>
+    <div class="ron-cell"><div class="ron-cell-label">Age</div><div class="ron-cell-val ${ageCls(td.pairAge)}">${td.pairAge !== null ? td.pairAge + ' days' : '—'}</div></div>
+    <div class="ron-cell"><div class="ron-cell-label">Liquidity</div><div class="ron-cell-val ${liqCls(td.liquidity)}">${fmt(td.liquidity)}</div></div>
+    <div class="ron-cell"><div class="ron-cell-label">Market Cap</div><div class="ron-cell-val c-na">${fmt(td.mcap)}</div></div>
+    <div class="ron-cell"><div class="ron-cell-label">24h Volume</div><div class="ron-cell-val c-na">${fmt(td.volume24h)}</div></div>
+    <div class="ron-cell"><div class="ron-cell-label">24h Change</div><div class="ron-cell-val ${pctCls(td.change24h)}">${fmtPct(td.change24h)}</div></div>
+    <div class="ron-cell"><div class="ron-cell-label">Buys / Sells</div><div class="ron-cell-val"><span class="c-ok">${td.buys24h}</span> / <span class="c-bad">${td.sells24h}</span></div></div>
+    <div class="ron-cell"><div class="ron-cell-label">DEX</div><div class="ron-cell-val c-na">${td.dex || '—'}</div></div>
+  ` : `<div class="ron-cell" style="grid-column:1/-1"><div class="ron-cell-label">Status</div><div class="ron-cell-val c-bad">Not found on DexScreener</div></div>`;
+
+  // Flags
+  if (td.flags.length) {
+    document.getElementById('ronFlags').style.display = 'block';
+    document.getElementById('ronFlagsList').innerHTML = td.flags
+      .map(f => `<div class="ron-flag-item"><span>🚩</span><span>${f}</span></div>`).join('');
+  } else {
+    document.getElementById('ronFlags').style.display = 'none';
+  }
+
+  // Analysis text
+  document.getElementById('ronTakeText').textContent = analysis.analysis || '';
+  document.getElementById('ronResult').classList.add('active');
+}
+
+function ronSetLoading(on) {
+  document.getElementById('ronLoading').classList.toggle('active', on);
+  document.getElementById('ronBtn').disabled = on;
+  document.getElementById('ronBtn').textContent = on ? 'SNIFFING...' : '🔍 SNIFF';
+}
+function ronShowError(msg) {
+  const el = document.getElementById('ronError');
+  el.textContent = '⚠️ ' + msg;
+  el.classList.add('active');
+}
+function ronHideError()  { document.getElementById('ronError').classList.remove('active'); }
+function ronHideResult() { document.getElementById('ronResult').classList.remove('active'); }
+
 function copyHeroCA() {
   const addr = CONFIG.TOKEN_MINT;
   navigator.clipboard.writeText(addr).then(() => {
