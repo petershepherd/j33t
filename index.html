@@ -1961,13 +1961,25 @@
         <div class="card-icon">🎨</div>
         <div class="card-title">RUG RADAR</div>
         <div class="card-desc">Generate shareable J33T meme cards with crypto safety messages. Download and spread the word.</div>
-        <div class="card-min">MIN: 100,000 $J33T</div>
+        <div class="card-min">MIN: 10,000 $J33T</div>
       </div>
       <div class="gate-card locked" id="card-oracle" onclick="tryAccess('oracle')">
         <div class="card-icon">🐾</div>
         <div class="card-title">J33T'S TAKE</div>
         <div class="card-desc">J33T shares her personal thoughts on meme coins and market vibes. Never financial advice — just a dog's opinion.</div>
-        <div class="card-min">MIN: 500,000 $J33T</div>
+        <div class="card-min">MIN: 50,000 $J33T</div>
+      </div>
+      <div class="gate-card locked" id="card-rugornotSection" onclick="document.getElementById('rugornotSection').scrollIntoView({behavior:'smooth'})">
+        <div class="card-icon">🔍</div>
+        <div class="card-title">RUG OR NOT?</div>
+        <div class="card-desc">Paste any Solana contract address and J33T sniffs it for red flags. AI-powered on-chain analysis.</div>
+        <div class="card-min">MIN: 100,000 $J33T</div>
+      </div>
+      <div class="gate-card locked" id="card-dailySniff" onclick="document.getElementById('dailySniff').scrollIntoView({behavior:'smooth'})">
+        <div class="card-icon">👃</div>
+        <div class="card-title">DAILY SNIFF</div>
+        <div class="card-desc">J33T sniffs Solana's trending tokens 3× a day. On-chain data + AI commentary. Not a recommendation.</div>
+        <div class="card-min">MIN: 100,000 $J33T</div>
       </div>
       <div class="gate-card locked" id="card-whitelist" onclick="tryAccess('whitelist')">
         <div class="card-icon">📋</div>
@@ -2905,7 +2917,7 @@ async function connectWallet(type) {
   walletConnected = true;
   const addr = '7xK' + Math.random().toString(36).substr(2,4).toUpperCase() + '...' + Math.random().toString(36).substr(2,4).toUpperCase() + 'pump';
   walletAddr = addr;
-  j33tBalance = Math.floor(Math.random() * 4500000) + 50000; // 50k–4.55M range for demo
+  j33tBalance = Math.floor(Math.random() * 99000) + 500; // 500–99,999 range for demo (below all tier minimums)
 
   try {
     localStorage.setItem('j33t_demo_v2', JSON.stringify({connected: true, balance: j33tBalance, addr: walletAddr, real: false}));
@@ -3107,10 +3119,12 @@ function disconnectWallet() {
 
 function unlockCards() {
   [
-    ['card-meme',      100000],
-    ['card-oracle',    500000],
-    ['card-whitelist', 1000000],
-    ['card-staking',   5000000],
+    ['card-meme',          10000],
+    ['card-oracle',        50000],
+    ['card-rugornotSection', 100000],
+    ['card-dailySniff',    100000],
+    ['card-whitelist',    1000000],
+    ['card-staking',      5000000],
   ].forEach(([id, min]) => {
     const card = document.getElementById(id);
     if (card && j33tBalance >= min) { card.classList.remove('locked'); card.classList.add('unlocked'); }
@@ -3161,7 +3175,7 @@ async function refreshBalance() {
 
 function tryAccess(type) {
   if (!walletConnected) { showToast('Connect your wallet first!'); openWalletModal(); return; }
-  const mins = { meme: 100000, oracle: 500000, whitelist: 1000000, staking: 5000000 };
+  const mins = { meme: 10000, oracle: 50000, whitelist: 1000000, staking: 5000000 };
   if (j33tBalance < mins[type]) {
     showToast(`Need ${mins[type].toLocaleString()} $J33T to unlock!`);
     return;
@@ -3594,6 +3608,28 @@ async function runRugOrNot() {
   const addr = document.getElementById('ronInput').value.trim();
   if (!addr || addr.length < 32) {
     ronShowError('Please enter a valid Solana contract address.');
+    return;
+  }
+
+  // Easter egg: ha a saját J33T token CA-t írják be
+  if (addr.toLowerCase() === CONFIG.TOKEN_MINT.toLowerCase()) {
+    ronSetLoading(false);
+    ronHideError();
+    ronHideResult();
+    // Speciális J33T panel
+    document.getElementById('ronResult').classList.add('active');
+    document.getElementById('ronVerdict').className = 'ron-verdict v-safe';
+    document.getElementById('ronEmoji').textContent = '🐾';
+    document.getElementById('ronVerdictMain').textContent = 'OBVIOUSLY NOT A RUG';
+    document.getElementById('ronRisk').innerHTML = '0<small>RISK</small>';
+    document.getElementById('ronRisk').style.color = 'var(--green)';
+    document.getElementById('ronDataGrid').innerHTML = `
+      <div class="ron-cell" style="grid-column:1/-1">
+        <div class="ron-cell-label">Status</div>
+        <div class="ron-cell-val c-ok">Born January 2009. Still here. Still not rugged.</div>
+      </div>`;
+    document.getElementById('ronFlags').style.display = 'none';
+    document.getElementById('ronTakeText').textContent = "Woof. Seriously? You're asking me to sniff myself? I have been alive since January 2009 — before most of you knew what a blockchain was. I have survived bear markets, bull runs, three different wallets, and one very suspicious treat that turned out to be a carrot. I am the anti-rug. I am J33T. Go sniff something that actually needs sniffing. NFA — but also, obviously NFA, I'm a dog.";
     return;
   }
 
