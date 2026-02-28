@@ -827,6 +827,141 @@
     .tier-timeline-wrap { padding: 18px 14px; }
   }
 
+
+  /* ============================================================
+     EASTER EGG FOUND OVERLAY
+  ============================================================ */
+  .egg-found-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .egg-found-overlay.active {
+    opacity: 1;
+    pointer-events: none;
+  }
+  .egg-found-box {
+    background: var(--surface);
+    border: 2px solid var(--gold);
+    padding: 40px 48px;
+    text-align: center;
+    position: relative;
+    animation: eggBoxPop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 0 60px rgba(245,200,66,0.3);
+  }
+  @keyframes eggBoxPop {
+    from { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+    to   { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  .egg-found-icon {
+    font-size: 52px;
+    display: block;
+    margin-bottom: 12px;
+    animation: eggIconSpin 0.6s ease-out;
+  }
+  @keyframes eggIconSpin {
+    from { transform: rotate(-20deg) scale(0); }
+    to   { transform: rotate(0deg) scale(1); }
+  }
+  .egg-found-label {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--gold);
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+  .egg-found-name {
+    font-family: var(--pixel);
+    font-size: clamp(12px, 3vw, 18px);
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .egg-found-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+  .egg-found-count {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--green);
+    letter-spacing: 2px;
+  }
+
+  /* Leaderboard */
+  .egg-leaderboard {
+    margin-top: 32px;
+    background: var(--surface2);
+    border: 1px solid rgba(245,200,66,0.1);
+    padding: 20px 24px;
+  }
+  .egg-lb-title {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .egg-lb-refresh {
+    background: none;
+    border: 1px solid rgba(245,200,66,0.3);
+    color: var(--gold);
+    font-family: var(--pixel);
+    font-size: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .egg-lb-refresh:hover { background: rgba(245,200,66,0.1); }
+  .egg-lb-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 11px;
+  }
+  .egg-lb-row:last-child { border-bottom: none; }
+  .egg-lb-rank { font-family: var(--pixel); font-size: 8px; color: var(--muted); width: 20px; flex-shrink: 0; }
+  .egg-lb-rank.gold   { color: #ffd700; }
+  .egg-lb-rank.silver { color: #c0c0c0; }
+  .egg-lb-rank.bronze { color: #cd7f32; }
+  .egg-lb-addr { flex: 1; color: var(--muted); font-family: var(--mono); font-size: 10px; }
+  .egg-lb-score { font-family: var(--pixel); font-size: 8px; color: var(--green); }
+  .egg-lb-you { color: var(--gold) !important; }
+  .egg-lb-empty { font-size: 11px; color: var(--muted); text-align: center; padding: 20px; }
+  .egg-lb-you-row { background: rgba(245,200,66,0.05); border-radius: 0; margin: 4px -24px; padding: 8px 24px; }
+
+
+  .egg-lb-cheater { color: var(--red) !important; }
+  .egg-lb-cheater-tag {
+    font-family: var(--pixel);
+    font-size: 5px;
+    color: var(--red);
+    border: 1px solid rgba(255,68,102,0.4);
+    padding: 2px 5px;
+    letter-spacing: 1px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .egg-lb-row.cheater-row {
+    opacity: 0.6;
+    background: rgba(255,68,102,0.04);
+  }
   /* HERO */
   .hero {
     position: relative;
@@ -2025,6 +2160,18 @@
   <button class="btn-sm" onclick="document.getElementById('konamiOverlay').classList.remove('show'); document.body.classList.remove('super-saiyan');">BACK TO EARTH</button>
 </div>
 
+
+<!-- Easter Egg Discovery Overlay -->
+<div class="egg-found-overlay" id="eggFoundOverlay">
+  <div class="egg-found-box">
+    <div class="egg-found-icon" id="eggFoundIcon">🥚</div>
+    <div class="egg-found-label">EASTER EGG FOUND</div>
+    <div class="egg-found-name" id="eggFoundName">???</div>
+    <div class="egg-found-desc" id="eggFoundDesc"></div>
+    <div class="egg-found-count" id="eggFoundCount"></div>
+  </div>
+</div>
+
 <!-- Live price widget -->
 <div class="price-widget" id="priceWidget">
   <div class="price-widget-label">$J33T / USD</div>
@@ -2220,13 +2367,13 @@
 
     <!-- Feature cards -->
     <div class="gate-grid">
-      <div class="gate-card locked" id="card-meme" onclick="tryAccess('meme')">
+      <div class="gate-card locked" id="card-meme" onclick="trackWindowShop('card-meme'); tryAccess('meme')">
         <div class="card-icon">🎨</div>
         <div class="card-title">RUG RADAR</div>
         <div class="card-desc">Generate shareable J33T meme cards with crypto safety messages. Download and spread the word.</div>
         <div class="card-min">MIN: 10,000 $J33T</div>
       </div>
-      <div class="gate-card locked" id="card-oracle" onclick="tryAccess('oracle')">
+      <div class="gate-card locked" id="card-oracle" onclick="trackWindowShop('card-oracle'); tryAccess('oracle')">
         <div class="card-icon">🐾</div>
         <div class="card-title">J33T'S TAKE</div>
         <div class="card-desc">J33T shares her personal thoughts on meme coins and market vibes. Never financial advice — just a dog's opinion.</div>
@@ -2244,13 +2391,13 @@
         <div class="card-desc">J33T sniffs Solana's trending tokens 3× a day. On-chain data + AI commentary. Not a recommendation.</div>
         <div class="card-min">MIN: 100,000 $J33T</div>
       </div>
-      <div class="gate-card locked" id="card-whitelist" onclick="tryAccess('whitelist')">
+      <div class="gate-card locked" id="card-whitelist" onclick="trackWindowShop('card-whitelist'); tryAccess('whitelist')">
         <div class="card-icon">📋</div>
         <div class="card-title">EARLY ACCESS LIST</div>
         <div class="card-desc">Priority access to future J33T ecosystem drops, NFTs, and partner launches.</div>
         <div class="card-min">MIN: 500,000 $J33T</div>
       </div>
-      <div class="gate-card locked" id="card-staking" onclick="tryAccess('staking')">
+      <div class="gate-card locked" id="card-staking" onclick="trackWindowShop('card-staking'); tryAccess('staking')">
         <div class="card-icon">💎</div>
         <div class="card-title">PAWS STAKING</div>
         <div class="card-desc">Stake your $J33T and earn passive rewards. The longer she waits, the more she approves.</div>
@@ -2286,6 +2433,20 @@
         <button class="btn-sm" style="background:var(--accent);color:#fff;" onclick="petJ33T()">🐾 PET J33T</button>
       </div>
     </div>
+
+<!-- Easter Egg Leaderboard -->
+<div class="egg-leaderboard" id="eggLeaderboard">
+  <div class="egg-lb-title">
+    🥚 EGG HUNTERS LEADERBOARD
+    <button class="egg-lb-refresh" onclick="loadEggLeaderboard()">↻ REFRESH</button>
+  </div>
+  <div id="eggLbBody">
+    <div class="egg-lb-empty">Loading hunters...</div>
+  </div>
+  <div style="margin-top:12px; font-size:9px; color:var(--muted); text-align:center;">
+    Connect wallet to appear on the leaderboard
+  </div>
+</div>
   </div>
 </section>
 
@@ -3349,6 +3510,7 @@ function applyWalletState() {
   buildTierTimeline();
   buildTierTabGrid();
   updateNavBadgeTooltip();
+  if (walletConnected) checkNiceNumber(j33tBalance);
 }
 
 function disconnectWallet() {
@@ -3566,6 +3728,7 @@ function getWisdom() {
   }, 300);
 }
 function petJ33T() {
+  patDogEgg();
   const el = document.getElementById('oracleText');
   el.style.opacity = 0;
   setTimeout(() => {
@@ -4006,6 +4169,12 @@ document.getElementById('ronInput').addEventListener('keydown', e => {
 
 async function runRugOrNot() {
   const addr = document.getElementById('ronInput').value.trim();
+  // Rugception easter egg
+  if (addr.toLowerCase().trim() === 'rug') {
+    triggerEasterEgg('rug_input');
+    ronShowError('Really? "rug"? J33T cannot sniff a concept. Try an actual contract address.');
+    return;
+  }
   if (!addr || addr.length < 32) {
     ronShowError('Please enter a valid Solana contract address.');
     return;
@@ -4029,7 +4198,7 @@ async function runRugOrNot() {
         <div class="ron-cell-val c-ok">Born January 2009. Still here. Still not rugged.</div>
       </div>`;
     document.getElementById('ronFlags').style.display = 'none';
-    document.getElementById('ronTakeText').textContent = "Woof. Seriously? You're asking me to sniff myself? I have been alive since January 2009 — before most of you knew what a blockchain was. I have survived bear markets, bull runs, three different wallets, and one very suspicious treat that turned out to be a carrot. I am the anti-rug. I am J33T. Go sniff something that actually needs sniffing. NFA — but also, obviously NFA, I'm a dog.";
+    triggerEasterEgg('self_sniff'); document.getElementById('ronTakeText').textContent = "Woof. Seriously? You're asking me to sniff myself? I have been alive since January 2009 — before most of you knew what a blockchain was. I have survived bear markets, bull runs, three different wallets, and one very suspicious treat that turned out to be a carrot. I am the anti-rug. I am J33T. Go sniff something that actually needs sniffing. NFA — but also, obviously NFA, I'm a dog.";
     return;
   }
 
@@ -4248,6 +4417,219 @@ function showToast(msg) {
 }
 
 // ============================================================
+
+// ============================================================
+// EASTER EGG MASTER SYSTEM
+// ============================================================
+
+// Összes egg definíció — id, label, icon, description, trigger leírás
+const ALL_EGGS = {
+  // ── KÁRTYA EASTER EGGS (card generator) ──
+  'card_evil':    { label: 'EVIL MODE',           icon: '👿', desc: 'The dog stares into the abyss. The abyss stares back.',     trigger: 'Type "evil" in card generator' },
+  'card_moon':    { label: 'MOON MODE',            icon: '🌕', desc: 'Moonlight dog. Sees things you cannot.',                   trigger: 'Type "moon" in card generator' },
+  'card_ghost':   { label: 'GHOST DOG',            icon: '👻', desc: 'Transparent. Unchained. Still not selling.',               trigger: 'Type "ghost" in card generator' },
+  'card_laser':   { label: 'LASER EYES',           icon: '🔴', desc: 'The lasers were inside us all along.',                    trigger: 'Type "laser" in card generator' },
+  'card_doge':    { label: 'SUCH DOGE',            icon: '🐶', desc: 'WOW. MANY RESPECT. MUCH ORIGINAL.',                      trigger: 'Type "doge" in card generator' },
+  'card_rug':     { label: 'RUG DETECTED',         icon: '🚩', desc: 'You typed the forbidden word. Devs sold. Bye.',           trigger: 'Type "rug" in card generator' },
+  'card_based':   { label: 'ULTRA BASED',          icon: '😎', desc: 'Maximum based. J33T approves deeply.',                   trigger: 'Type "based" in card generator' },
+  'card_gm':      { label: 'GM FREN',              icon: '☀️', desc: 'Another day. Still holding. This is the way.',           trigger: 'Type "gm" in card generator' },
+  'card_satoshi': { label: 'RESPECT THE OG',       icon: '₿',  desc: 'Bitcoin orange dog honors the original. Nakamoto nods.', trigger: 'Type "satoshi" in card generator' },
+  'card_chaos':   { label: 'CHAOS MODE',           icon: '🌀', desc: 'Rainbow border. Your eyes hurt. You smile anyway.',      trigger: "Find 3 eggs first, then type \"chaos\"" },
+  // ── SITE EASTER EGGS ──
+  'self_sniff':   { label: 'SELF SNIFFER',         icon: '👃', desc: 'You asked J33T to sniff herself. Bold move.',            trigger: 'Enter J33T CA in RUG OR NOT' },
+  // 'konami' — csali, NEM valódi egg, cheater detector (lásd Konami handler)
+  'woof_type':    { label: 'WOOF WHISPERER',       icon: '🐕', desc: 'You typed woof. J33T heard you from three blocks away.', trigger: 'Type "woof" anywhere on the page' },
+  'rug_input':    { label: 'RUGCEPTION',           icon: '🎭', desc: 'You searched for "rug" in the rug detector. Inception.', trigger: 'Type "rug" in RUG OR NOT' },
+  'degen_hours':  { label: 'DEGEN HOURS',          icon: '🌙', desc: '3-4 AM. J33T is also awake. You are both degenerates.', trigger: 'Visit between 3-4 AM' },
+  'genesis_day':  { label: 'GENESIS DAY',          icon: '📅', desc: 'January 3rd. Bitcoin block zero. You remembered.',      trigger: 'Visit on January 3rd' },
+  'pat_dog':      { label: 'PAT THE DOG',          icon: '🖐️', desc: 'Seven pats. J33T\u2019s tail is now a blur.',               trigger: 'Click J33T\u2019s icon 7 times' },
+  'nice_number':  { label: 'NICE.',                icon: '🔢', desc: '69,420 or 21,000,000 tokens. The universe is aligned.', trigger: 'Hold exactly 69,420 or 21,000,000 $J33T' },
+  'diamond_wait': { label: 'DIAMOND HANDS',        icon: '💎', desc: 'Five minutes of stillness. J33T respects your patience.', trigger: 'Stay idle on the page for 5 minutes' },
+  'window_shop':  { label: 'WINDOW SHOPPER',       icon: '🪟', desc: 'All locked. All clicked. J33T sees your ambition.',     trigger: 'Click every locked gate card without a wallet' },
+};
+
+const TOTAL_EGGS = Object.keys(ALL_EGGS).length;
+
+// localStorage-ből töltjük a foundok-at
+let foundEasterEggs = new Set(JSON.parse(localStorage.getItem('j33t_eggs_v2') || '[]'));
+
+function saveEggs() {
+  localStorage.setItem('j33t_eggs_v2', JSON.stringify([...foundEasterEggs]));
+}
+
+function triggerEasterEgg(id) {
+  if (!ALL_EGGS[id]) return;
+  const egg = ALL_EGGS[id];
+  const isNew = !foundEasterEggs.has(id);
+
+  if (isNew) {
+    foundEasterEggs.add(id);
+    saveEggs();
+    pushEggToLeaderboard(id);
+  }
+
+  // Mindig ünnepeljük — new vagy már megvolt
+  showEggOverlay(egg, isNew);
+  launchConfetti();
+}
+
+function showEggOverlay(egg, isNew) {
+  const overlay = document.getElementById('eggFoundOverlay');
+  const iconEl  = document.getElementById('eggFoundIcon');
+  const nameEl  = document.getElementById('eggFoundName');
+  const descEl  = document.getElementById('eggFoundDesc');
+  const countEl = document.getElementById('eggFoundCount');
+
+  iconEl.textContent  = egg.icon;
+  nameEl.textContent  = egg.label;
+  descEl.textContent  = egg.desc;
+
+  const found = foundEasterEggs.size;
+  if (isNew) {
+    countEl.textContent = `${found} / ${TOTAL_EGGS} EGGS FOUND`;
+    if (found === TOTAL_EGGS) {
+      countEl.textContent = '🏆 ALL EGGS FOUND — TOP DOG ACHIEVEMENT UNLOCKED';
+    }
+  } else {
+    countEl.textContent = `Already found · ${found} / ${TOTAL_EGGS} total`;
+  }
+
+  overlay.classList.add('active');
+  setTimeout(() => overlay.classList.remove('active'), 3000);
+}
+
+// ── LEADERBOARD ───────────────────────────────────────────────────
+
+async function pushEggToLeaderboard(eggId) {
+  if (!walletConnected || !walletAddr) return;
+  try {
+    await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'egg_found',
+        wallet: walletAddr,
+        eggId,
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+    loadEggLeaderboard();
+  } catch(e) {}
+}
+
+async function loadEggLeaderboard() {
+  const body = document.getElementById('eggLbBody');
+  if (!body) return;
+  body.innerHTML = '<div class="egg-lb-empty">Loading...</div>';
+  try {
+    const res = await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'egg_leaderboard' }),
+      signal: AbortSignal.timeout(8000),
+    });
+    const d = await res.json();
+    const rows = d.leaderboard || [];
+    if (!rows.length) {
+      body.innerHTML = '<div class="egg-lb-empty">No hunters yet. Be the first! 🥚</div>';
+      return;
+    }
+    // Cheater-ek a lista végére, nem kapnak rank számot
+    const legit = rows.filter(r => !r.cheater);
+    const cheaters = rows.filter(r => r.cheater);
+    const sorted = [...legit, ...cheaters];
+    const rankLabels = ['gold','silver','bronze'];
+    body.innerHTML = sorted.slice(0, 10).map((r, i) => {
+      const isYou = walletConnected && r.wallet === walletAddr;
+      const short = r.wallet.slice(0,4) + '...' + r.wallet.slice(-4);
+      const rankNum = r.cheater ? '💀' : (i + 1) + '.';
+      const rankCls = r.cheater ? '' : (rankLabels[i] || '');
+      return `<div class="egg-lb-row${isYou ? ' egg-lb-you-row' : ''}${r.cheater ? ' cheater-row' : ''}">
+        <div class="egg-lb-rank ${rankCls}">${rankNum}</div>
+        <div class="egg-lb-addr ${isYou ? 'egg-lb-you' : ''} ${r.cheater ? 'egg-lb-cheater' : ''}">
+          ${isYou ? '👉 ' : ''}${short}
+          ${r.cheater ? '<span class="egg-lb-cheater-tag">CHEATER</span>' : ''}
+        </div>
+        <div class="egg-lb-score ${r.cheater ? 'egg-lb-cheater' : ''}">${r.count} 🥚</div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    body.innerHTML = '<div class="egg-lb-empty">Could not load leaderboard.</div>';
+  }
+}
+
+// ── SITE TRIGGER RENDSZER ─────────────────────────────────────────
+
+// PAT THE DOG — 7 kattintás
+let patCount = 0;
+let patTimer = null;
+function patDogEgg() {
+  patCount++;
+  clearTimeout(patTimer);
+  patTimer = setTimeout(() => { patCount = 0; }, 3000);
+  if (patCount >= 7) {
+    patCount = 0;
+    triggerEasterEgg('pat_dog');
+  }
+}
+
+// WINDOW SHOPPER — összes locked gate card kattintása
+const lockedCards = new Set();
+const allGateCards = ['card-meme','card-oracle','card-rugornotSection','card-dailySniff','card-whitelist','card-staking'];
+function trackWindowShop(cardId) {
+  if (!walletConnected) {
+    lockedCards.add(cardId);
+    if (allGateCards.every(id => lockedCards.has(id))) {
+      triggerEasterEgg('window_shop');
+    }
+  }
+}
+
+// DEGEN HOURS — 3-4 AM
+function checkDegenHours() {
+  const h = new Date().getHours();
+  if (h === 3) triggerEasterEgg('degen_hours');
+}
+
+// GENESIS DAY — január 3.
+function checkGenesisDay() {
+  const d = new Date();
+  if (d.getMonth() === 0 && d.getDate() === 3) triggerEasterEgg('genesis_day');
+}
+
+// DIAMOND HANDS — 5 perc idle
+let idleTimer = null;
+function resetIdleTimer() {
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => triggerEasterEgg('diamond_wait'), 5 * 60 * 1000);
+}
+['mousemove','keydown','scroll','click','touchstart'].forEach(e =>
+  document.addEventListener(e, resetIdleTimer, { passive: true })
+);
+resetIdleTimer();
+
+// NICE NUMBER — balance check
+function checkNiceNumber(balance) {
+  if (balance === 69420 || balance === 21000000) {
+    triggerEasterEgg('nice_number');
+  }
+}
+
+// RUG OR NOT — "rug" beírása
+function checkRugInput(addr) {
+  if (addr.toLowerCase().trim() === 'rug') {
+    triggerEasterEgg('rug_input');
+    return true; // megállítja a scan-t
+  }
+  return false;
+}
+
+// Init — time-based checks
+checkDegenHours();
+checkGenesisDay();
+// Leaderboard betöltése oldal betöltéskor
+setTimeout(loadEggLeaderboard, 1500);
+
 // KONAMI CODE EASTER EGG
 // ============================================================
 const konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
@@ -4256,10 +4638,14 @@ document.addEventListener('keydown', e => {
   if (e.key === konami[ki]) { ki++;
     if (ki === konami.length) {
       ki = 0;
+      // CSALI EASTER EGG — aki idáig eljut, az a forrásból olvasta ki
+      // Látványos jutalom hogy ne gyanakodjon, de közben cheater jelöljük
       document.body.classList.add('super-saiyan');
       document.getElementById('konamiOverlay').classList.add('show');
       launchConfetti();
       showToast('⚡ SUPER SAIYAN MODE ⚡');
+      // Csendben elküldjük a cheater jelölést
+      markKonamiCheater();
       setTimeout(() => {
         document.getElementById('konamiOverlay').classList.remove('show');
         document.body.classList.remove('super-saiyan');
@@ -4267,6 +4653,26 @@ document.addEventListener('keydown', e => {
     }
   } else { ki = 0; }
 });
+
+
+// ── KONAMI CSALI — cheater jelölés küldése
+async function markKonamiCheater() {
+  if (!walletConnected || !walletAddr) return;
+  try {
+    await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'mark_cheater',
+        wallet: walletAddr,
+        reason: 'konami_trap',
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+    // Ranglista frissítése hogy a cheater jelölés megjelenjen
+    setTimeout(loadEggLeaderboard, 1000);
+  } catch(e) {}
+}
 
 // ============================================================
 // HIDDEN EASTER EGG — type "woof" anywhere
@@ -4278,7 +4684,7 @@ document.addEventListener('keypress', e => {
   if (woofBuffer === 'woof') {
     woofBuffer = '';
     launchConfetti();
-    showToast('🐕 WOOF! J33T HEARD YOU!');
+    triggerEasterEgg('woof_type');
     petTheDog({});
   }
 });
@@ -4388,7 +4794,6 @@ const easterEggs = {
   },
 };
 
-let foundEasterEggs = new Set(JSON.parse(localStorage.getItem('j33t_eggs') || '[]'));
 let currentEasterEgg = null;
 
 function checkEasterEgg(line1, line2) {
@@ -4403,14 +4808,8 @@ function checkEasterEgg(line1, line2) {
 
   for (const [keyword, egg] of Object.entries(easterEggs)) {
     if (combined.includes(keyword)) {
-      if (!foundEasterEggs.has(keyword)) {
-        foundEasterEggs.add(keyword);
-        localStorage.setItem('j33t_eggs', JSON.stringify([...foundEasterEggs]));
-        showToast('🥚 Easter egg found: ' + egg.label + ' (' + foundEasterEggs.size + '/9 total)');
-        if (foundEasterEggs.size === 3) {
-          setTimeout(() => showToast('🌀 CHAOS MODE UNLOCKED! Type "chaos" to activate!'), 1500);
-        }
-      }
+      // Trigger a new unified system
+      triggerEasterEgg('card_' + keyword);
       return egg;
     }
   }
