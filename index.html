@@ -583,6 +583,250 @@
     color: var(--muted);
     text-align: right;
   }
+
+  /* ============================================================
+     TIER TAB + TIMELINE
+  ============================================================ */
+
+  /* Tier Tab Toggle */
+  .tier-tab-wrap {
+    margin: 32px 0 0;
+    border: 1px solid rgba(245,200,66,0.15);
+  }
+  .tier-tab-toggle {
+    width: 100%;
+    background: rgba(245,200,66,0.04);
+    border: none;
+    color: var(--gold);
+    font-family: var(--pixel);
+    font-size: 8px;
+    padding: 14px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    letter-spacing: 2px;
+    transition: background 0.2s;
+  }
+  .tier-tab-toggle:hover { background: rgba(245,200,66,0.08); }
+  .tier-tab-arrow { transition: transform 0.3s; display: inline-block; }
+  .tier-tab-arrow.open { transform: rotate(180deg); }
+
+  .tier-tab-panel {
+    display: none;
+    padding: 20px;
+    background: var(--surface2);
+    border-top: 1px solid rgba(245,200,66,0.1);
+  }
+  .tier-tab-panel.open { display: block; }
+
+  .tier-tab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+
+  .tier-info-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .tier-info-card.is-current {
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 12px rgba(245,200,66,0.15);
+  }
+  .tier-info-card.is-current::before {
+    content: 'YOUR TIER';
+    position: absolute;
+    top: -8px; right: 10px;
+    font-family: var(--pixel);
+    font-size: 5px;
+    background: var(--gold);
+    color: var(--bg);
+    padding: 2px 6px;
+    letter-spacing: 1px;
+  }
+  .tier-info-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    filter: grayscale(0.3);
+  }
+  .tier-info-body { flex: 1; min-width: 0; }
+  .tier-info-name {
+    font-family: var(--pixel);
+    font-size: 7px;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .tier-info-min {
+    font-size: 9px;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+  .tier-info-desc {
+    font-size: 9px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .tier-info-perks {
+    margin-top: 6px;
+    font-size: 8px;
+    color: var(--green);
+    line-height: 1.6;
+  }
+
+  /* Nav badge tooltip */
+  .nav-wallet-info { position: relative; }
+  .nav-badge-tooltip {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--surface2);
+    border: 1px solid rgba(245,200,66,0.25);
+    padding: 10px 14px;
+    font-size: 10px;
+    color: var(--text);
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    line-height: 1.7;
+    min-width: 200px;
+  }
+  .nav-badge-tooltip .tt-badge { font-family: var(--pixel); font-size: 7px; color: var(--gold); display: block; margin-bottom: 4px; }
+  .nav-badge-tooltip .tt-desc  { font-size: 9px; color: var(--muted); }
+  .nav-wallet-info:hover .nav-badge-tooltip { display: block; }
+
+  /* Tier Timeline */
+  .tier-timeline-wrap {
+    margin: 32px 0 24px;
+    padding: 24px 28px;
+    background: var(--surface2);
+    border: 1px solid rgba(245,200,66,0.1);
+  }
+  .tier-timeline-label {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+  }
+  .tier-timeline {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    margin-bottom: 8px;
+  }
+  /* The line */
+  .tier-timeline::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    right: 12px;
+    height: 2px;
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-50%);
+    z-index: 0;
+  }
+  /* Progress fill */
+  .tier-timeline-progress {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--green), var(--gold));
+    transform: translateY(-50%);
+    z-index: 1;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tier-node {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: default;
+  }
+  .tier-node-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.1);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.4s;
+  }
+  .tier-node.reached .tier-node-dot {
+    border-color: var(--green);
+    background: rgba(0,255,170,0.1);
+    box-shadow: 0 0 10px rgba(0,255,170,0.3);
+  }
+  .tier-node.current .tier-node-dot {
+    border-color: var(--gold);
+    background: rgba(245,200,66,0.15);
+    box-shadow: 0 0 16px rgba(245,200,66,0.5);
+    animation: tierPulse 2s ease-in-out infinite;
+  }
+  .tier-node.locked .tier-node-dot {
+    opacity: 0.3;
+    filter: grayscale(1);
+  }
+  @keyframes tierPulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(245,200,66,0.4); }
+    50%       { box-shadow: 0 0 20px rgba(245,200,66,0.7); }
+  }
+  .tier-node-label {
+    font-family: var(--pixel);
+    font-size: 5px;
+    color: var(--muted);
+    text-align: center;
+    max-width: 52px;
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tier-node.current .tier-node-label { color: var(--gold); }
+  .tier-node.reached .tier-node-label { color: var(--green); }
+  .tier-node-min {
+    font-size: 7px;
+    color: var(--muted);
+    text-align: center;
+    opacity: 0.6;
+  }
+  .tier-next-msg {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 16px;
+    line-height: 2;
+  }
+  .tier-next-msg span { color: var(--gold); }
+  .tier-next-msg .top-dog { color: var(--red); }
+
+  @media (max-width: 600px) {
+    .tier-tab-grid { grid-template-columns: 1fr 1fr; }
+    .tier-timeline { padding: 0 4px; }
+    .tier-node-dot { width: 26px; height: 26px; font-size: 11px; }
+    .tier-node-label { font-size: 4px; max-width: 38px; }
+    .tier-node-min { display: none; }
+    .tier-timeline-wrap { padding: 18px 14px; }
+  }
+
   /* HERO */
   .hero {
     position: relative;
@@ -1946,6 +2190,17 @@
       Connect your Solana wallet. If you hold enough $J33T, you unlock exclusive features — including J33T's takes on meme coins. This is not financial advice. This is a Yorkshire Terrier.
     </p>
 
+
+    <!-- Tier Info Tab -->
+    <div class="tier-tab-wrap">
+      <button class="tier-tab-toggle" id="tierTabToggle" onclick="toggleTierTab()">
+        <span>🏅 HOLDER TIERS</span><span class="tier-tab-arrow" id="tierTabArrow">▼</span>
+      </button>
+      <div class="tier-tab-panel" id="tierTabPanel">
+        <div class="tier-tab-grid" id="tierTabGrid"></div>
+      </div>
+    </div>
+
     <!-- Wallet panel -->
     <div class="wallet-panel">
       <div class="wallet-status disconnected" id="walletStatus">◉ WALLET NOT CONNECTED</div>
@@ -1953,6 +2208,14 @@
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
       <div style="font-family: var(--pixel); font-size: 7px; color: var(--muted); margin-bottom: 20px;" id="holdingStatus">Connect wallet to check $J33T balance</div>
       <button class="wallet-btn" id="walletActionBtn" onclick="openWalletModal()">CONNECT WALLET</button>
+    </div>
+
+
+    <!-- Tier Progress Timeline (always visible) -->
+    <div class="tier-timeline-wrap" id="tierTimelineWrap">
+      <div class="tier-timeline-label">// YOUR JOURNEY</div>
+      <div class="tier-timeline" id="tierTimeline"></div>
+      <div class="tier-next-msg" id="tierNextMsg"></div>
     </div>
 
     <!-- Feature cards -->
@@ -1985,7 +2248,7 @@
         <div class="card-icon">📋</div>
         <div class="card-title">EARLY ACCESS LIST</div>
         <div class="card-desc">Priority access to future J33T ecosystem drops, NFTs, and partner launches.</div>
-        <div class="card-min">MIN: 1,000,000 $J33T</div>
+        <div class="card-min">MIN: 500,000 $J33T</div>
       </div>
       <div class="gate-card locked" id="card-staking" onclick="tryAccess('staking')">
         <div class="card-icon">💎</div>
@@ -3083,6 +3346,9 @@ function applyWalletState() {
   unlockCards();
   updateCardLimitUI();
   sniffUpdateUI();
+  buildTierTimeline();
+  buildTierTabGrid();
+  updateNavBadgeTooltip();
 }
 
 function disconnectWallet() {
@@ -3114,17 +3380,19 @@ function disconnectWallet() {
 
   updateCardLimitUI();
   sniffUpdateUI();
+  buildTierTimeline();
+  updateNavBadgeTooltip();
   showToast('Wallet disconnected. 🐾');
 }
 
 function unlockCards() {
   [
-    ['card-meme',          10000],
-    ['card-oracle',        50000],
+    ['card-meme',            10000],
+    ['card-oracle',          50000],
     ['card-rugornotSection', 100000],
-    ['card-dailySniff',    100000],
-    ['card-whitelist',    1000000],
-    ['card-staking',      5000000],
+    ['card-dailySniff',      100000],
+    ['card-whitelist',       500000],
+    ['card-staking',        5000000],
   ].forEach(([id, min]) => {
     const card = document.getElementById(id);
     if (card && j33tBalance >= min) { card.classList.remove('locked'); card.classList.add('unlocked'); }
@@ -3175,7 +3443,7 @@ async function refreshBalance() {
 
 function tryAccess(type) {
   if (!walletConnected) { showToast('Connect your wallet first!'); openWalletModal(); return; }
-  const mins = { meme: 10000, oracle: 50000, whitelist: 1000000, staking: 5000000 };
+  const mins = { meme: 10000, oracle: 50000, whitelist: 500000, staking: 5000000 };
   if (j33tBalance < mins[type]) {
     showToast(`Need ${mins[type].toLocaleString()} $J33T to unlock!`);
     return;
@@ -3367,6 +3635,138 @@ function tickerMoonMode() {
 // VERIFY / COPY MINT ADDRESS
 // ============================================================
 
+
+
+// ============================================================
+// TIER TAB + TIMELINE + NAV BADGE TOOLTIP
+// ============================================================
+
+function fmtTierMin(min) {
+  if (min === 0) return 'FREE';
+  if (min >= 1000000) return (min/1000000).toFixed(0) + 'M';
+  if (min >= 1000) return (min/1000).toFixed(0) + 'K';
+  return min.toLocaleString();
+}
+
+function getTierPerks(tier) {
+  const perks = [];
+  if (tier.min === 0)       return ['👁 Observer access'];
+  if (tier.min <= 10000)    perks.push('🎨 RUG RADAR (card gen)');
+  if (tier.min <= 50000)    perks.push('🐾 J33T\u2019s Take');
+  if (tier.min <= 100000)   perks.push('🔍 RUG OR NOT?', '👃 Daily Sniff (3×/day)');
+  if (tier.min <= 500000)   perks.push('📋 Early Access List');
+  if (tier.min <= 5000000)  perks.push('💎 Paws Staking');
+  if (tier.limit > 1)       perks.push(`🃏 ${tier.limit === Infinity ? '∞' : tier.limit} cards/day`);
+  return perks;
+}
+
+function buildTierTabGrid() {
+  const grid = document.getElementById('tierTabGrid');
+  if (!grid) return;
+  const bal = walletConnected ? j33tBalance : -1;
+  const currentTier = getHolderTier(Math.max(bal, 0));
+
+  grid.innerHTML = holderTiers.map(t => {
+    const isCurrent = walletConnected && t.min === currentTier.min;
+    const perks = getTierPerks(t);
+    return `
+      <div class="tier-info-card${isCurrent ? ' is-current' : ''}" style="border-color: ${isCurrent ? 'var(--gold)' : t.color + '22'}">
+        <div class="tier-info-icon">${t.icon}</div>
+        <div class="tier-info-body">
+          <div class="tier-info-name" style="color:${t.color}">${t.badge}</div>
+          <div class="tier-info-min">${t.min === 0 ? 'No minimum' : fmtTierMin(t.min) + ' $J33T'}</div>
+          <div class="tier-info-desc">${t.desc}</div>
+          <div class="tier-info-perks">${perks.map(p => '✓ ' + p).join('<br>')}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleTierTab() {
+  const panel = document.getElementById('tierTabPanel');
+  const arrow = document.getElementById('tierTabArrow');
+  const isOpen = panel.classList.toggle('open');
+  arrow.classList.toggle('open', isOpen);
+  if (isOpen) buildTierTabGrid();
+}
+
+function buildTierTimeline() {
+  const wrap = document.getElementById('tierTimelineWrap');
+  const tl   = document.getElementById('tierTimeline');
+  const msg  = document.getElementById('tierNextMsg');
+  if (!wrap || !tl || !msg) return;
+
+  wrap.style.display = 'block';
+
+  if (!walletConnected) {
+    // Disconnected state: mutasd az összes szürke node-ot + connect CTA
+    const nodes = holderTiers.map(t => `
+      <div class="tier-node locked">
+        <div class="tier-node-dot">${t.icon}</div>
+        <div class="tier-node-label">${t.badge}</div>
+        <div class="tier-node-min">${t.min === 0 ? '' : fmtTierMin(t.min)}</div>
+      </div>`).join('');
+    tl.innerHTML = `<div class="tier-timeline-progress" style="width:0%"></div>` + nodes;
+    msg.innerHTML = `<span style="color:var(--gold);cursor:pointer;" onclick="openWalletModal()">🔗 CONNECT WALLET</span> to see your tier and track your journey`;
+    return;
+  }
+
+  const bal = j33tBalance;
+  const currentTier = getHolderTier(bal);
+  const currentIdx  = holderTiers.findIndex(t => t.min === currentTier.min);
+  const nextTier    = holderTiers[currentIdx + 1] || null;
+
+  // Progress % along the full line
+  const maxMin   = holderTiers[holderTiers.length - 1].min;
+  const pct      = Math.min(100, (bal / maxMin) * 100);
+
+  // Nodes
+  const nodes = holderTiers.map((t, i) => {
+    let cls = 'tier-node ';
+    if (i < currentIdx)  cls += 'reached';
+    else if (i === currentIdx) cls += 'current';
+    else cls += 'locked';
+    return `
+      <div class="${cls}">
+        <div class="tier-node-dot">${t.icon}</div>
+        <div class="tier-node-label">${t.badge}</div>
+        <div class="tier-node-min">${t.min === 0 ? '' : fmtTierMin(t.min)}</div>
+      </div>`;
+  }).join('');
+
+  tl.innerHTML = `<div class="tier-timeline-progress" id="tierProgressBar" style="width:0%"></div>` + nodes;
+
+  // Animate progress bar
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      const bar = document.getElementById('tierProgressBar');
+      if (bar) bar.style.width = pct + '%';
+    }, 100);
+  });
+
+  // Next tier message
+  if (!nextTier) {
+    msg.innerHTML = `<span class="top-dog">👑 YOU ARE ALPHA DOG. J33T BOWS.</span>`;
+  } else {
+    const need = nextTier.min - bal;
+    msg.innerHTML = `Next tier: <span>${nextTier.icon} ${nextTier.badge}</span> — need <span>${need.toLocaleString()} more $J33T</span> · You have <span>${bal.toLocaleString()}</span>`;
+  }
+}
+
+function updateNavBadgeTooltip() {
+  const tier    = getHolderTier(walletConnected ? j33tBalance : 0);
+  const badgeEl = document.getElementById('ttBadge');
+  const descEl  = document.getElementById('ttDesc');
+  if (!badgeEl || !descEl) return;
+  if (!walletConnected) {
+    badgeEl.textContent = '🐾 LURKER';
+    descEl.textContent  = 'Connect wallet to see your tier.';
+    return;
+  }
+  badgeEl.textContent = tier.icon + ' ' + tier.badge;
+  badgeEl.style.color = tier.color;
+  descEl.textContent  = tier.desc;
+}
 
 // ============================================================
 // DAILY SNIFF — Holder Exclusive
@@ -4387,11 +4787,13 @@ const rarities = [
 
 // ── HOLDER TIERS → daily card limit ─────────────────────────────
 const holderTiers = [
-  { min: 0,         label: 'NO WALLET',       limit: 1,        color: '#6b6b88', icon: '🐾' },
-  { min: 100000,    label: 'PUPPY TIER',       limit: 2,        color: '#00ffaa', icon: '🦴' },
-  { min: 300000,    label: 'GOOD GIRL TIER',    limit: 3,        color: '#7b61ff', icon: '💜' },
-  { min: 1000000,   label: 'DIAMOND PAWS',     limit: 4,        color: '#f5c842', icon: '💎' },
-  { min: 5000000,   label: 'ALPHA DOG 👑',     limit: 5,        color: '#ff4466', icon: '👑' },
+  { min: 0,         label: 'STREET STRAY',  badge: 'STREET STRAY',   desc: 'No $J33T yet. J33T sniffs the air and keeps walking.',              limit: 1,  color: '#6b6b88', icon: '🚶' },
+  { min: 10000,     label: 'FIRST SNIFF',   badge: 'FIRST SNIFF',    desc: 'You found the scent. Welcome to the kennel. RUG RADAR unlocked.',   limit: 1,  color: '#a8d5a2', icon: '🐽' },
+  { min: 50000,     label: 'LOUD WOOFER',   badge: 'LOUD WOOFER',    desc: 'J33T hears you from three blocks away. J33T Take unlocked.',        limit: 2,  color: '#c084fc', icon: '📢' },
+  { min: 100000,    label: 'NOSE CERTIFIED',badge: 'NOSE CERTIFIED',  desc: 'Certified sniffer. RUG OR NOT + Daily Sniff unlocked.',            limit: 2,  color: '#00ffaa', icon: '👃' },
+  { min: 500000,    label: 'PACK RUNNER',   badge: 'PACK RUNNER',    desc: 'Running with the pack now. Early Access unlocked.',                 limit: 3,  color: '#fbbf24', icon: '🏃' },
+  { min: 1000000,   label: 'PAWS OF STEEL', badge: 'PAWS OF STEEL',  desc: 'Bear markets tried. Bears lost. Paws Staking unlocked.',           limit: 4,  color: '#60a5fa', icon: '🦾' },
+  { min: 5000000,   label: 'TOP DOG',       badge: 'TOP DOG',        desc: 'The apex. The myth. J33T rolls over and shows her belly.',          limit: 5,  color: '#ff4466', icon: '🐺' },
 ];
 
 function getHolderTier(balance) {
