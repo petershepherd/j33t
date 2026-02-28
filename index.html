@@ -3287,6 +3287,7 @@ setInterval(refreshPriceData, 30000);
 let walletConnected = false;
 let j33tBalance = 0;
 let walletAddr = '';
+let walletFullAddr = ''; // teljes pubkey a KV műveletekhez
 let isRealMode = false;
 let connectClickCount = 0;
 
@@ -3299,6 +3300,7 @@ try {
       walletConnected = d.connected;
       j33tBalance = d.balance;
       walletAddr = d.addr;
+      walletFullAddr = d.fullAddr || d.addr;
       isRealMode = d.real || false;
       setTimeout(() => applyWalletState(), 300);
     }
@@ -3381,6 +3383,7 @@ async function connectRealWallet(type) {
     showToast('Connecting to ' + type + '...');
     const resp = await provider.connect();
     const pubkey = resp.publicKey.toString();
+    walletFullAddr = pubkey; // teljes pubkey KV-hoz
     walletAddr = pubkey.slice(0,4) + '...' + pubkey.slice(-4);
     walletConnected = true;
 
@@ -3388,7 +3391,7 @@ async function connectRealWallet(type) {
     j33tBalance = await fetchRealBalance(pubkey);
 
     try {
-      localStorage.setItem('j33t_demo_v2', JSON.stringify({connected: true, balance: j33tBalance, addr: walletAddr, real: true}));
+      localStorage.setItem('j33t_demo_v2', JSON.stringify({connected: true, balance: j33tBalance, addr: walletAddr, fullAddr: walletFullAddr, real: true}));
     } catch(e) {}
 
     applyWalletState();
@@ -3518,6 +3521,7 @@ function disconnectWallet() {
   walletConnected = false;
   j33tBalance = 0;
   walletAddr = '';
+  walletFullAddr = '';
   isRealMode = false;
   localStorage.removeItem('j33t_demo_v2');
 
@@ -4526,20 +4530,29 @@ function showEggOverlay(egg, isNew) {
 // ── LEADERBOARD ───────────────────────────────────────────────────
 
 async function pushEggToLeaderboard(eggId) {
-  if (!walletConnected || !walletAddr) return;
+  const addr = walletFullAddr || walletAddr;
+  console.log('[J33T Eggs] pushEggToLeaderboard called', { eggId, walletConnected, addr });
+  if (!walletConnected || !addr) {
+    console.warn('[J33T Eggs] Skipped — wallet not connected or no address');
+    return;
+  }
   try {
-    await fetch(RON_WORKER, {
+    const res = await fetch(RON_WORKER, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         action: 'egg_found',
-        wallet: walletAddr,
+        wallet: addr,
         eggId,
       }),
       signal: AbortSignal.timeout(8000),
     });
+    const d = await res.json();
+    console.log('[J33T Eggs] egg_found response:', d);
     loadEggLeaderboard();
-  } catch(e) {}
+  } catch(e) {
+    console.error('[J33T Eggs] pushEggToLeaderboard error:', e.message);
+  }
 }
 
 async function loadEggLeaderboard() {
@@ -4554,6 +4567,7 @@ async function loadEggLeaderboard() {
       signal: AbortSignal.timeout(8000),
     });
     const d = await res.json();
+    console.log('[J33T Eggs] leaderboard response:', d);
     const rows = d.leaderboard || [];
     if (!rows.length) {
       body.innerHTML = '<div class="egg-lb-empty">No hunters yet. Be the first! 🥚</div>';
@@ -4682,14 +4696,15 @@ document.addEventListener('keydown', e => {
 
 // ── KONAMI CSALI — cheater jelölés küldése
 async function markKonamiCheater() {
-  if (!walletConnected || !walletAddr) return;
+  const addr = walletFullAddr || walletAddr;
+  if (!walletConnected || !addr) return;
   try {
     await fetch(RON_WORKER, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         action: 'mark_cheater',
-        wallet: walletAddr,
+        wallet: addr,
         reason: 'konami_trap',
       }),
       signal: AbortSignal.timeout(8000),
