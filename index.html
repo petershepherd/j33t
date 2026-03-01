@@ -2389,7 +2389,7 @@
 <div class="hero">
   <div class="hero-badge ca-badge" id="heroCaBadge" onclick="copyHeroCA()" title="Click to copy contract address">
     <span class="ca-label">CA</span>
-    <span class="ca-addr" id="heroCaAddr">E2HNWS5L6gwmtC9SZPpRq6Yp3V5gzotFrL3dAEP2pump</span>
+    <span class="ca-addr" id="heroCaAddr">355ses9YKA4pTvbyTqRDT4QjzuJ1CW23eLqsfi1npump</span>
     <span class="ca-copy-icon" id="heroCaIcon">⎘</span>
   </div>
 
@@ -2804,7 +2804,7 @@
           class="ron-input"
           id="ronInput"
           type="text"
-          placeholder="e.g. E2HNWS5L6gwmtC9SZPpRq6Yp3V5gzotFrL3dAEP2pump"
+          placeholder="e.g. 355ses9YKA4pTvbyTqRDT4QjzuJ1CW23eLqsfi1npump"
           autocomplete="off"
           spellcheck="false"
         />
@@ -2957,10 +2957,10 @@
 <footer>
   <div class="footer-logo">J33T © 2009–∞</div>
   <ul class="footer-links">
-    <li><a href="https://x.com/J33tyorkie">Twitter/X</a></li>
+    <li><a href="https://x.com/J33tyorkie" target="_blank" rel="noopener">Twitter/X</a></li>
     <li><a href="https://t.me/j33t_sniff" target="_blank" rel="noopener">Telegram</a></li>
-    <li><a href="https://dexscreener.com/solana/8fyhql4ad6f9jjjvhxzspbkka3jmwkpdr6slniate36w">Dexscreener</a></li>
-    <li><a href="#">Raydium</a></li>
+    <li><a href="https://dexscreener.com/solana/8fyhql4ad6f9jjjvhxzspbkka3jmwkpdr6slniate36w" target="_blank" rel="noopener">Dexscreener</a></li>
+    <li><a href="https://raydium.io/swap/?inputMint=sol&outputMint=355ses9YKA4pTvbyTqRDT4QjzuJ1CW23eLqsfi1npump" target="_blank" rel="noopener">Raydium</a></li>
   </ul>
   <div class="footer-copy">Not financial advice. Just a good girl.<br>& her even better degens.</div>
 </footer>
@@ -2969,33 +2969,23 @@
 <div class="modal" id="walletModal">
   <div class="modal-box">
     <div class="modal-title" id="walletModalTitle">CONNECT WALLET</div>
-
-    <!-- Demo mode notice (default) -->
-    <div id="demoNotice" style="font-size:9px; color:var(--green); border:1px solid rgba(0,255,170,0.3); padding:10px 14px; margin-bottom:20px; line-height:1.7; font-family:var(--mono); background:rgba(0,255,170,0.04);">
-      ⚠️ <strong>DEMO MODE</strong> — No real wallet needed.<br>
-      Click any option to simulate $J33T holdings and explore features.<br>
-      <span style="color:var(--muted);font-size:8px;">( click CONNECT 5× for real wallet mode 🐾 )</span>
+    <div style="font-size:9px; color:var(--muted); font-family:var(--mono); text-align:center; margin-bottom:20px; line-height:1.7;">
+      Your real $J33T balance will be read on-chain.<br>
+      <span style="color:var(--green);">No transactions will be made.</span>
     </div>
-
-    <!-- Real mode notice (hidden until 5 clicks) -->
-    <div class="wallet-real-notice" id="realNotice">
-      🔗 <strong>REAL WALLET MODE</strong> — Your actual Phantom/Solflare/Backpack will be prompted. Your real $J33T balance will be read on-chain. No transactions will be made.
-    </div>
-
     <button class="wallet-option" onclick="connectWallet('phantom')">
       <span class="wallet-option-icon">👻</span>
-      <span id="phantomLabel">Phantom <span style="font-size:10px;color:var(--muted)">(simulated)</span></span>
+      <span>Phantom</span>
     </button>
     <button class="wallet-option" onclick="connectWallet('solflare')">
       <span class="wallet-option-icon">☀️</span>
-      <span id="solflareLabel">Solflare <span style="font-size:10px;color:var(--muted)">(simulated)</span></span>
+      <span>Solflare</span>
     </button>
     <button class="wallet-option" onclick="connectWallet('backpack')">
       <span class="wallet-option-icon">🎒</span>
-      <span id="backpackLabel">Backpack <span style="font-size:10px;color:var(--muted)">(simulated)</span></span>
+      <span>Backpack</span>
     </button>
     <button class="modal-close" onclick="closeWalletModal()">CANCEL</button>
-    <div style="font-size:8px;color:var(--muted);margin-top:12px;font-family:var(--pixel);letter-spacing:1px;" id="walletClickCounter"></div>
   </div>
 </div>
 
@@ -3429,8 +3419,8 @@ function updatePriceUI(d) {
     pc.className = 'price-widget-change ' + (d.change24h > 0 ? 'up' : 'down');
   }
   if (pm) pm.textContent = 'MCap: ' + fmtBig(d.mcap);
-  if (dot) dot.className = 'price-dot ' + (d.source === 'DEMO' ? 'loading' : '');
-  if (src) src.textContent = d.source === 'DEMO' ? 'demo data' : `live · ${d.source}`;
+  if (dot) dot.className = 'price-dot';
+  if (src) src.textContent = `live · ${d.source}`;
 
   // Tokenomics grid live values
   const lp2 = document.getElementById('livePrice2');
@@ -3448,8 +3438,8 @@ function updatePriceUI(d) {
 
 function updateTicker(d) {
   const items = document.querySelectorAll('.ticker-item');
-  const priceStr = d.source === 'DEMO' ? '~' + fmtPrice(d.price) : fmtPrice(d.price);
-  const mcapStr = d.source === 'DEMO' ? '~' + fmtBig(d.mcap) : fmtBig(d.mcap);
+  const priceStr = fmtPrice(d.price);
+  const mcapStr = fmtBig(d.mcap);
   const chg = fmtChange(d.change24h);
   // Update first and duplicate items (indexes 0 and 7 = price, 1 and 8 = mcap)
   items.forEach((item, i) => {
@@ -3470,19 +3460,16 @@ let walletConnected = false;
 let j33tBalance = 0;
 let walletAddr = '';
 let walletFullAddr = ''; // teljes pubkey a KV műveletekhez
-let isRealMode = false;
-
-// Restore demo session
+// Restore session
 try {
   const saved = localStorage.getItem('j33t_demo_v2');
   if (saved) {
     const d = JSON.parse(saved);
-    if (d.connected) {
+    if (d.connected && d.real) {
       walletConnected = d.connected;
       j33tBalance = d.balance;
       walletAddr = d.addr;
       walletFullAddr = d.fullAddr || d.addr;
-      isRealMode = d.real || false;
       setTimeout(() => applyWalletState(), 300);
     }
   }
@@ -3495,31 +3482,7 @@ function closeWalletModal() { document.getElementById('walletModal').classList.r
 
 async function connectWallet(type) {
   closeWalletModal();
-
-  if (isRealMode && !IS_DEMO_MODE) {
-    // Attempt real wallet connection
-    await connectRealWallet(type);
-    return;
-  }
-
-  // Demo mode
-  walletConnected = true;
-  const addr = '7xK' + Math.random().toString(36).substr(2,4).toUpperCase() + '...' + Math.random().toString(36).substr(2,4).toUpperCase() + 'pump';
-  walletAddr = addr;
-  j33tBalance = Math.floor(Math.random() * 99000) + 500; // 500–99,999 range for demo (below all tier minimums)
-
-  try {
-    localStorage.setItem('j33t_demo_v2', JSON.stringify({connected: true, balance: j33tBalance, addr: walletAddr, real: false}));
-  } catch(e) {}
-
-  applyWalletState();
-
-  if (j33tBalance >= 1000000) {
-    launchConfetti();
-    showToast(`💎 DIAMOND PAWS! ${j33tBalance.toLocaleString()} $J33T! 🎉`);
-  } else {
-    showToast(`Connected (demo)! ${j33tBalance.toLocaleString()} $J33T detected 🐕`);
-  }
+  await connectRealWallet(type);
 }
 
 async function connectRealWallet(type) {
@@ -3536,9 +3499,7 @@ async function connectRealWallet(type) {
     }
 
     if (!provider) {
-      showToast(`${type.charAt(0).toUpperCase()+type.slice(1)} not found — falling back to demo mode.`);
-      isRealMode = false;
-      await connectWallet(type);
+      showToast(`${type.charAt(0).toUpperCase()+type.slice(1)} not found. Please install it and try again.`);
       return;
     }
 
@@ -3562,9 +3523,7 @@ async function connectRealWallet(type) {
 
   } catch(err) {
     console.error('Wallet connect error:', err);
-    showToast('Connection failed — running in demo mode.');
-    isRealMode = false;
-    await connectWallet(type);
+    showToast('Connection failed. Please try again. 🐾');
   }
 }
 
@@ -3651,10 +3610,10 @@ async function fetchRealBalance(pubkey) {
 
 function applyWalletState() {
   // Modal state
-  document.getElementById('walletStatus').textContent = isRealMode ? '◉ REAL WALLET CONNECTED' : '◉ WALLET CONNECTED (DEMO)';
+  document.getElementById('walletStatus').textContent = '◉ WALLET CONNECTED';
   document.getElementById('walletStatus').className = 'wallet-status connected';
   document.getElementById('walletAddress').textContent = walletAddr + ' · ' + j33tBalance.toLocaleString() + ' $J33T';
-  document.getElementById('holdingStatus').textContent = 'Balance: ' + j33tBalance.toLocaleString() + ' $J33T' + (isRealMode ? ' (on-chain)' : ' (simulated)');
+  document.getElementById('holdingStatus').textContent = 'Balance: ' + j33tBalance.toLocaleString() + ' $J33T (on-chain)';
   const pct = Math.min((j33tBalance / 50000) * 100, 100);
   setTimeout(() => { document.getElementById('progressFill').style.width = pct + '%'; }, 100);
   document.getElementById('walletActionBtn').textContent = 'CONNECTED ✓';
@@ -3685,7 +3644,6 @@ function disconnectWallet() {
   j33tBalance = 0;
   walletAddr = '';
   walletFullAddr = '';
-  isRealMode = false;
   localStorage.removeItem('j33t_demo_v2');
 
   // Reset nav widget
@@ -3697,7 +3655,7 @@ function disconnectWallet() {
   document.getElementById('walletStatus').className = 'wallet-status disconnected';
   document.getElementById('walletAddress').textContent = '';
   document.getElementById('holdingStatus').textContent = 'Connect wallet to check $J33T balance';
-  document.getElementById('walletActionBtn').textContent = 'SIMULATE DEMO CONNECTION';
+  document.getElementById('walletActionBtn').textContent = 'CONNECT WALLET';
   document.getElementById('walletActionBtn').style.borderColor = '';
   document.getElementById('walletActionBtn').style.color = '';
   document.getElementById('progressFill').style.width = '0%';
@@ -3911,7 +3869,7 @@ function petTheDog(e) {
   clearTimeout(dogClickTimer);
   dogClickTimer = setTimeout(() => { dogClickCount = 0; }, 3000);
 
-  if (dogClickCount >= 3 && !isRealMode) {
+  if (dogClickCount >= 3) {
     dogClickCount = 0;
     unlockRealWallet();
     return;
@@ -3922,8 +3880,6 @@ function petTheDog(e) {
 }
 
 function unlockRealWallet() {
-  isRealMode = true;
-
   // Modal frissítése
   const demoNotice = document.getElementById('demoNotice');
   const realNotice = document.getElementById('realNotice');
