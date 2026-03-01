@@ -403,6 +403,100 @@
     .launch-grid { grid-template-columns: 1fr; }
   }
 
+
+  /* ── TOKEN LAUNCH SCANNER ── */
+  .launch-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.05);
+    font-size: 9px;
+    color: var(--muted);
+  }
+  .launch-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .launch-badge {
+    font-family: var(--pixel);
+    font-size: 5px;
+    padding: 3px 7px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  .stage-early    { background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.4); color: #fbbf24; }
+  .stage-survived { background: rgba(251,146,60,0.12); border: 1px solid rgba(251,146,60,0.4); color: #fb923c; }
+  .stage-verified { background: rgba(0,255,170,0.10); border: 1px solid rgba(0,255,170,0.4); color: var(--green); }
+  .launch-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .launch-card {
+    background: var(--surface2);
+    padding: 14px 18px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-left: 3px solid var(--muted);
+    transition: border-color 0.2s;
+  }
+  .launch-card.stage-early    { border-left-color: #fbbf24; }
+  .launch-card.stage-survived { border-left-color: #fb923c; }
+  .launch-card.stage-verified { border-left-color: var(--green); }
+  .launch-card:hover { border-color: rgba(255,255,255,0.15); }
+  .launch-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .launch-card-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .launch-card-sym {
+    font-family: var(--pixel);
+    font-size: 6px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .launch-card-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    font-size: 9px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .launch-card-stats span { color: var(--text); display: block; font-size: 10px; }
+  .launch-auth-row {
+    display: flex;
+    gap: 10px;
+    font-size: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .launch-auth-ok  { color: var(--green); }
+  .launch-auth-bad { color: var(--red); }
+  .launch-auth-unk { color: var(--muted); }
+  .launch-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    font-size: 8px;
+    color: var(--muted);
+  }
+  @media (max-width: 600px) {
+    .launch-card-stats { grid-template-columns: repeat(2, 1fr); }
+    .launch-legend { gap: 10px; }
+  }
+
   /* ── SMART MONEY TRACKER ── */
   .smart-tier-banner {
     font-family: var(--pixel);
@@ -3058,6 +3152,12 @@
         <div class="card-desc">Real-time scoring of new Solana tokens. Liquidity growth, buy pressure, dev wallet analysis. Updated every 2 min.</div>
         <div class="card-min">MIN: 10,000 $J33T</div>
       </div>
+      <div class="gate-card locked" id="card-launchScanner" onclick="tryAccess('card-launchScanner', 100000, 'launchScanner')">
+        <div class="card-icon">🆕</div>
+        <div class="card-title">LAUNCH SCANNER</div>
+        <div class="card-desc">3-stage filter for new Solana launches. Early sniff → Survival → Verified quality.</div>
+        <div class="card-min">MIN: 100,000 $J33T</div>
+      </div>
       <div class="gate-card locked" id="card-smartMoney" onclick="tryAccess('card-smartMoney', 10000, 'smartMoney')">
         <div class="card-icon">🧠</div>
         <div class="card-title">SMART MONEY</div>
@@ -3479,6 +3579,47 @@
   </div>
 </section>
 
+
+
+<!-- Token Launch Scanner -->
+<section class="sniff-section" id="launchScanner">
+  <div class="section-label">// FRESH OFF THE CHAIN</div>
+  <h2 class="section-title">TOKEN LAUNCH SCANNER</h2>
+  <p class="section-desc">J33T watches every new Solana token launch and runs it through a 3-stage filter. Early sniff → Survival check → Quality verified. Only the best make it through.</p>
+
+  <div class="sniff-locked" id="launchLocked">
+    <div class="sniff-locked-icon">🔒</div>
+    <div class="sniff-locked-text">100,000 $J33T required to access Launch Scanner</div>
+    <div class="sniff-locked-bal" id="launchLockedBal"></div>
+    <button class="btn" onclick="openWalletModal()">CONNECT WALLET</button>
+  </div>
+
+  <div id="launchUnlocked" style="display:none;">
+
+    <!-- Stage legend -->
+    <div class="launch-legend">
+      <div class="launch-legend-item">
+        <span class="launch-badge stage-early">⚡ EARLY</span>
+        <span>0–10 min · High risk · Watch only</span>
+      </div>
+      <div class="launch-legend-item">
+        <span class="launch-badge stage-survived">🟠 SURVIVED</span>
+        <span>1–6h · Passed rug check</span>
+      </div>
+      <div class="launch-legend-item">
+        <span class="launch-badge stage-verified">✅ VERIFIED</span>
+        <span>24h · Quality confirmed</span>
+      </div>
+    </div>
+
+    <div class="launch-feed" id="launchFeed">
+      <div class="rs-empty">Loading launch scanner...</div>
+    </div>
+    <div style="text-align:center; margin-top:16px;">
+      <button class="sniff-fetch-btn" onclick="loadLaunchAlerts()" style="font-size:8px; padding:10px 20px;">↻ REFRESH SCANNER</button>
+    </div>
+  </div>
+</section>
 
 <!-- Smart Money Tracker -->
 <section class="sniff-section" id="smartMoney">
@@ -4353,6 +4494,7 @@ function disconnectWallet() {
 function unlockCards() {
   [
     ['card-launchScanner',   10000],
+    ['card-launchScanner',  100000],
     ['card-smartMoney',      10000],
     ['card-meme',            10000],
     ['card-oracle',          50000],
@@ -4800,6 +4942,119 @@ function renderLaunchCards(tokens, isFeed = false) {
         ${t.url ? `<a class="launch-dex-link" href="${t.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">VIEW ON DEXSCREENER →</a>` : ''}
       </div>`;
   }).join('');
+}
+
+
+// ============================================================
+// TOKEN LAUNCH SCANNER
+// ============================================================
+const LAUNCH_MIN_BALANCE = 100000;
+
+function launchUpdateUI() {
+  const locked   = document.getElementById('launchLocked');
+  const unlocked = document.getElementById('launchUnlocked');
+  const balEl    = document.getElementById('launchLockedBal');
+  if (!locked || !unlocked) return;
+
+  if (!walletConnected || j33tBalance < LAUNCH_MIN_BALANCE) {
+    locked.style.display   = 'block';
+    unlocked.style.display = 'none';
+    if (walletConnected && j33tBalance < LAUNCH_MIN_BALANCE) {
+      balEl.textContent = `Your balance: ${j33tBalance.toLocaleString()} $J33T — need ${(LAUNCH_MIN_BALANCE - j33tBalance).toLocaleString()} more`;
+    } else {
+      balEl.textContent = '';
+    }
+    return;
+  }
+
+  locked.style.display   = 'none';
+  unlocked.style.display = 'block';
+  loadLaunchAlerts();
+}
+
+async function loadLaunchAlerts() {
+  const feed = document.getElementById('launchFeed');
+  if (!feed) return;
+  feed.innerHTML = '<div class="rs-empty">Scanning launches...</div>';
+
+  try {
+    const res = await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'launch_alerts' }),
+      signal: AbortSignal.timeout(12000),
+    });
+    const d = await res.json();
+    const tokens = d.tokens || [];
+
+    if (!tokens.length) {
+      feed.innerHTML = '<div class="rs-empty">No launches scanned yet — J33T is watching new pairs 👀</div>';
+      return;
+    }
+
+    const fmt    = v => v != null ? '$' + Math.round(v).toLocaleString() : '—';
+    const fmtPct = v => v != null ? (v > 0 ? '+' : '') + parseFloat(v).toFixed(1) + '%' : '—';
+    const pctCls = v => v == null ? '' : v > 0 ? 'c-ok' : 'c-bad';
+    const now    = Date.now();
+    const timeAgo = ts => {
+      const diff = Math.floor((now - ts) / 60000);
+      if (diff < 60)   return diff + 'm ago';
+      if (diff < 1440) return Math.floor(diff/60) + 'h ago';
+      return Math.floor(diff/1440) + 'd ago';
+    };
+
+    const stageLabel = {
+      early:    '<span class="launch-badge stage-early">⚡ EARLY</span>',
+      survived: '<span class="launch-badge stage-survived">🟠 SURVIVED</span>',
+      verified: '<span class="launch-badge stage-verified">✅ VERIFIED</span>',
+    };
+
+    const authBadge = (val, label) => {
+      if (val === false) return `<span class="launch-auth-ok">✅ No ${label}</span>`;
+      if (val === true)  return `<span class="launch-auth-bad">🚫 Has ${label}</span>`;
+      return `<span class="launch-auth-unk">❓ ${label} unknown</span>`;
+    };
+
+    feed.innerHTML = tokens.map(t => {
+      const mcapChange = t.mcapChange != null
+        ? `<span class="${pctCls(t.mcapChange)}">${fmtPct(t.mcapChange)}</span>`
+        : '—';
+
+      return `
+        <div class="launch-card stage-${t.stage}" ${t.url ? `onclick="window.open('${t.url}')" style="cursor:pointer"` : ''}>
+          <div class="launch-card-header">
+            <div>
+              <div class="launch-card-name">${t.name}</div>
+              <div class="launch-card-sym">$${t.symbol} · ${t.ageMin != null ? t.ageMin + ' min at discovery' : '?'}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+              ${stageLabel[t.stage] || ''}
+              <span style="font-family:var(--pixel);font-size:6px;color:var(--gold)">SCORE ${t.launchScore}/100</span>
+            </div>
+          </div>
+
+          <div class="launch-card-stats">
+            <div>MCap (call)<span>${fmt(t.mcap)}</span></div>
+            <div>Liquidity<span>${fmt(t.liquidityNow || t.liquidity)}</span></div>
+            <div>Buy ratio<span class="${t.buyRatio >= 65 ? 'c-ok' : t.buyRatio < 45 ? 'c-bad' : 'c-warn'}">${t.buyRatio != null ? t.buyRatio + '%' : '—'}</span></div>
+            <div>Since call<span>${mcapChange}</span></div>
+          </div>
+
+          <div class="launch-auth-row">
+            ${authBadge(t.freezeAuth, 'freeze')}
+            ${authBadge(t.mintAuth,   'mint')}
+          </div>
+
+          <div class="launch-card-footer">
+            <span>⏱ Spotted ${timeAgo(t.ts)}</span>
+            ${t.url ? `<a class="fomo-dex-link" href="${t.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">VIEW ON DEXSCREENER →</a>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+
+  } catch(e) {
+    feed.innerHTML = '<div class="rs-empty">Could not load launch scanner.</div>';
+  }
 }
 
 // ============================================================
