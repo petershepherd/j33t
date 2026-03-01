@@ -963,6 +963,108 @@
     opacity: 0.6;
     background: rgba(255,68,102,0.04);
   }
+
+  /* ============================================================
+     RECENTLY SNIFFED
+  ============================================================ */
+  .recently-sniffed {
+    margin-top: 32px;
+    background: var(--surface2);
+    border: 1px solid rgba(0,255,170,0.1);
+    padding: 20px 24px;
+  }
+  .rs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .rs-title {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--green);
+    letter-spacing: 2px;
+  }
+  .rs-refresh {
+    background: none;
+    border: 1px solid rgba(0,255,170,0.3);
+    color: var(--green);
+    font-family: var(--pixel);
+    font-size: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .rs-refresh:hover { background: rgba(0,255,170,0.08); }
+  .rs-desc {
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .rs-list {
+    max-height: 480px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,255,170,0.2) transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .rs-list::-webkit-scrollbar { width: 4px; }
+  .rs-list::-webkit-scrollbar-thumb { background: rgba(0,255,170,0.2); }
+  .rs-row {
+    display: grid;
+    grid-template-columns: 28px 1fr 64px 72px 72px 72px;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--surface);
+    border-left: 2px solid transparent;
+    font-size: 10px;
+    transition: background 0.15s;
+  }
+  .rs-row:hover { background: rgba(255,255,255,0.03); }
+  .rs-row.risk-low    { border-left-color: var(--green); }
+  .rs-row.risk-med    { border-left-color: #fbbf24; }
+  .rs-row.risk-high   { border-left-color: var(--red); }
+  .rs-rank { font-family: var(--pixel); font-size: 6px; color: var(--muted); text-align: center; }
+  .rs-token-name { font-weight: 600; color: var(--text); }
+  .rs-token-sym  { font-family: var(--pixel); font-size: 6px; color: var(--muted); }
+  .rs-score {
+    font-family: var(--pixel);
+    font-size: 7px;
+    text-align: center;
+    padding: 2px 6px;
+  }
+  .rs-score.low  { color: var(--green); }
+  .rs-score.med  { color: #fbbf24; }
+  .rs-score.high { color: var(--red); }
+  .rs-stat { font-size: 9px; color: var(--muted); text-align: right; }
+  .rs-stat span { color: var(--text); }
+  .rs-time { font-size: 8px; color: var(--muted); text-align: right; }
+  .rs-empty { font-size: 11px; color: var(--muted); text-align: center; padding: 28px; }
+  .rs-header-row {
+    display: grid;
+    grid-template-columns: 28px 1fr 64px 72px 72px 72px;
+    gap: 8px;
+    padding: 4px 10px 8px;
+    font-family: var(--pixel);
+    font-size: 5px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    margin-bottom: 4px;
+  }
+
+  @media (max-width: 600px) {
+    .rs-row { grid-template-columns: 24px 1fr 56px 60px; }
+    .rs-row .rs-stat:last-child,
+    .rs-row .rs-time { display: none; }
+    .rs-header-row { grid-template-columns: 24px 1fr 56px 60px; }
+    .rs-header-row span:nth-child(5),
+    .rs-header-row span:nth-child(6) { display: none; }
+  }
+
   /* HERO */
   .hero {
     position: relative;
@@ -2435,6 +2537,19 @@
       </div>
     </div>
 
+
+    <!-- Recently Sniffed -->
+    <div class="recently-sniffed" id="recentlySniffed">
+      <div class="rs-header">
+        <div class="rs-title">// RECENTLY SNIFFED</div>
+        <button class="rs-refresh" onclick="loadSniffHistory()">↻ REFRESH</button>
+      </div>
+      <div class="rs-desc">Tokens sniffed by J33T holders — score based, last 50. <a href="https://t.me/j33t_sniff" target="_blank" style="color:var(--gold)">@j33t_sniff</a></div>
+      <div class="rs-list" id="rsListBody">
+        <div class="rs-empty">No sniffs yet — be the first holder to sniff! 👃</div>
+      </div>
+    </div>
+
 <!-- Easter Egg Leaderboard -->
 <div class="egg-leaderboard" id="eggLeaderboard">
   <div class="egg-lb-title">
@@ -3515,6 +3630,7 @@ function applyWalletState() {
   buildTierTabGrid();
   updateNavBadgeTooltip();
   if (walletConnected) checkNiceNumber(j33tBalance);
+  loadSniffHistory();
 }
 
 function disconnectWallet() {
@@ -3805,6 +3921,96 @@ function tickerMoonMode() {
 
 
 
+
+// ============================================================
+// RECENTLY SNIFFED — KV history lista
+// ============================================================
+
+function rsRiskClass(score) {
+  if (score >= 70) return 'high';
+  if (score >= 45) return 'med';
+  return 'low';
+}
+function rsRiskLabel(score) {
+  if (score >= 70) return '🔴 HIGH';
+  if (score >= 45) return '🟡 MED';
+  return '🟢 LOW';
+}
+function rsFmtAge(sniffedAt) {
+  const mins = Math.floor((Date.now() - sniffedAt) / 60000);
+  if (mins < 60)  return mins + 'm ago';
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24)   return hrs + 'h ago';
+  return Math.floor(hrs / 24) + 'd ago';
+}
+function rsFmtBig(n) {
+  if (!n) return '—';
+  if (n >= 1_000_000) return '$' + (n/1_000_000).toFixed(1) + 'M';
+  if (n >= 1_000)     return '$' + (n/1_000).toFixed(0) + 'K';
+  return '$' + n.toFixed(0);
+}
+
+async function loadSniffHistory() {
+  const body = document.getElementById('rsListBody');
+  if (!body) return;
+  body.innerHTML = '<div class="rs-empty">Loading...</div>';
+  try {
+    const res = await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'sniff_history' }),
+      signal: AbortSignal.timeout(8000),
+    });
+    const d = await res.json();
+    const tokens = d.tokens || [];
+
+    if (!tokens.length) {
+      body.innerHTML = '<div class="rs-empty">No sniffs yet — be the first holder to sniff! 👃</div>';
+      return;
+    }
+
+    // Score szerint rendezzük (legalacsonyabb risk elöl)
+    const sorted = [...tokens].sort((a, b) => {
+      const sa = a.riskScore ?? 50;
+      const sb = b.riskScore ?? 50;
+      return sa - sb;
+    });
+
+    const headerRow = `
+      <div class="rs-header-row">
+        <span>#</span><span>TOKEN</span><span style="text-align:center">RISK</span>
+        <span style="text-align:right">LIQ</span>
+        <span style="text-align:right">MCAP</span>
+        <span style="text-align:right">SNIFFED</span>
+      </div>`;
+
+    const rows = sorted.slice(0, 50).map((t, i) => {
+      const score = t.riskScore ?? 50;
+      const cls   = rsRiskClass(score);
+      const url   = t.url ? `href="${t.url}" target="_blank"` : '';
+      return `
+        <div class="rs-row risk-${cls}" ${url ? `onclick="window.open('${t.url}')" style="cursor:pointer"` : ''}>
+          <div class="rs-rank">${i + 1}</div>
+          <div>
+            <div class="rs-token-name">${t.name || '???'}</div>
+            <div class="rs-token-sym">$${t.symbol || '???'}</div>
+          </div>
+          <div class="rs-score ${cls}">${score}<br><span style="font-size:5px">${rsRiskLabel(score)}</span></div>
+          <div class="rs-stat"><span>${rsFmtBig(t.liquidity)}</span><br>liquidity</div>
+          <div class="rs-stat"><span>${rsFmtBig(t.mcap)}</span><br>mcap</div>
+          <div class="rs-time">${t.sniffedAt ? rsFmtAge(t.sniffedAt) : '—'}</div>
+        </div>`;
+    }).join('');
+
+    body.innerHTML = headerRow + rows;
+  } catch(e) {
+    body.innerHTML = '<div class="rs-empty">Could not load sniff history.</div>';
+  }
+}
+
+// Oldal betöltésekor és wallet connectkor betöltjük
+setTimeout(loadSniffHistory, 2000);
+
 // ============================================================
 // TIER TAB + TIMELINE + NAV BADGE TOOLTIP
 // ============================================================
@@ -4073,6 +4279,14 @@ async function runDailySniff() {
     sniffIncUsage();
     sniffUpdateUI();
 
+    // 4. Worker-nek küldjük a sniff eredményt (TG + KV history)
+    fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'sniff_report', tokens: analysed }),
+      signal: AbortSignal.timeout(12000),
+    }).then(() => loadSniffHistory()).catch(() => {});
+
     const now = new Date();
     document.getElementById('sniffTimestamp').textContent =
       `Last sniff: ${now.toUTCString()}`;
@@ -4130,7 +4344,7 @@ Respond with ONLY the commentary text, no JSON, no labels, 2-3 sentences max.`;
     aiText = d.result || '';
   } catch(e) { aiText = 'AI analysis unavailable.'; }
 
-  return { ...t, score, flags, aiText };
+  return { ...t, score, riskScore: score, flags, aiText };
 }
 
 function sniffRenderCards(tokens) {
