@@ -1065,6 +1065,72 @@
     .rs-header-row span:nth-child(6) { display: none; }
   }
 
+
+  /* ── REAL WALLET UNLOCK BANNER ── */
+  #realUnlockBanner {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: rubFadeIn 0.3s ease;
+  }
+  @keyframes rubFadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .rub-inner {
+    text-align: center;
+    padding: 48px 40px;
+    border: 2px solid var(--green);
+    background: var(--surface2);
+    max-width: 420px;
+    width: 90%;
+    animation: rubPop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes rubPop {
+    from { transform: scale(0.7); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  .rub-icon {
+    font-size: 52px;
+    margin-bottom: 16px;
+    animation: rubBounce 0.6s ease infinite alternate;
+  }
+  @keyframes rubBounce {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-8px); }
+  }
+  .rub-title {
+    font-family: var(--pixel);
+    font-size: 18px;
+    color: var(--green);
+    letter-spacing: 4px;
+    line-height: 1.5;
+    text-shadow: 0 0 20px rgba(0,255,170,0.5);
+  }
+  .rub-sub {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 12px;
+    margin-bottom: 28px;
+  }
+  .rub-btn {
+    font-family: var(--pixel);
+    font-size: 9px;
+    letter-spacing: 2px;
+    background: var(--green);
+    color: #000;
+    border: none;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .rub-btn:hover { opacity: 0.85; }
+
   /* HERO */
   .hero {
     position: relative;
@@ -2891,9 +2957,9 @@
 <footer>
   <div class="footer-logo">J33T © 2009–∞</div>
   <ul class="footer-links">
-    <li><a href="https://x.com/J33tyorkie">Twitter/X</a></li>
+    <li><a href="#">Twitter/X</a></li>
     <li><a href="https://t.me/j33t_sniff" target="_blank" rel="noopener">Telegram</a></li>
-    <li><a href="https://dexscreener.com/solana/8fyhql4ad6f9jjjvhxzspbkka3jmwkpdr6slniate36w">Dexscreener</a></li>
+    <li><a href="#">Dexscreener</a></li>
     <li><a href="#">Raydium</a></li>
   </ul>
   <div class="footer-copy">Not financial advice. Just a good girl.<br>& her even better degens.</div>
@@ -2938,7 +3004,7 @@
 // CONFIG — Replace TOKEN_MINT with your real $J33T mint address
 // ============================================================
 const CONFIG = {
-  TOKEN_MINT: '355ses9YKA4pTvbyTqRDT4QjzuJ1CW23eLqsfi1npump',
+  TOKEN_MINT: 'E2HNWS5L6gwmtC9SZPpRq6Yp3V5gzotFrL3dAEP2pump',
   TOKEN_SYMBOL: 'J33T',
   CHAIN: 'solana',
   DEXSCREENER_API: 'https://api.dexscreener.com/tokens/v1/solana/',
@@ -3405,7 +3471,6 @@ let j33tBalance = 0;
 let walletAddr = '';
 let walletFullAddr = ''; // teljes pubkey a KV műveletekhez
 let isRealMode = false;
-let connectClickCount = 0;
 
 // Restore demo session
 try {
@@ -3424,25 +3489,6 @@ try {
 } catch(e) {}
 
 function openWalletModal() {
-  connectClickCount++;
-  const counter = document.getElementById('walletClickCounter');
-  const remaining = 5 - connectClickCount;
-
-  if (connectClickCount >= 5 && !isRealMode) {
-    // Unlock real mode!
-    isRealMode = true;
-    document.getElementById('demoNotice').style.display = 'none';
-    document.getElementById('realNotice').classList.add('show');
-    document.getElementById('walletModalTitle').textContent = '🔗 REAL WALLET';
-    document.getElementById('phantomLabel').innerHTML = 'Phantom <span style="font-size:10px;color:var(--green)">(real)</span>';
-    document.getElementById('solflareLabel').innerHTML = 'Solflare <span style="font-size:10px;color:var(--green)">(real)</span>';
-    document.getElementById('backpackLabel').innerHTML = 'Backpack <span style="font-size:10px;color:var(--green)">(real)</span>';
-    if (counter) counter.textContent = '🐾 REAL MODE UNLOCKED';
-    showToast('🐾 Real wallet mode unlocked! 5 clicks achieved.');
-  } else if (!isRealMode && counter && remaining > 0) {
-    counter.textContent = `${remaining} more click${remaining !== 1 ? 's' : ''} for real mode...`;
-  }
-
   document.getElementById('walletModal').classList.add('open');
 }
 function closeWalletModal() { document.getElementById('walletModal').classList.remove('open'); }
@@ -3849,6 +3895,75 @@ function getWisdom() {
     el.style.transition = 'opacity 0.5s'; el.style.opacity = 1;
   }, 300);
 }
+
+// ── PIXEL DOG UNLOCK — 3 kattintás = real wallet connect unlock
+let dogClickCount = 0;
+let dogClickTimer = null;
+
+function petTheDog(e) {
+  // Easter egg tracking (pat dog)
+  patDogEgg();
+
+  // Unlock számláló
+  dogClickCount++;
+
+  // 3 másodpercen belül kell a 3 kattintás
+  clearTimeout(dogClickTimer);
+  dogClickTimer = setTimeout(() => { dogClickCount = 0; }, 3000);
+
+  if (dogClickCount >= 3 && !isRealMode) {
+    dogClickCount = 0;
+    unlockRealWallet();
+    return;
+  }
+
+  // Sima kutya reakció ha még nem unlockoltunk
+  petJ33T();
+}
+
+function unlockRealWallet() {
+  isRealMode = true;
+
+  // Modal frissítése
+  const demoNotice = document.getElementById('demoNotice');
+  const realNotice = document.getElementById('realNotice');
+  if (demoNotice) demoNotice.style.display = 'none';
+  if (realNotice) realNotice.classList.add('show');
+  const title = document.getElementById('walletModalTitle');
+  if (title) title.textContent = '🔗 REAL WALLET';
+  const pLabel = document.getElementById('phantomLabel');
+  const sLabel = document.getElementById('solflareLabel');
+  const bLabel = document.getElementById('backpackLabel');
+  if (pLabel) pLabel.innerHTML = 'Phantom <span style="font-size:10px;color:var(--green)">(real)</span>';
+  if (sLabel) sLabel.innerHTML = 'Solflare <span style="font-size:10px;color:var(--green)">(real)</span>';
+  if (bLabel) bLabel.innerHTML = 'Backpack <span style="font-size:10px;color:var(--green)">(real)</span>';
+
+  // Nagy felirat megjelenítése
+  showRealUnlockBanner();
+  launchConfetti();
+}
+
+function showRealUnlockBanner() {
+  // Meglévő bannert töröljük ha van
+  const existing = document.getElementById('realUnlockBanner');
+  if (existing) existing.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'realUnlockBanner';
+  banner.innerHTML = `
+    <div class="rub-inner">
+      <div class="rub-icon">🐾</div>
+      <div class="rub-title">REAL WALLET CONNECT</div>
+      <div class="rub-title">UNLOCKED</div>
+      <div class="rub-sub">Good girl J33T — she trusts you.</div>
+      <button class="rub-btn" onclick="document.getElementById('realUnlockBanner').remove(); openWalletModal();">CONNECT NOW</button>
+    </div>`;
+  document.body.appendChild(banner);
+
+  // Auto-hide 6 másodperc után
+  setTimeout(() => { if (banner.parentNode) banner.remove(); }, 6000);
+}
+
 function petJ33T() {
   patDogEgg();
   const el = document.getElementById('oracleText');
