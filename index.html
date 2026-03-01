@@ -3136,6 +3136,10 @@
       <span class="wallet-option-icon">🎒</span>
       <span>Backpack</span>
     </button>
+    <button class="wallet-option" onclick="connectWallet('jupiter')">
+      <span class="wallet-option-icon">🪐</span>
+      <span>Jupiter</span>
+    </button>
     <button class="modal-close" onclick="closeWalletModal()">CANCEL</button>
   </div>
 </div>
@@ -3647,6 +3651,8 @@ async function connectRealWallet(type) {
       provider = window.solflare;
     } else if (type === 'backpack' && window.backpack) {
       provider = window.backpack;
+    } else if (type === 'jupiter' && window.jupiter) {
+      provider = window.jupiter;
     }
 
     if (!provider) {
@@ -3683,7 +3689,7 @@ async function fetchRealBalance(pubkey) {
 
   // ── METHOD 1: Phantom getTokenAccountsByOwner (direkt a wallet extension-ből)
   // A Phantom provider saját RPC-n keresztül lekérdezi — nincs CORS, nincs API key
-  const provider = window.solana || window.solflare || window.backpack;
+  const provider = window.solana || window.solflare || window.backpack || window.jupiter;
   if (provider) {
     try {
       const result = await provider.request({
@@ -3845,7 +3851,7 @@ async function refreshBalance() {
   if (btn) { btn.classList.add('spinning'); btn.disabled = true; }
 
   // Get full pubkey from provider (walletAddr is already shortened)
-  const provider = window.solana || window.solflare || window.backpack;
+  const provider = window.solana || window.solflare || window.backpack || window.jupiter;
   const pubkey = provider?.publicKey?.toString() || walletAddr;
 
   const newBalance = await fetchRealBalance(pubkey);
