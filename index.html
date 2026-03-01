@@ -4493,7 +4493,6 @@ function disconnectWallet() {
 
 function unlockCards() {
   [
-    ['card-launchScanner',   10000],
     ['card-launchScanner',  100000],
     ['card-smartMoney',      10000],
     ['card-meme',            10000],
@@ -4791,26 +4790,7 @@ let launchTab        = 'live';
 let launchTimer      = null;
 let launchCountdown  = 30;
 
-function launchUpdateUI() {
-  const locked   = document.getElementById('launchLocked');
-  const unlocked = document.getElementById('launchUnlocked');
-  const balEl    = document.getElementById('launchLockedBal');
-  if (!locked || !unlocked) return;
-
-  if (!walletConnected || j33tBalance < 10000) {
-    locked.style.display   = 'block';
-    unlocked.style.display = 'none';
-    if (walletConnected && j33tBalance < 10000) {
-      balEl.textContent = `Your balance: ${j33tBalance.toLocaleString()} $J33T — need ${(10000 - j33tBalance).toLocaleString()} more`;
-    } else { balEl.textContent = ''; }
-    stopLaunchTimer();
-    return;
-  }
-  locked.style.display   = 'none';
-  unlocked.style.display = 'block';
-  runLaunchScan();
-  startLaunchTimer();
-}
+// launchUpdateUI — lásd lejjebb a helyes definíciót (100k limit)
 
 function switchLaunchTab(tab) {
   launchTab = tab;
