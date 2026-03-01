@@ -252,6 +252,118 @@
   }
 
 
+
+  /* ── SMART MONEY TRACKER ── */
+  .smart-tier-banner {
+    font-family: var(--pixel);
+    font-size: 7px;
+    text-align: center;
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(245,200,66,0.2);
+    background: rgba(245,200,66,0.04);
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+  .smart-stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 24px;
+    padding: 14px;
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .smart-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .smart-stat-val {
+    font-family: var(--pixel);
+    font-size: 14px;
+    color: var(--green);
+  }
+  .smart-stat-lbl {
+    font-size: 8px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  .smart-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .smart-card {
+    background: var(--surface2);
+    border: 1px solid rgba(0,255,170,0.1);
+    border-left: 3px solid var(--green);
+    padding: 16px 18px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .smart-card:hover { border-color: rgba(0,255,170,0.4); }
+  .smart-card.delayed { border-left-color: var(--muted); opacity: 0.7; }
+  .smart-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .smart-card-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .smart-card-sym {
+    font-family: var(--pixel);
+    font-size: 6px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .smart-card-badge {
+    font-family: var(--pixel);
+    font-size: 6px;
+    padding: 4px 8px;
+    background: rgba(0,255,170,0.1);
+    border: 1px solid rgba(0,255,170,0.3);
+    color: var(--green);
+    white-space: nowrap;
+  }
+  .smart-card-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    font-size: 9px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .smart-card-stats span { color: var(--text); display: block; font-size: 10px; }
+  .smart-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    color: var(--muted);
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .smart-card-time { font-family: var(--mono); font-size: 8px; }
+  .smart-delayed-overlay {
+    text-align: center;
+    padding: 20px;
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--muted);
+    border: 1px dashed rgba(255,255,255,0.1);
+    letter-spacing: 1px;
+  }
+  @media (max-width: 600px) {
+    .smart-card-stats { grid-template-columns: repeat(2, 1fr); }
+    .smart-stats-bar { gap: 20px; }
+  }
+
   /* ── HAMBURGER ── */
   .nav-right {
     display: flex;
@@ -2571,6 +2683,7 @@
     <li><a href="#utility" onclick="closeHamburger()">Utility</a></li>
     <li><a href="#pumpfun" onclick="closeHamburger()">Trust</a></li>
     <li><a href="#holderTools" onclick="closeHamburger()">Tools</a></li>
+    <li><a href="#smartMoney" onclick="closeHamburger()">Smart$</a></li>
     <li><a href="#tokenomics" onclick="closeHamburger()">$J33T</a></li>
   </ul>
   <div class="nav-right">
@@ -2754,6 +2867,12 @@
 
     <!-- Feature cards -->
     <div class="gate-grid">
+      <div class="gate-card locked" id="card-smartMoney" onclick="tryAccess('card-smartMoney', 10000, 'smartMoney')">
+        <div class="card-icon">🧠</div>
+        <div class="card-title">SMART MONEY</div>
+        <div class="card-desc">Track wallets that consistently buy early. Get alerted when smart money moves.</div>
+        <div class="card-min">MIN: 10,000 $J33T · delay by tier</div>
+      </div>
       <div class="gate-card locked" id="card-meme" onclick="trackWindowShop('card-meme'); tryAccess('meme')">
         <div class="card-icon">🎨</div>
         <div class="card-title">RUG RADAR</div>
@@ -3159,6 +3278,46 @@
     <div class="sniff-error" id="fomoError"></div>
     <div class="fomo-grid" id="fomoGrid"></div>
     <div class="fomo-summary" id="fomoSummary"></div>
+  </div>
+</section>
+
+
+<!-- Smart Money Tracker -->
+<section class="sniff-section" id="smartMoney">
+  <div class="section-label">// FOLLOW THE SMART MONEY</div>
+  <h2 class="section-title">SMART MONEY TRACKER</h2>
+  <p class="section-desc">J33T tracks wallets that consistently buy early on winning tokens. When they move — you'll know. Delay depends on your tier.</p>
+
+  <div class="sniff-locked" id="smartLocked">
+    <div class="sniff-locked-icon">🔒</div>
+    <div class="sniff-locked-text">10,000 $J33T required to access Smart Money Tracker</div>
+    <div class="sniff-locked-bal" id="smartLockedBal"></div>
+    <button class="btn" onclick="openWalletModal()">CONNECT WALLET</button>
+  </div>
+
+  <div id="smartUnlocked" style="display:none;">
+    <div class="smart-tier-banner" id="smartTierBanner"></div>
+    <div class="smart-stats-bar" id="smartStatsBar">
+      <div class="smart-stat-item">
+        <span class="smart-stat-val" id="smartWalletCount">—</span>
+        <span class="smart-stat-lbl">tracked wallets</span>
+      </div>
+      <div class="smart-stat-item">
+        <span class="smart-stat-val" id="smartAlertCount">—</span>
+        <span class="smart-stat-lbl">alerts today</span>
+      </div>
+      <div class="smart-stat-item">
+        <span class="smart-stat-val">2 min</span>
+        <span class="smart-stat-lbl">update interval</span>
+      </div>
+    </div>
+
+    <div class="smart-feed" id="smartFeed">
+      <div class="rs-empty">Loading smart money feed...</div>
+    </div>
+    <div style="text-align:center; margin-top:16px;">
+      <button class="sniff-fetch-btn" onclick="loadSmartAlerts()" style="font-size:8px; padding:10px 20px;">↻ REFRESH FEED</button>
+    </div>
   </div>
 </section>
 
@@ -4238,6 +4397,152 @@ function tickerMoonMode() {
 
 
 
+
+
+// ============================================================
+// SMART MONEY TRACKER
+// ============================================================
+
+// Tier-alapú késleltetés (percben)
+const SMART_TIER_DELAY = [
+  { min: 5000000, delay: 0,  label: '🐺 TOP DOG — Real-time' },
+  { min: 1000000, delay: 2,  label: '🦾 PAWS OF STEEL — 2 min delay' },
+  { min: 500000,  delay: 4,  label: '🏃 PACK RUNNER — 4 min delay' },
+  { min: 100000,  delay: 6,  label: '👃 NOSE CERTIFIED — 6 min delay' },
+  { min: 50000,   delay: 8,  label: '📢 LOUD WOOFER — 8 min delay' },
+  { min: 10000,   delay: 10, label: '🐽 FIRST SNIFF — 10 min delay' },
+  { min: 0,       delay: 12, label: '🚶 STREET STRAY — 12 min delay' },
+];
+
+function getSmartDelay(balance) {
+  return SMART_TIER_DELAY.find(t => balance >= t.min) || SMART_TIER_DELAY[SMART_TIER_DELAY.length - 1];
+}
+
+function smartUpdateUI() {
+  const locked   = document.getElementById('smartLocked');
+  const unlocked = document.getElementById('smartUnlocked');
+  const balEl    = document.getElementById('smartLockedBal');
+  if (!locked || !unlocked) return;
+
+  if (!walletConnected || j33tBalance < 10000) {
+    locked.style.display   = 'block';
+    unlocked.style.display = 'none';
+    if (walletConnected && j33tBalance < 10000) {
+      balEl.textContent = `Your balance: ${j33tBalance.toLocaleString()} $J33T — need ${(10000 - j33tBalance).toLocaleString()} more`;
+    } else {
+      balEl.textContent = '';
+    }
+    return;
+  }
+
+  locked.style.display   = 'none';
+  unlocked.style.display = 'block';
+
+  const tierInfo = getSmartDelay(j33tBalance);
+  const banner   = document.getElementById('smartTierBanner');
+  if (banner) {
+    banner.textContent = tierInfo.delay === 0
+      ? `${tierInfo.label} · You see alerts the moment J33T spots them`
+      : `${tierInfo.label} · Upgrade your holdings to see alerts faster`;
+  }
+
+  // Stats + feed betöltése
+  loadSmartStats();
+  loadSmartAlerts();
+}
+
+async function loadSmartStats() {
+  try {
+    const res = await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'smart_stats' }),
+      signal: AbortSignal.timeout(8000),
+    });
+    const d = await res.json();
+    const wc = document.getElementById('smartWalletCount');
+    if (wc) wc.textContent = d.walletCount || '0';
+  } catch(e) {}
+}
+
+async function loadSmartAlerts() {
+  const feed = document.getElementById('smartFeed');
+  const ac   = document.getElementById('smartAlertCount');
+  if (!feed) return;
+
+  feed.innerHTML = '<div class="rs-empty">Loading...</div>';
+
+  try {
+    const res = await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'smart_alerts' }),
+      signal: AbortSignal.timeout(10000),
+    });
+    const d = await res.json();
+    const alerts = d.alerts || [];
+
+    if (!alerts.length) {
+      feed.innerHTML = '<div class="rs-empty">No smart money alerts yet — J33T is watching 👀</div>';
+      return;
+    }
+
+    const delayMs  = getSmartDelay(j33tBalance).delay * 60 * 1000;
+    const now      = Date.now();
+
+    // Today counter
+    const todayStart = new Date();
+    todayStart.setHours(0,0,0,0);
+    const todayCount = alerts.filter(a => a.ts > todayStart.getTime()).length;
+    if (ac) ac.textContent = todayCount;
+
+    const fmt    = v => v != null ? '$' + Math.round(v).toLocaleString() : '—';
+    const fmtPct = v => v != null ? (v > 0 ? '+' : '') + parseFloat(v).toFixed(1) + '%' : '—';
+    const pctCls = v => v == null ? '' : v > 0 ? 'c-ok' : 'c-bad';
+    const timeAgo = ts => {
+      const diff = Math.floor((now - ts) / 1000);
+      if (diff < 60)   return diff + 's ago';
+      if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+      return Math.floor(diff/3600) + 'h ago';
+    };
+
+    feed.innerHTML = alerts.slice(0, 20).map(a => {
+      const alertAge  = now - a.ts;
+      const visible   = alertAge >= delayMs;
+      const remaining = Math.ceil((delayMs - alertAge) / 60000);
+
+      if (!visible) {
+        return `<div class="smart-delayed-overlay">
+          🔒 ALERT HIDDEN · Unlocks in ${remaining} min · Hold more $J33T for faster access
+        </div>`;
+      }
+
+      return `
+        <div class="smart-card" ${a.url ? `onclick="window.open('${a.url}')" style="cursor:pointer"` : ''}>
+          <div class="smart-card-header">
+            <div>
+              <div class="smart-card-name">${a.name}</div>
+              <div class="smart-card-sym">$${a.symbol} · ${a.pairAge != null ? a.pairAge + 'd old' : '?'}</div>
+            </div>
+            <div class="smart-card-badge">🧠 ${a.walletCount} SMART WALLET${a.walletCount > 1 ? 'S' : ''}</div>
+          </div>
+          <div class="smart-card-stats">
+            <div>MCap<span>${fmt(a.mcap)}</span></div>
+            <div>Liquidity<span>${fmt(a.liquidity)}</span></div>
+            <div>24h<span class="${pctCls(a.change24h)}">${fmtPct(a.change24h)}</span></div>
+            <div>Avg Score<span style="color:var(--gold)">${a.avgScore?.toFixed(1) || '?'}</span></div>
+          </div>
+          <div class="smart-card-footer">
+            <span class="smart-card-time">⏱ ${timeAgo(a.ts)}</span>
+            ${a.url ? `<a class="fomo-dex-link" href="${a.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">VIEW ON DEXSCREENER →</a>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+
+  } catch(e) {
+    feed.innerHTML = '<div class="rs-empty">Could not load smart money feed.</div>';
+  }
+}
 
 // ============================================================
 // FOMO REPORT — Top 7-day Solana gainers
