@@ -4506,13 +4506,30 @@ async function refreshBalance() {
   );
 }
 
-function tryAccess(type) {
+function tryAccess(type, minOverride, sectionId) {
+  // Gate card hívás: tryAccess('card-launchScanner', 100000, 'launchScanner')
+  // Régi hívás: tryAccess('meme')
   if (!walletConnected) { showToast('Connect your wallet first!'); openWalletModal(); return; }
-  const mins = { meme: 10000, oracle: 50000, whitelist: 500000, staking: 5000000 };
-  if (j33tBalance < mins[type]) {
-    showToast(`Need ${mins[type].toLocaleString()} $J33T to unlock!`);
+
+  const mins = { meme: 10000, oracle: 50000, whitelist: 500000, staking: 5000000,
+                 'card-launchScanner': 100000, 'card-smartMoney': 10000,
+                 'card-fomo': 100000, 'card-dailySniff': 100000,
+                 'card-rugornotSection': 100000 };
+  const requiredMin = minOverride || mins[type] || 0;
+
+  if (j33tBalance < requiredMin) {
+    showToast(`Need ${requiredMin.toLocaleString()} $J33T to unlock!`);
     return;
   }
+
+  // Section scroll — gate card hívások esetén
+  if (sectionId) {
+    const el = document.getElementById(sectionId);
+    if (el) { setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }
+    return;
+  }
+
+  // Régi hívások
   if (type === 'meme') {
     const el = document.getElementById('memeForge');
     el.classList.toggle('visible');
