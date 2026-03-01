@@ -1131,6 +1131,121 @@
   }
   .rub-btn:hover { opacity: 0.85; }
 
+
+  /* ============================================================
+     FOMO REPORT
+  ============================================================ */
+  .fomo-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .fomo-disclaimer {
+    font-size: 9px;
+    color: var(--muted);
+    font-family: var(--mono);
+    text-align: center;
+  }
+  .fomo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .fomo-card {
+    background: var(--surface2);
+    border: 1px solid rgba(255,68,102,0.2);
+    border-left: 3px solid var(--red);
+    padding: 16px 18px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .fomo-card:hover { border-color: rgba(255,68,102,0.5); }
+  .fomo-card-rank {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--muted);
+  }
+  .fomo-token-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .fomo-token-sym {
+    font-family: var(--pixel);
+    font-size: 6px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .fomo-gain {
+    font-family: var(--pixel);
+    font-size: 20px;
+    color: var(--red);
+    margin-bottom: 10px;
+    text-shadow: 0 0 12px rgba(255,68,102,0.4);
+  }
+  .fomo-gain.massive { color: #ff2255; font-size: 26px; }
+  .fomo-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    font-size: 9px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .fomo-stats span { color: var(--text); }
+  .fomo-ai-text {
+    font-size: 10px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.6;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 10px;
+    margin-top: 6px;
+  }
+  .fomo-ai-text::before {
+    content: '🐾 ';
+  }
+  .fomo-dex-link {
+    display: inline-block;
+    margin-top: 10px;
+    font-family: var(--pixel);
+    font-size: 6px;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .fomo-dex-link:hover { opacity: 1; }
+  .fomo-summary {
+    margin-top: 28px;
+    padding: 20px 24px;
+    background: rgba(255,68,102,0.05);
+    border: 1px solid rgba(255,68,102,0.15);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.8;
+    white-space: pre-wrap;
+  }
+  .fomo-summary-title {
+    font-family: var(--pixel);
+    font-size: 8px;
+    color: var(--red);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+  @media (max-width: 600px) {
+    .fomo-grid { grid-template-columns: 1fr; }
+  }
+
   /* HERO */
   .hero {
     position: relative;
@@ -2364,6 +2479,7 @@
     <li><a href="#utility">Utility</a></li>
     <li><a href="#pumpfun">Trust</a></li>
     <li><a href="#dailySniff">Sniff</a></li>
+    <li><a href="#fomoSection">FOMO</a></li>
     <li><a href="#rugornotSection">Rug?</a></li>
     <li><a href="#tokenomics">$J33T</a></li>
   </ul>
@@ -2905,6 +3021,41 @@
       <div class="sniff-timestamp" id="sniffTimestamp"></div>
     </div>
 
+  </div>
+</section>
+
+
+<!-- FOMO Calculator -->
+<section class="sniff-section" id="fomoSection">
+  <div class="section-label">// WHAT DID YOU MISS?</div>
+  <h2 class="section-title">J33T'S FOMO REPORT</h2>
+  <p class="section-desc">Top Solana gainers from the last 7 days. Painful? Yes. Useful? Also yes.</p>
+
+  <div class="sniff-locked" id="fomoLocked">
+    <div class="sniff-locked-icon">🔒</div>
+    <div class="sniff-locked-text">100,000 $J33T required to unlock FOMO Report</div>
+    <div class="sniff-locked-bal" id="fomoLockedBal"></div>
+    <button class="btn" onclick="openWalletModal()">CONNECT WALLET</button>
+  </div>
+
+  <div id="fomoUnlocked" style="display:none;">
+    <div class="fomo-controls">
+      <button class="sniff-fetch-btn" id="fomoBtn" onclick="runFomoReport()">
+        😭 SHOW ME WHAT I MISSED
+      </button>
+      <div class="fomo-disclaimer">Top 7-day Solana gainers · NFA · DYOR · This will hurt.</div>
+    </div>
+
+    <div class="sniff-loading" id="fomoLoading">
+      <div class="sniff-loading-dot"></div>
+      <div class="sniff-loading-dot"></div>
+      <div class="sniff-loading-dot"></div>
+      <span style="margin-left:12px; font-size:10px; color:var(--muted);">J33T is digging through the gains...</span>
+    </div>
+
+    <div class="sniff-error" id="fomoError"></div>
+    <div class="fomo-grid" id="fomoGrid"></div>
+    <div class="fomo-summary" id="fomoSummary"></div>
   </div>
 </section>
 
@@ -3637,6 +3788,7 @@ function applyWalletState() {
   updateNavBadgeTooltip();
   if (walletConnected) checkNiceNumber(j33tBalance);
   loadSniffHistory();
+  fomoUpdateUI();
 }
 
 function disconnectWallet() {
@@ -3993,6 +4145,135 @@ function tickerMoonMode() {
 
 
 
+
+
+// ============================================================
+// FOMO REPORT — Top 7-day Solana gainers
+// ============================================================
+const FOMO_MIN_BALANCE = 100000;
+
+function fomoUpdateUI() {
+  const connected = walletConnected && j33tBalance >= FOMO_MIN_BALANCE;
+  const locked    = document.getElementById('fomoLocked');
+  const unlocked  = document.getElementById('fomoUnlocked');
+  const balEl     = document.getElementById('fomoLockedBal');
+  if (!locked || !unlocked) return;
+
+  if (!connected) {
+    locked.style.display   = 'block';
+    unlocked.style.display = 'none';
+    if (walletConnected && j33tBalance < FOMO_MIN_BALANCE) {
+      balEl.textContent = `Your balance: ${j33tBalance.toLocaleString()} $J33T — need ${(FOMO_MIN_BALANCE - j33tBalance).toLocaleString()} more`;
+    } else {
+      balEl.textContent = '';
+    }
+  } else {
+    locked.style.display   = 'none';
+    unlocked.style.display = 'block';
+  }
+}
+
+async function runFomoReport() {
+  if (!walletConnected || j33tBalance < FOMO_MIN_BALANCE) {
+    showToast('Need 100,000 $J33T to use FOMO Report!');
+    return;
+  }
+
+  const btn     = document.getElementById('fomoBtn');
+  const loading = document.getElementById('fomoLoading');
+  const grid    = document.getElementById('fomoGrid');
+  const summary = document.getElementById('fomoSummary');
+  const errEl   = document.getElementById('fomoError');
+
+  btn.disabled = true;
+  loading.classList.add('active');
+  grid.innerHTML = '';
+  summary.innerHTML = '';
+  errEl.classList.remove('active');
+
+  try {
+    // 1. Top gainers lekérése
+    const res = await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'fomo_gainers' }),
+      signal: AbortSignal.timeout(20000),
+    });
+    const d = await res.json();
+    if (d.error) throw new Error(d.error);
+
+    const gainers = d.gainers || [];
+    if (!gainers.length) {
+      grid.innerHTML = '<div class="rs-empty">No major gainers found right now. Check back soon.</div>';
+      return;
+    }
+
+    // 2. Kártyák megjelenítése azonnal
+    fomoRenderCards(gainers);
+
+    // 3. AI összefoglaló kommentár
+    const topNames = gainers.slice(0, 3).map(t => `${t.name} (+${Math.round(t.change7d)}%)`).join(', ');
+    const prompt = `You are J33T, a 17-year-old Yorkshire Terrier crypto analyst. 
+A user just checked what they missed on Solana in the last 7 days.
+Top gainers were: ${topNames}.
+Write a 3-sentence FOMO report in J33T's voice — painful, darkly funny, but not cruel.
+Reference the actual tokens and gains. End with one piece of genuine advice.
+No financial advice disclaimer needed — just be J33T.`;
+
+    const aiRes = await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'groq', prompt }),
+      signal: AbortSignal.timeout(15000),
+    });
+    const aiData = await aiRes.json();
+    const aiText = aiData.result || '';
+
+    if (aiText) {
+      summary.innerHTML = `
+        <div class="fomo-summary-title">// J33T'S VERDICT</div>
+        <div>${aiText}</div>`;
+    }
+
+  } catch(e) {
+    errEl.textContent = '⚠️ ' + e.message;
+    errEl.classList.add('active');
+  } finally {
+    loading.classList.remove('active');
+    btn.disabled = false;
+    btn.textContent = '🔄 REFRESH PAIN';
+  }
+}
+
+function fomoRenderCards(gainers) {
+  const grid = document.getElementById('fomoGrid');
+  const fmt  = v => v != null ? '$' + Math.round(v).toLocaleString() : '—';
+
+  grid.innerHTML = gainers.map((t, i) => {
+    const gain     = Math.round(t.change7d);
+    const multiple = (t.change7d / 100 + 1).toFixed(1);
+    const isMassive = gain >= 500;
+    const change24cls = t.change24h > 0 ? 'c-ok' : 'c-bad';
+    const change24txt = t.change24h != null
+      ? (t.change24h > 0 ? '+' : '') + t.change24h.toFixed(1) + '%'
+      : '—';
+
+    return `
+      <div class="fomo-card">
+        <div class="fomo-card-rank">#${i + 1}</div>
+        <div class="fomo-token-name">${t.name}</div>
+        <div class="fomo-token-sym">$${t.symbol} · ${t.pairAge != null ? t.pairAge + 'd old' : '?'}</div>
+        <div class="fomo-gain ${isMassive ? 'massive' : ''}">+${gain}% <span style="font-size:12px;opacity:0.7">(${multiple}x)</span></div>
+        <div class="fomo-stats">
+          <div>MCap<br><span>${fmt(t.mcap)}</span></div>
+          <div>Liquidity<br><span>${fmt(t.liquidity)}</span></div>
+          <div>Vol 24h<br><span>${fmt(t.volume24h)}</span></div>
+          <div>24h change<br><span class="${change24cls}">${change24txt}</span></div>
+        </div>
+        ${t.url ? `<a class="fomo-dex-link" href="${t.url}" target="_blank" rel="noopener">VIEW ON DEXSCREENER →</a>` : ''}
+      </div>`;
+  }).join('');
+}
 
 // ============================================================
 // RECENTLY SNIFFED — KV history lista
@@ -4906,7 +5187,7 @@ function patDogEgg() {
 
 // WINDOW SHOPPER — összes locked gate card kattintása
 const lockedCards = new Set();
-const allGateCards = ['card-meme','card-oracle','card-rugornotSection','card-dailySniff','card-whitelist','card-staking'];
+const allGateCards = ['card-meme','card-oracle','card-rugornotSection','card-dailySniff','card-fomo','card-whitelist','card-staking'];
 function trackWindowShop(cardId) {
   if (!walletConnected) {
     lockedCards.add(cardId);
