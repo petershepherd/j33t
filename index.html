@@ -253,6 +253,156 @@
 
 
 
+
+  /* ── LAUNCH SCANNER ── */
+  .launch-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .launch-live-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--green);
+    letter-spacing: 1px;
+  }
+  .launch-live-dot {
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 1.5s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.4; transform: scale(0.7); }
+  }
+  .launch-next-refresh {
+    font-size: 9px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  .launch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+  }
+  .launch-card {
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-top: 3px solid var(--gold);
+    padding: 16px;
+    position: relative;
+    transition: border-color 0.2s;
+    cursor: pointer;
+  }
+  .launch-card:hover { border-color: rgba(245,200,66,0.4); }
+  .launch-card.score-hot  { border-top-color: var(--green); }
+  .launch-card.score-warm { border-top-color: #fbbf24; }
+  .launch-card.score-cold { border-top-color: var(--muted); }
+  .launch-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .launch-score {
+    font-family: var(--pixel);
+    font-size: 18px;
+    line-height: 1;
+  }
+  .launch-score.hot  { color: var(--green); text-shadow: 0 0 10px rgba(0,255,170,0.4); }
+  .launch-score.warm { color: #fbbf24; }
+  .launch-score.cold { color: var(--muted); }
+  .launch-score-label {
+    font-family: var(--pixel);
+    font-size: 6px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .launch-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .launch-sym {
+    font-family: var(--pixel);
+    font-size: 6px;
+    color: var(--muted);
+  }
+  .launch-age-badge {
+    font-family: var(--pixel);
+    font-size: 6px;
+    padding: 3px 7px;
+    border: 1px solid rgba(245,200,66,0.3);
+    color: var(--gold);
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+  .launch-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    font-size: 9px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .launch-stats span { color: var(--text); display: block; font-size: 10px; }
+  .launch-signals {
+    font-size: 9px;
+    line-height: 1.7;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .launch-dex-link {
+    font-family: var(--pixel);
+    font-size: 6px;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 1px;
+    opacity: 0.7;
+    display: inline-block;
+    margin-top: 8px;
+    transition: opacity 0.2s;
+  }
+  .launch-dex-link:hover { opacity: 1; }
+  .launch-empty {
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    padding: 32px;
+    border: 1px dashed rgba(255,255,255,0.08);
+  }
+  .launch-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .launch-tab {
+    font-family: var(--pixel);
+    font-size: 7px;
+    padding: 10px 18px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    letter-spacing: 1px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    margin-bottom: -1px;
+  }
+  .launch-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+  @media (max-width: 600px) {
+    .launch-grid { grid-template-columns: 1fr; }
+  }
+
   /* ── SMART MONEY TRACKER ── */
   .smart-tier-banner {
     font-family: var(--pixel);
@@ -1218,6 +1368,41 @@
     border: 1px solid rgba(0,255,170,0.1);
     padding: 20px 24px;
   }
+
+  .rs-header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .rs-track-record {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(0,255,170,0.3);
+    background: rgba(0,255,170,0.04);
+    padding: 5px 12px;
+  }
+  .rs-track-label {
+    font-family: var(--pixel);
+    font-size: 5px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .rs-track-val {
+    font-family: var(--pixel);
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .rs-track-sub {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
   .rs-header {
     display: flex;
     align-items: center;
@@ -2867,6 +3052,12 @@
 
     <!-- Feature cards -->
     <div class="gate-grid">
+      <div class="gate-card locked" id="card-launchScanner" onclick="tryAccess('card-launchScanner', 10000, 'launchScanner')">
+        <div class="card-icon">🚀</div>
+        <div class="card-title">LAUNCH SCANNER</div>
+        <div class="card-desc">Real-time scoring of new Solana tokens. Liquidity growth, buy pressure, dev wallet analysis. Updated every 2 min.</div>
+        <div class="card-min">MIN: 10,000 $J33T</div>
+      </div>
       <div class="gate-card locked" id="card-smartMoney" onclick="tryAccess('card-smartMoney', 10000, 'smartMoney')">
         <div class="card-icon">🧠</div>
         <div class="card-title">SMART MONEY</div>
@@ -2944,7 +3135,14 @@
     <!-- Recently Sniffed -->
     <div class="recently-sniffed" id="recentlySniffed">
       <div class="rs-header">
-        <div class="rs-title">// RECENTLY SNIFFED</div>
+        <div class="rs-header-left">
+          <div class="rs-title">// RECENTLY SNIFFED</div>
+          <div class="rs-track-record" id="rsTrackRecord" style="display:none;">
+            <span class="rs-track-label">AVG SINCE CALL</span>
+            <span class="rs-track-val" id="rsTrackVal">—</span>
+            <span class="rs-track-sub" id="rsTrackSub"></span>
+          </div>
+        </div>
         <button class="rs-refresh" onclick="loadSniffHistory()">↻ REFRESH</button>
       </div>
       <div class="rs-desc">Tokens sniffed by J33T holders — score based, last 50. <a href="https://t.me/j33t_sniff" target="_blank" style="color:var(--gold)">@j33t_sniff</a></div>
@@ -3318,6 +3516,45 @@
     <div style="text-align:center; margin-top:16px;">
       <button class="sniff-fetch-btn" onclick="loadSmartAlerts()" style="font-size:8px; padding:10px 20px;">↻ REFRESH FEED</button>
     </div>
+  </div>
+</section>
+
+
+<!-- Launch Scanner -->
+<section class="sniff-section" id="launchScanner">
+  <div class="section-label">// FIRST 24 HOURS</div>
+  <h2 class="section-title">LAUNCH SCANNER</h2>
+  <p class="section-desc">J33T automatically scores every new Solana token — liquidity growth, buy pressure, dev wallet, sniper activity. Updated every 2 minutes. Max 24h old tokens only.</p>
+
+  <div class="sniff-locked" id="launchLocked">
+    <div class="sniff-locked-icon">🔒</div>
+    <div class="sniff-locked-text">10,000 $J33T required to access Launch Scanner</div>
+    <div class="sniff-locked-bal" id="launchLockedBal"></div>
+    <button class="btn" onclick="openWalletModal()">CONNECT WALLET</button>
+  </div>
+
+  <div id="launchUnlocked" style="display:none;">
+    <div class="launch-tabs">
+      <button class="launch-tab active" id="launchTabLive" onclick="switchLaunchTab('live')">🔴 LIVE SCAN</button>
+      <button class="launch-tab" id="launchTabFeed" onclick="switchLaunchTab('feed')">📋 RECENT ALERTS</button>
+    </div>
+
+    <div class="launch-controls">
+      <div class="launch-live-badge">
+        <div class="launch-live-dot"></div>
+        AUTO-REFRESH EVERY 30s
+      </div>
+      <div class="launch-next-refresh" id="launchNextRefresh">Next refresh in 30s</div>
+    </div>
+
+    <div class="sniff-loading" id="launchLoading">
+      <div class="sniff-loading-dot"></div>
+      <div class="sniff-loading-dot"></div>
+      <div class="sniff-loading-dot"></div>
+      <span style="margin-left:12px; font-size:10px; color:var(--muted);">Scanning new launches...</span>
+    </div>
+    <div class="sniff-error" id="launchError"></div>
+    <div class="launch-grid" id="launchGrid"></div>
   </div>
 </section>
 
@@ -4076,6 +4313,7 @@ function applyWalletState() {
   loadSniffHistory();
   fomoUpdateUI();
   smartUpdateUI();
+  launchUpdateUI();
 }
 
 function disconnectWallet() {
@@ -4100,7 +4338,7 @@ function disconnectWallet() {
   document.getElementById('progressFill').style.width = '0%';
 
   // Re-lock cards
-  ['card-smartMoney','card-meme','card-oracle','card-fomo','card-whitelist','card-staking'].forEach(id => {
+  ['card-launchScanner','card-smartMoney','card-meme','card-oracle','card-fomo','card-whitelist','card-staking'].forEach(id => {
     const card = document.getElementById(id);
     if (card) { card.classList.remove('unlocked'); card.classList.add('locked'); }
   });
@@ -4114,6 +4352,7 @@ function disconnectWallet() {
 
 function unlockCards() {
   [
+    ['card-launchScanner',   10000],
     ['card-smartMoney',      10000],
     ['card-meme',            10000],
     ['card-oracle',          50000],
@@ -4401,6 +4640,167 @@ function tickerMoonMode() {
 
 
 
+
+
+// ============================================================
+// LAUNCH SCANNER
+// ============================================================
+let launchTab        = 'live';
+let launchTimer      = null;
+let launchCountdown  = 30;
+
+function launchUpdateUI() {
+  const locked   = document.getElementById('launchLocked');
+  const unlocked = document.getElementById('launchUnlocked');
+  const balEl    = document.getElementById('launchLockedBal');
+  if (!locked || !unlocked) return;
+
+  if (!walletConnected || j33tBalance < 10000) {
+    locked.style.display   = 'block';
+    unlocked.style.display = 'none';
+    if (walletConnected && j33tBalance < 10000) {
+      balEl.textContent = `Your balance: ${j33tBalance.toLocaleString()} $J33T — need ${(10000 - j33tBalance).toLocaleString()} more`;
+    } else { balEl.textContent = ''; }
+    stopLaunchTimer();
+    return;
+  }
+  locked.style.display   = 'none';
+  unlocked.style.display = 'block';
+  runLaunchScan();
+  startLaunchTimer();
+}
+
+function switchLaunchTab(tab) {
+  launchTab = tab;
+  document.getElementById('launchTabLive').classList.toggle('active', tab === 'live');
+  document.getElementById('launchTabFeed').classList.toggle('active', tab === 'feed');
+  if (tab === 'live') runLaunchScan();
+  else loadLaunchFeed();
+}
+
+function startLaunchTimer() {
+  stopLaunchTimer();
+  launchCountdown = 30;
+  launchTimer = setInterval(() => {
+    launchCountdown--;
+    const el = document.getElementById('launchNextRefresh');
+    if (el) el.textContent = `Next refresh in ${launchCountdown}s`;
+    if (launchCountdown <= 0) {
+      launchCountdown = 30;
+      if (launchTab === 'live') runLaunchScan();
+    }
+  }, 1000);
+}
+
+function stopLaunchTimer() {
+  if (launchTimer) { clearInterval(launchTimer); launchTimer = null; }
+}
+
+async function runLaunchScan() {
+  const grid    = document.getElementById('launchGrid');
+  const loading = document.getElementById('launchLoading');
+  const errEl   = document.getElementById('launchError');
+  if (!grid) return;
+
+  loading.classList.add('active');
+  errEl.classList.remove('active');
+
+  try {
+    const res = await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'launch_scanner' }),
+      signal: AbortSignal.timeout(20000),
+    });
+    const d = await res.json();
+    if (d.error) throw new Error(d.error);
+    renderLaunchCards(d.tokens || []);
+  } catch(e) {
+    errEl.textContent = '⚠️ ' + e.message;
+    errEl.classList.add('active');
+    grid.innerHTML = '';
+  } finally {
+    loading.classList.remove('active');
+  }
+}
+
+async function loadLaunchFeed() {
+  const grid    = document.getElementById('launchGrid');
+  const loading = document.getElementById('launchLoading');
+  if (!grid) return;
+  loading.classList.add('active');
+  try {
+    const res = await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'launch_feed' }),
+      signal: AbortSignal.timeout(10000),
+    });
+    const d = await res.json();
+    renderLaunchCards(d.tokens || [], true);
+  } catch(e) {
+    grid.innerHTML = '<div class="launch-empty">Could not load feed.</div>';
+  } finally {
+    loading.classList.remove('active');
+  }
+}
+
+function renderLaunchCards(tokens, isFeed = false) {
+  const grid = document.getElementById('launchGrid');
+  if (!tokens.length) {
+    grid.innerHTML = `<div class="launch-empty">${isFeed ? 'No alerts yet — J33T is watching 🐾' : 'No qualifying launches found right now. J33T is watching...'}</div>`;
+    return;
+  }
+
+  const fmt    = v => v != null ? '$' + (v >= 1000000 ? (v/1000000).toFixed(2)+'M' : v >= 1000 ? (v/1000).toFixed(1)+'K' : Math.round(v)) : '—';
+  const fmtPct = v => v != null ? (v > 0 ? '+' : '') + parseFloat(v).toFixed(1) + '%' : '—';
+  const pctCls = v => v == null ? '' : v > 0 ? 'c-ok' : 'c-bad';
+  const scoreCls = s => s >= 65 ? 'hot' : s >= 40 ? 'warm' : 'cold';
+  const ageStr  = m => m < 60 ? m + ' min' : Math.floor(m/60) + 'h ' + (m%60) + 'min';
+  const now     = Date.now();
+  const timeAgo = ts => {
+    const d = Math.floor((now - ts) / 1000);
+    if (d < 60) return d + 's ago';
+    if (d < 3600) return Math.floor(d/60) + 'm ago';
+    return Math.floor(d/3600) + 'h ago';
+  };
+
+  grid.innerHTML = tokens.map(t => {
+    const sc  = scoreCls(t.score);
+    const buyRatio = t.buys1h + t.sells1h > 0
+      ? Math.round(t.buys1h / (t.buys1h + t.sells1h) * 100) + '%'
+      : '—';
+
+    return `
+      <div class="launch-card score-${sc}" ${t.url ? `onclick="window.open('${t.url}')"` : ''}>
+        <div class="launch-card-top">
+          <div>
+            <div class="launch-name">${t.name}</div>
+            <div class="launch-sym">$${t.symbol}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="launch-score ${sc}">${t.score}</div>
+            <div class="launch-score-label">LAUNCH SCORE</div>
+          </div>
+        </div>
+        <div class="launch-age-badge">⏱ ${ageStr(t.ageMin)} old ${isFeed && t.ts ? '· alerted ' + timeAgo(t.ts) : ''}</div>
+        <div class="launch-stats">
+          <div>Liquidity<span>${fmt(t.liq)}</span></div>
+          <div>MCap<span>${fmt(t.mcap)}</span></div>
+          <div>Buy ratio<span class="${pctCls(t.change1h)}">${buyRatio}</span></div>
+          <div>1h vol<span>${fmt(t.vol1h)}</span></div>
+          <div>Buys<span class="c-ok">${t.buys1h}</span></div>
+          <div>1h chg<span class="${pctCls(t.change1h)}">${fmtPct(t.change1h)}</span></div>
+        </div>
+        <div class="launch-signals">
+          ${t.green?.length  ? t.green.map(g  => `<span class="c-ok">✅ ${g}</span>`).join('  ') : ''}
+          ${t.flags?.length  ? t.flags.map(f  => `<span class="c-bad">⚠️ ${f}</span>`).join('  ') : ''}
+          ${!t.green?.length && !t.flags?.length ? '<span style="color:var(--muted)">No signals detected</span>' : ''}
+        </div>
+        ${t.url ? `<a class="launch-dex-link" href="${t.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">VIEW ON DEXSCREENER →</a>` : ''}
+      </div>`;
+  }).join('');
+}
 
 // ============================================================
 // SMART MONEY TRACKER
@@ -4783,6 +5183,32 @@ async function loadSniffHistory() {
     }).join('');
 
     body.innerHTML = headerRow + rows;
+
+    // ── Track Record számítás — csak LOW RISK (score < 40) coinok since call értéke
+    const trackEl  = document.getElementById('rsTrackRecord');
+    const trackVal = document.getElementById('rsTrackVal');
+    const trackSub = document.getElementById('rsTrackSub');
+
+    const eligible = sorted.filter(t =>
+      (t.riskScore ?? 50) < 40 &&           // csak LOW RISK
+      t.mcapChange !== null &&               // van since call adat
+      t.mcapChange !== undefined
+    );
+
+    if (eligible.length >= 1 && trackEl && trackVal && trackSub) {
+      const avg = eligible.reduce((sum, t) => sum + t.mcapChange, 0) / eligible.length;
+      const color = avg >= 0 ? 'var(--green)' : 'var(--red)';
+      const arrow = avg >= 0 ? '▲' : '▼';
+      const pct   = (avg >= 0 ? '+' : '') + avg.toFixed(1) + '%';
+
+      trackVal.textContent  = arrow + ' ' + pct;
+      trackVal.style.color  = color;
+      trackSub.textContent  = `(${eligible.length} low risk call${eligible.length > 1 ? 's' : ''})`;
+      trackEl.style.display = 'flex';
+    } else if (trackEl) {
+      trackEl.style.display = 'none';
+    }
+
   } catch(e) {
     body.innerHTML = '<div class="rs-empty">Could not load sniff history.</div>';
   }
@@ -5632,7 +6058,7 @@ function patDogEgg() {
 
 // WINDOW SHOPPER — összes locked gate card kattintása
 const lockedCards = new Set();
-const allGateCards = ['card-smartMoney','card-meme','card-oracle','card-rugornotSection','card-dailySniff','card-fomo','card-whitelist','card-staking'];
+const allGateCards = ['card-launchScanner','card-smartMoney','card-meme','card-oracle','card-rugornotSection','card-dailySniff','card-fomo','card-whitelist','card-staking'];
 function trackWindowShop(cardId) {
   if (!walletConnected) {
     lockedCards.add(cardId);
