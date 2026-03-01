@@ -251,11 +251,144 @@
     to   { transform: rotate(360deg); }
   }
 
-  @media (max-width: 640px) {
-    .nav-wallet-info { padding: 5px 8px; }
-    .nav-balance { font-size: 6px; }
-    .nav-addr { display: none; }
+
+  /* ── HAMBURGER ── */
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
+
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: 1px solid rgba(245,200,66,0.3);
+    cursor: pointer;
+    padding: 8px;
+    flex-shrink: 0;
+  }
+  .nav-hamburger span {
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: var(--gold);
+    transition: all 0.25s ease;
+    transform-origin: center;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+  @media (max-width: 768px) {
+    .nav-hamburger { display: flex; }
+    .nav-links {
+      display: none;
+      position: fixed;
+      top: 56px;
+      left: 0; right: 0;
+      background: rgba(8,8,12,0.98);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(245,200,66,0.15);
+      flex-direction: column;
+      gap: 0;
+      z-index: 999;
+      padding: 8px 0 16px;
+      animation: menuSlide 0.2s ease;
+    }
+    @keyframes menuSlide {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .nav-links.open { display: flex; }
+    .nav-links li a {
+      display: block;
+      padding: 14px 28px;
+      font-size: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .nav-links li:last-child a { border-bottom: none; }
+    /* Mobilon csak logo + connect + hamburger */
+    .nav-addr { display: none; }
+    .nav-balance { font-size: 6px; }
+    .nav-wallet-info { padding: 5px 8px; }
+  }
+
+  /* ── HOLDER TOOLS FRAME ── */
+  .holder-tools-frame {
+    margin-top: 56px;
+    border: 1px solid rgba(0,255,170,0.12);
+    background: rgba(0,255,170,0.02);
+    padding: 0 0 32px;
+  }
+  .holder-tools-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(0,255,170,0.1);
+    margin-bottom: 28px;
+    background: rgba(0,255,170,0.03);
+  }
+  .holder-tools-label {
+    font-family: var(--pixel);
+    font-size: 8px;
+    color: var(--green);
+    letter-spacing: 2px;
+  }
+  .holder-tools-sub {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+  }
+
+  /* ── SPACING JAVÍTÁS ── */
+  section {
+    padding-top: 96px;
+    padding-bottom: 96px;
+  }
+  .sniff-section {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+  .section-label {
+    margin-bottom: 10px;
+    letter-spacing: 3px;
+  }
+  .section-title {
+    margin-bottom: 16px;
+    line-height: 1.15;
+  }
+  .section-desc {
+    margin-bottom: 40px;
+    max-width: 600px;
+  }
+  .gate-grid {
+    gap: 16px;
+    padding: 0 24px;
+  }
+  .gate-card {
+    padding: 22px 18px;
+  }
+  .recently-sniffed {
+    margin: 32px 24px 0;
+  }
+  .egg-leaderboard {
+    margin: 32px 24px 0;
+  }
+  .meme-gen {
+    margin: 32px 24px 0;
+  }
+  .oracle-box {
+    margin: 32px 24px 0;
+  }
+
+
 
 
   /* ============================================================
@@ -2409,30 +2542,33 @@
 <!-- Nav -->
 <nav>
   <div class="nav-logo">J33T<span class="blink">_</span></div>
-  <ul class="nav-links">
-    <li><a href="#about">Origin</a></li>
-    <li><a href="#utility">Utility</a></li>
-    <li><a href="#pumpfun">Trust</a></li>
-    <li><a href="#dailySniff">Sniff</a></li>
-    <li><a href="#fomoSection">FOMO</a></li>
-    <li><a href="#rugornotSection">Rug?</a></li>
-    <li><a href="#tokenomics">$J33T</a></li>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about" onclick="closeHamburger()">Origin</a></li>
+    <li><a href="#utility" onclick="closeHamburger()">Utility</a></li>
+    <li><a href="#pumpfun" onclick="closeHamburger()">Trust</a></li>
+    <li><a href="#holderTools" onclick="closeHamburger()">Tools</a></li>
+    <li><a href="#tokenomics" onclick="closeHamburger()">$J33T</a></li>
   </ul>
-  <div class="nav-wallet-wrap" id="navWalletWrap">
-    <!-- Disconnected state -->
-    <button class="nav-connect" id="navConnectBtn" onclick="openWalletModal()">CONNECT</button>
-    <!-- Connected state (hidden until wallet connects) -->
-    <div class="nav-connected" id="navConnected" style="display:none;">
-      <div class="nav-wallet-info" onclick="openWalletModal()" title="View wallet details">
-        <span class="nav-tier-icon" id="navTierIcon">🐾</span>
-        <div class="nav-wallet-details">
-          <span class="nav-balance" id="navBalance">0 $J33T</span>
-          <span class="nav-addr" id="navAddr">····</span>
+  <div class="nav-right">
+    <div class="nav-wallet-wrap" id="navWalletWrap">
+      <!-- Disconnected state -->
+      <button class="nav-connect" id="navConnectBtn" onclick="openWalletModal()">CONNECT</button>
+      <!-- Connected state (hidden until wallet connects) -->
+      <div class="nav-connected" id="navConnected" style="display:none;">
+        <div class="nav-wallet-info" onclick="openWalletModal()" title="View wallet details">
+          <span class="nav-tier-icon" id="navTierIcon">🐾</span>
+          <div class="nav-wallet-details">
+            <span class="nav-balance" id="navBalance">0 $J33T</span>
+            <span class="nav-addr" id="navAddr">····</span>
+          </div>
         </div>
+        <button class="nav-refresh" id="navRefreshBtn" onclick="refreshBalance()" title="Refresh balance">↻</button>
+        <button class="nav-logout" onclick="disconnectWallet()" title="Disconnect wallet">LOG OUT</button>
       </div>
-      <button class="nav-refresh" id="navRefreshBtn" onclick="refreshBalance()" title="Refresh balance">↻</button>
-      <button class="nav-logout" onclick="disconnectWallet()" title="Disconnect wallet">LOG OUT</button>
     </div>
+    <button class="nav-hamburger" id="navHamburger" onclick="toggleHamburger()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
 
@@ -2585,6 +2721,13 @@
       <div class="tier-next-msg" id="tierNextMsg"></div>
     </div>
 
+    <!-- ╔═ HOLDER TOOLS FRAME ════════════════════════════════════╗ -->
+    <div class="holder-tools-frame" id="holderTools">
+      <div class="holder-tools-header">
+        <span class="holder-tools-label">// HOLDER TOOLS</span>
+        <span class="holder-tools-sub">Connect wallet to unlock · Balance determines access</span>
+      </div>
+
     <!-- Feature cards -->
     <div class="gate-grid">
       <div class="gate-card locked" id="card-meme" onclick="trackWindowShop('card-meme'); tryAccess('meme')">
@@ -2680,6 +2823,7 @@
     Connect wallet to appear on the leaderboard
   </div>
 </div>
+    </div><!-- /holder-tools-frame -->
   </div>
 </section>
 
@@ -3080,6 +3224,24 @@
 </div>
 
 <script>
+
+// ── HAMBURGER MENU ──────────────────────────────────────────
+function toggleHamburger() {
+  const links = document.getElementById('navLinks');
+  const btn   = document.getElementById('navHamburger');
+  links.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+function closeHamburger() {
+  document.getElementById('navLinks').classList.remove('open');
+  document.getElementById('navHamburger').classList.remove('open');
+}
+// Kattintás az oldalon kívül → bezárja a menüt
+document.addEventListener('click', e => {
+  const nav = document.querySelector('nav');
+  if (!nav.contains(e.target)) closeHamburger();
+});
+
 // ============================================================
 // CONFIG — Replace TOKEN_MINT with your real $J33T mint address
 // ============================================================
