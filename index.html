@@ -3454,7 +3454,7 @@ refreshPriceData();
 setInterval(refreshPriceData, 30000);
 
 // ============================================================
-// WALLET STATE — Demo + Real mode
+// WALLET STATE
 // ============================================================
 let walletConnected = false;
 let j33tBalance = 0;
@@ -3462,12 +3462,12 @@ let walletAddr = '';
 let walletFullAddr = ''; // teljes pubkey a KV műveletekhez
 // Restore session
 try {
-  const saved = localStorage.getItem('j33t_demo_v2');
+  const saved = localStorage.getItem('j33t_wallet_v1');
   if (saved) {
     const d = JSON.parse(saved);
-    if (d.connected && d.real) {
-      walletConnected = d.connected;
-      j33tBalance = d.balance;
+    if (d.connected && d.addr) {
+      walletConnected = true;
+      j33tBalance = d.balance || 0;
       walletAddr = d.addr;
       walletFullAddr = d.fullAddr || d.addr;
       setTimeout(() => applyWalletState(), 300);
@@ -3514,7 +3514,7 @@ async function connectRealWallet(type) {
     j33tBalance = await fetchRealBalance(pubkey);
 
     try {
-      localStorage.setItem('j33t_demo_v2', JSON.stringify({connected: true, balance: j33tBalance, addr: walletAddr, fullAddr: walletFullAddr, real: true}));
+      localStorage.setItem('j33t_wallet_v1', JSON.stringify({connected: true, balance: j33tBalance, addr: walletAddr, fullAddr: walletFullAddr, real: true}));
     } catch(e) {}
 
     applyWalletState();
@@ -3644,7 +3644,7 @@ function disconnectWallet() {
   j33tBalance = 0;
   walletAddr = '';
   walletFullAddr = '';
-  localStorage.removeItem('j33t_demo_v2');
+  localStorage.removeItem('j33t_wallet_v1');
 
   // Reset nav widget
   document.getElementById('navConnectBtn').style.display = '';
@@ -3714,9 +3714,9 @@ async function refreshBalance() {
 
   // Update localStorage
   try {
-    const stored = JSON.parse(localStorage.getItem('j33t_demo_v2') || '{}');
+    const stored = JSON.parse(localStorage.getItem('j33t_wallet_v1') || '{}');
     stored.balance = j33tBalance;
-    localStorage.setItem('j33t_demo_v2', JSON.stringify(stored));
+    localStorage.setItem('j33t_wallet_v1', JSON.stringify(stored));
   } catch(e) {}
 
   setTimeout(() => {
