@@ -4099,7 +4099,7 @@ function disconnectWallet() {
   document.getElementById('progressFill').style.width = '0%';
 
   // Re-lock cards
-  ['card-meme','card-oracle','card-whitelist','card-staking'].forEach(id => {
+  ['card-smartMoney','card-meme','card-oracle','card-fomo','card-whitelist','card-staking'].forEach(id => {
     const card = document.getElementById(id);
     if (card) { card.classList.remove('unlocked'); card.classList.add('locked'); }
   });
@@ -4113,10 +4113,12 @@ function disconnectWallet() {
 
 function unlockCards() {
   [
+    ['card-smartMoney',      10000],
     ['card-meme',            10000],
     ['card-oracle',          50000],
     ['card-rugornotSection', 100000],
     ['card-dailySniff',      100000],
+    ['card-fomo',            100000],
     ['card-whitelist',       500000],
     ['card-staking',        5000000],
   ].forEach(([id, min]) => {
@@ -5629,7 +5631,7 @@ function patDogEgg() {
 
 // WINDOW SHOPPER — összes locked gate card kattintása
 const lockedCards = new Set();
-const allGateCards = ['card-meme','card-oracle','card-rugornotSection','card-dailySniff','card-fomo','card-whitelist','card-staking'];
+const allGateCards = ['card-smartMoney','card-meme','card-oracle','card-rugornotSection','card-dailySniff','card-fomo','card-whitelist','card-staking'];
 function trackWindowShop(cardId) {
   if (!walletConnected) {
     lockedCards.add(cardId);
