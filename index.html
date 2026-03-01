@@ -1147,7 +1147,7 @@
   .rs-list::-webkit-scrollbar-thumb { background: rgba(0,255,170,0.2); }
   .rs-row {
     display: grid;
-    grid-template-columns: 28px 1fr 64px 72px 72px 72px;
+    grid-template-columns: 28px 1fr 64px 72px 72px 88px 72px;
     align-items: center;
     gap: 8px;
     padding: 8px 10px;
@@ -1178,7 +1178,7 @@
   .rs-empty { font-size: 11px; color: var(--muted); text-align: center; padding: 28px; }
   .rs-header-row {
     display: grid;
-    grid-template-columns: 28px 1fr 64px 72px 72px 72px;
+    grid-template-columns: 28px 1fr 64px 72px 72px 88px 72px;
     gap: 8px;
     padding: 4px 10px 8px;
     font-family: var(--pixel);
@@ -1190,12 +1190,36 @@
   }
 
   @media (max-width: 600px) {
-    .rs-row { grid-template-columns: 24px 1fr 56px 60px; }
-    .rs-row .rs-stat:last-child,
+    .rs-row { grid-template-columns: 24px 1fr 56px 80px; }
+    .rs-row .rs-stat,
     .rs-row .rs-time { display: none; }
-    .rs-header-row { grid-template-columns: 24px 1fr 56px 60px; }
-    .rs-header-row span:nth-child(5),
-    .rs-header-row span:nth-child(6) { display: none; }
+    .rs-row .rs-mcap-change { display: block !important; }
+    .rs-header-row { grid-template-columns: 24px 1fr 56px 80px; }
+    .rs-header-row span:nth-child(n+4):not(:nth-child(6)) { display: none; }
+  }
+  .rs-mcap-change {
+    text-align: right;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .rs-mcap-change .rs-change-pct {
+    font-family: var(--pixel);
+    font-size: 8px;
+    display: block;
+  }
+  .rs-mcap-change .rs-mcap-vals {
+    font-size: 8px;
+    color: var(--muted);
+    display: block;
+    margin-top: 2px;
+  }
+  .rs-loading-live {
+    font-size: 9px;
+    color: var(--muted);
+    font-family: var(--mono);
+    text-align: center;
+    padding: 4px 0 8px;
+    opacity: 0.7;
   }
 
 
@@ -4380,7 +4404,7 @@ async function loadSniffHistory() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'sniff_history' }),
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(25000), // live lekérdezés miatt hosszabb timeout
     });
     const d = await res.json();
     const tokens = d.tokens || [];
@@ -4398,19 +4422,46 @@ async function loadSniffHistory() {
     });
 
     const headerRow = `
+      <div class="rs-loading-live">⚡ Live prices loaded — sniff performance updated</div>
       <div class="rs-header-row">
-        <span>#</span><span>TOKEN</span><span style="text-align:center">RISK</span>
+        <span>#</span>
+        <span>TOKEN</span>
+        <span style="text-align:center">RISK</span>
         <span style="text-align:right">LIQ</span>
-        <span style="text-align:right">MCAP</span>
+        <span style="text-align:right">CALL MCAP</span>
+        <span style="text-align:right">SINCE CALL</span>
         <span style="text-align:right">SNIFFED</span>
       </div>`;
 
     const rows = sorted.slice(0, 50).map((t, i) => {
       const score = t.riskScore ?? 50;
       const cls   = rsRiskClass(score);
-      const url   = t.url ? `href="${t.url}" target="_blank"` : '';
+
+      // MCap változás megjelenítése
+      let mcapChangeHtml = '<span style="color:var(--muted);font-size:9px">—</span>';
+      if (t.mcapChange !== null && t.mcapChange !== undefined) {
+        const pct     = t.mcapChange;
+        const color   = pct > 0 ? 'var(--green)' : pct < -10 ? 'var(--red)' : '#fbbf24';
+        const arrow   = pct > 0 ? '▲' : '▼';
+        const pctFmt  = (pct > 0 ? '+' : '') + pct.toFixed(1) + '%';
+        const callMcap = rsFmtBig(t.mcap);
+        const nowMcap  = rsFmtBig(t.currentMcap);
+        mcapChangeHtml = `
+          <div class="rs-mcap-change">
+            <span class="rs-change-pct" style="color:${color}">${arrow} ${pctFmt}</span>
+            <span class="rs-mcap-vals">${callMcap} → ${nowMcap}</span>
+          </div>`;
+      } else if (t.mcap) {
+        // van call mcap de nincs live adat
+        mcapChangeHtml = `
+          <div class="rs-mcap-change">
+            <span class="rs-change-pct" style="color:var(--muted)">N/A</span>
+            <span class="rs-mcap-vals">${rsFmtBig(t.mcap)} → ?</span>
+          </div>`;
+      }
+
       return `
-        <div class="rs-row risk-${cls}" ${url ? `onclick="window.open('${t.url}')" style="cursor:pointer"` : ''}>
+        <div class="rs-row risk-${cls}" ${t.url ? `onclick="window.open('${t.url}')" style="cursor:pointer"` : ''}>
           <div class="rs-rank">${i + 1}</div>
           <div>
             <div class="rs-token-name">${t.name || '???'}</div>
@@ -4418,7 +4469,8 @@ async function loadSniffHistory() {
           </div>
           <div class="rs-score ${cls}">${score}<br><span style="font-size:5px">${rsRiskLabel(score)}</span></div>
           <div class="rs-stat"><span>${rsFmtBig(t.liquidity)}</span><br>liquidity</div>
-          <div class="rs-stat"><span>${rsFmtBig(t.mcap)}</span><br>mcap</div>
+          <div class="rs-stat"><span>${rsFmtBig(t.mcap)}</span><br>at call</div>
+          ${mcapChangeHtml}
           <div class="rs-time">${t.sniffedAt ? rsFmtAge(t.sniffedAt) : '—'}</div>
         </div>`;
     }).join('');
