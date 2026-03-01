@@ -404,6 +404,77 @@
   }
 
 
+
+  /* ── LIVE FEED ── */
+  .livefeed-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .livefeed-live-dot-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  .livefeed-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+  .livefeed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .livefeed-card {
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-left: 3px solid transparent;
+    padding: 14px 16px;
+    transition: border-color 0.2s;
+    cursor: pointer;
+  }
+  .livefeed-card:hover { border-color: rgba(255,255,255,0.15); }
+  .livefeed-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .livefeed-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .livefeed-sym {
+    font-family: var(--pixel);
+    font-size: 6px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .livefeed-score {
+    font-family: var(--pixel);
+    font-size: 7px;
+    padding: 3px 7px;
+    border: 1px solid;
+  }
+  .livefeed-score.high  { color: var(--green); border-color: rgba(0,255,170,0.4); background: rgba(0,255,170,0.07); }
+  .livefeed-score.med   { color: #fbbf24;      border-color: rgba(251,191,36,0.4); background: rgba(251,191,36,0.07); }
+  .livefeed-score.low   { color: var(--muted); border-color: rgba(255,255,255,0.1); background: transparent; }
+  .livefeed-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    font-size: 8px;
+    color: var(--muted);
+  }
+  .livefeed-stats span { display: block; font-size: 10px; color: var(--text); margin-top: 1px; }
+
   /* ── TOKEN LAUNCH SCANNER ── */
   .launch-legend {
     display: flex;
@@ -3146,6 +3217,12 @@
 
     <!-- Feature cards -->
     <div class="gate-grid">
+      <div class="gate-card locked" id="card-liveFeed" onclick="tryAccess('card-liveFeed', 100000, 'liveFeed')">
+        <div class="card-icon">📡</div>
+        <div class="card-title">LIVE FEED</div>
+        <div class="card-desc">Top Solana tokens by potential score, updated every 2 minutes by J33T's cron nose. No sniff limit.</div>
+        <div class="card-min">MIN: 100,000 $J33T</div>
+      </div>
       <div class="gate-card locked" id="card-launchScanner" onclick="tryAccess('card-launchScanner', 100000, 'launchScanner')">
         <div class="card-icon">🆕</div>
         <div class="card-title">LAUNCH SCANNER</div>
@@ -3486,6 +3563,39 @@
 
 
 <!-- Daily Sniff — Holder Exclusive -->
+
+<!-- Live Feed -->
+<section class="sniff-section" id="liveFeed">
+  <div class="sniff-inner">
+    <div class="section-label">// UPDATED EVERY 2 MINUTES</div>
+    <h2 class="section-title">J33T'S LIVE FEED 📡</h2>
+    <p class="section-desc" style="max-width:620px;">
+      J33T's cron nose runs every 2 minutes — no sniff limit, no AI commentary, just the freshest on-chain data from the top scoring Solana tokens right now.
+    </p>
+
+    <div class="sniff-locked" id="liveFeedLocked">
+      <span class="sniff-locked-icon">🔒</span>
+      <div class="sniff-locked-text">CONNECT YOUR WALLET TO ACCESS<br>MINIMUM 100,000 $J33T REQUIRED</div>
+      <div class="sniff-locked-bal" id="liveFeedLockedBal"></div>
+      <button class="btn" onclick="openWalletModal()">CONNECT WALLET</button>
+    </div>
+
+    <div id="liveFeedUnlocked" style="display:none;">
+      <div class="livefeed-header">
+        <div class="livefeed-live-dot-wrap">
+          <div class="livefeed-dot"></div>
+          <span id="liveFeedAge">Loading...</span>
+        </div>
+        <button class="rs-refresh" onclick="loadLiveFeed()">↻ REFRESH</button>
+      </div>
+
+      <div id="liveFeedGrid" class="livefeed-grid">
+        <div class="rs-empty">Loading live feed...</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="sniff-section" id="dailySniff">
   <div class="sniff-inner">
 
@@ -4435,7 +4545,7 @@ function disconnectWallet() {
   document.getElementById('progressFill').style.width = '0%';
 
   // Re-lock cards
-  ['card-launchScanner','card-smartMoney','card-meme','card-oracle','card-fomo','card-whitelist','card-staking'].forEach(id => {
+  ['card-liveFeed','card-launchScanner','card-smartMoney','card-meme','card-oracle','card-fomo','card-whitelist','card-staking'].forEach(id => {
     const card = document.getElementById(id);
     if (card) { card.classList.remove('unlocked'); card.classList.add('locked'); }
   });
@@ -4449,6 +4559,7 @@ function disconnectWallet() {
 
 function unlockCards() {
   [
+    ['card-liveFeed',       100000],
     ['card-launchScanner',  100000],
     ['card-smartMoney',      10000],
     ['card-meme',            10000],
@@ -4897,6 +5008,101 @@ function renderLaunchCards(tokens, isFeed = false) {
   }).join('');
 }
 
+
+
+// ============================================================
+// LIVE FEED
+// ============================================================
+const LIVEFEED_MIN = 100000;
+
+function liveFeedUpdateUI() {
+  const locked   = document.getElementById('liveFeedLocked');
+  const unlocked = document.getElementById('liveFeedUnlocked');
+  const balEl    = document.getElementById('liveFeedLockedBal');
+  if (!locked || !unlocked) return;
+
+  if (!walletConnected || j33tBalance < LIVEFEED_MIN) {
+    locked.style.display   = 'block';
+    unlocked.style.display = 'none';
+    if (walletConnected && j33tBalance < LIVEFEED_MIN) {
+      balEl.textContent = `Your balance: ${j33tBalance.toLocaleString()} $J33T — need ${(LIVEFEED_MIN - j33tBalance).toLocaleString()} more`;
+    } else {
+      balEl.textContent = '';
+    }
+    return;
+  }
+
+  locked.style.display   = 'none';
+  unlocked.style.display = 'block';
+  loadLiveFeed();
+}
+
+async function loadLiveFeed() {
+  const grid  = document.getElementById('liveFeedGrid');
+  const ageEl = document.getElementById('liveFeedAge');
+  if (!grid) return;
+  grid.innerHTML = '<div class="rs-empty">Fetching live feed...</div>';
+
+  try {
+    const res = await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'livefeed' }),
+      signal: AbortSignal.timeout(10000),
+    });
+    const d = await res.json();
+    const tokens = d.tokens || [];
+
+    // Frissítési idő
+    if (ageEl) {
+      if (d.updatedAt) {
+        const mins = Math.floor((Date.now() - d.updatedAt) / 60000);
+        ageEl.textContent = mins === 0 ? 'Updated just now' : `Updated ${mins}m ago`;
+      } else {
+        ageEl.textContent = d.empty ? 'Waiting for first cron run...' : 'Live';
+      }
+    }
+
+    if (!tokens.length) {
+      grid.innerHTML = '<div class="rs-empty">Feed loading — cron runs every 2 min 📡</div>';
+      return;
+    }
+
+    const fmt    = v => v != null ? '$' + Math.round(v).toLocaleString() : '—';
+    const fmtPct = v => v != null ? (v > 0 ? '+' : '') + parseFloat(v).toFixed(1) + '%' : '—';
+    const pctCls = v => v == null ? '' : v > 0 ? 'c-ok' : 'c-bad';
+    const scoreCls = s => s >= 65 ? 'high' : s >= 40 ? 'med' : 'low';
+    const buyRatio = t => {
+      const total = (t.buys24h || 0) + (t.sells24h || 0);
+      return total > 0 ? Math.round(t.buys24h / total * 100) + '%' : '—';
+    };
+    const borderColor = s => s >= 65 ? 'var(--green)' : s >= 40 ? '#fbbf24' : 'rgba(255,255,255,0.1)';
+
+    grid.innerHTML = tokens.map(t => `
+      <div class="livefeed-card" style="border-left-color:${borderColor(t.potentialScore)}"
+           ${t.url ? `onclick="window.open('${t.url}')"` : ''}>
+        <div class="livefeed-card-top">
+          <div>
+            <div class="livefeed-name">${t.name}</div>
+            <div class="livefeed-sym">$${t.symbol} · ${t.pairAge != null ? t.pairAge + 'd' : '?'}</div>
+          </div>
+          <div class="livefeed-score ${scoreCls(t.potentialScore)}">POT ${t.potentialScore}</div>
+        </div>
+        <div class="livefeed-stats">
+          <div>MCap<span>${fmt(t.mcap)}</span></div>
+          <div>Liq<span class="${(t.liquidity||0) < 10000 ? 'c-bad' : 'c-ok'}">${fmt(t.liquidity)}</span></div>
+          <div>1h<span class="${pctCls(t.change1h)}">${fmtPct(t.change1h)}</span></div>
+          <div>24h<span class="${pctCls(t.change24h)}">${fmtPct(t.change24h)}</span></div>
+          <div>Buy%<span class="${t.buys24h/(t.buys24h+t.sells24h||1)>0.6?'c-ok':t.buys24h/(t.buys24h+t.sells24h||1)<0.4?'c-bad':'c-warn'}">${buyRatio(t)}</span></div>
+          <div>Vol<span>${fmt(t.volume24h)}</span></div>
+        </div>
+      </div>`
+    ).join('');
+
+  } catch(e) {
+    grid.innerHTML = '<div class="rs-empty">Could not load live feed.</div>';
+  }
+}
 
 // ============================================================
 // TOKEN LAUNCH SCANNER
@@ -6266,7 +6472,7 @@ function patDogEgg() {
 
 // WINDOW SHOPPER — összes locked gate card kattintása
 const lockedCards = new Set();
-const allGateCards = ['card-launchScanner','card-smartMoney','card-meme','card-oracle','card-rugornotSection','card-dailySniff','card-fomo','card-whitelist','card-staking'];
+const allGateCards = ['card-liveFeed','card-launchScanner','card-smartMoney','card-meme','card-oracle','card-rugornotSection','card-dailySniff','card-fomo','card-whitelist','card-staking'];
 function trackWindowShop(cardId) {
   if (!walletConnected) {
     lockedCards.add(cardId);
