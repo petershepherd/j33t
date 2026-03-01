@@ -4745,6 +4745,14 @@ async function sniffAnalyseToken(t) {
   if (t.pairAge !== null && t.pairAge < 3) flags.push('Very new token');
   if (t.change24h < -30) flags.push('Price dumping');
   if (t.sells24h > t.buys24h * 2) flags.push('High sell pressure');
+  if (t.buys24h > 0 && t.buys24h / (t.buys24h + t.sells24h) > 0.65) flags.push('🟢 Strong buy pressure');
+  if (t.mcap && t.volume24h && (t.volume24h / t.mcap) > 0.3) flags.push('🟢 High volume/mcap');
+
+  // buy/sell arány szöveg az AI-nak
+  const buyRatioPct = t.buys24h + t.sells24h > 0
+    ? Math.round(t.buys24h / (t.buys24h + t.sells24h) * 100) : null;
+  const volMcapRatio = t.mcap && t.volume24h
+    ? (t.volume24h / t.mcap * 100).toFixed(1) : null;
 
   // AI kommentár
   let aiText = '';
@@ -4755,8 +4763,11 @@ Token: ${t.name} (${t.symbol})
 Liquidity: $${t.liquidity ? Math.round(t.liquidity).toLocaleString() : 'unknown'}
 Market Cap: $${t.mcap ? Math.round(t.mcap).toLocaleString() : 'unknown'}
 24h Change: ${t.change24h !== null ? t.change24h + '%' : 'unknown'}
+1h Change: ${t.change1h !== null ? t.change1h + '%' : 'unknown'}
 Age: ${t.pairAge !== null ? t.pairAge + ' days' : 'unknown'}
-Buys/Sells 24h: ${t.buys24h}/${t.sells24h}
+Buys/Sells 24h: ${t.buys24h}/${t.sells24h}${buyRatioPct !== null ? ` (${buyRatioPct}% buy rate)` : ''}
+Volume/MCap ratio: ${volMcapRatio !== null ? volMcapRatio + '%' : 'unknown'}
+Potential score: ${t.potentialScore !== undefined ? t.potentialScore + '/100' : 'N/A'}
 Risk score: ${score}/100
 
 Respond with ONLY the commentary text, no JSON, no labels, 2-3 sentences max.`;
@@ -4780,6 +4791,10 @@ function sniffRenderCards(tokens) {
   const pctCls = v => v == null ? 'c-na' : v < -20 ? 'c-bad' : v > 0 ? 'c-ok' : 'c-warn';
   const riskCls = s => s < 40 ? 'risk-low' : s < 65 ? 'risk-medium' : 'risk-high';
   const riskLabel = s => s < 40 ? 'LOW RISK' : s < 65 ? 'MEDIUM' : 'HIGH RISK';
+  const potCls = p => p >= 65 ? 'c-ok' : p >= 40 ? 'c-warn' : 'c-bad';
+  const buyRatio = t => t.buys24h + t.sells24h > 0
+    ? Math.round(t.buys24h / (t.buys24h + t.sells24h) * 100) + '% buys'
+    : '—';
 
   document.getElementById('sniffGrid').innerHTML = tokens.map(t => `
     <div class="sniff-token-card">
@@ -4788,7 +4803,10 @@ function sniffRenderCards(tokens) {
           <div class="sniff-token-name">${t.name}</div>
           <div class="sniff-token-symbol">$${t.symbol} · ${t.dex || 'unknown dex'}</div>
         </div>
-        <div class="sniff-risk-badge ${riskCls(t.score)}">${riskLabel(t.score)} ${t.score}</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+          <div class="sniff-risk-badge ${riskCls(t.score)}">${riskLabel(t.score)} ${t.score}</div>
+          ${t.potentialScore !== undefined ? `<div style="font-family:var(--pixel);font-size:6px;color:${t.potentialScore>=65?'var(--green)':t.potentialScore>=40?'#fbbf24':'var(--muted)'}">POT. ${t.potentialScore}/100</div>` : ''}
+        </div>
       </div>
 
       <div class="sniff-token-stats">
@@ -4801,27 +4819,27 @@ function sniffRenderCards(tokens) {
           <span class="sniff-stat-val c-na">${fmt(t.mcap)}</span>
         </div>
         <div class="sniff-stat">
-          <span class="sniff-stat-label">24H CHANGE</span>
-          <span class="sniff-stat-val ${pctCls(t.change24h)}">${fmtPct(t.change24h)}</span>
+          <span class="sniff-stat-label">1H / 24H</span>
+          <span class="sniff-stat-val"><span class="${pctCls(t.change1h)}">${fmtPct(t.change1h)}</span> / <span class="${pctCls(t.change24h)}">${fmtPct(t.change24h)}</span></span>
         </div>
         <div class="sniff-stat">
           <span class="sniff-stat-label">AGE</span>
           <span class="sniff-stat-val ${t.pairAge < 3 ? 'c-bad' : t.pairAge < 7 ? 'c-warn' : 'c-ok'}">${t.pairAge !== null ? t.pairAge + 'd' : '—'}</span>
         </div>
         <div class="sniff-stat">
-          <span class="sniff-stat-label">BUYS / SELLS</span>
-          <span class="sniff-stat-val"><span class="c-ok">${t.buys24h}</span> / <span class="c-bad">${t.sells24h}</span></span>
+          <span class="sniff-stat-label">BUY RATIO</span>
+          <span class="sniff-stat-val ${t.buys24h/(t.buys24h+t.sells24h||1)>0.6?'c-ok':t.buys24h/(t.buys24h+t.sells24h||1)<0.4?'c-bad':'c-warn'}">${buyRatio(t)}</span>
         </div>
         <div class="sniff-stat">
-          <span class="sniff-stat-label">24H VOLUME</span>
-          <span class="sniff-stat-val c-na">${fmt(t.volume24h)}</span>
+          <span class="sniff-stat-label">VOL / MCAP</span>
+          <span class="sniff-stat-val ${t.mcap&&t.volume24h&&t.volume24h/t.mcap>0.2?'c-ok':'c-na'}">${t.mcap && t.volume24h ? (t.volume24h/t.mcap*100).toFixed(1)+'%' : '—'}</span>
         </div>
       </div>
 
       <div class="sniff-ai-text">🐾 ${t.aiText}</div>
 
       <div class="sniff-token-footer">
-        <div class="sniff-flags-mini">${t.flags.length ? '🚩 ' + t.flags.join(' · ') : '✓ No major flags detected'}</div>
+        <div class="sniff-flags-mini">${t.flags.filter(f=>!f.startsWith('🟢')).length ? '🚩 ' + t.flags.filter(f=>!f.startsWith('🟢')).join(' · ') : '✓ No major flags'} ${t.flags.filter(f=>f.startsWith('🟢')).map(f=>'<span class="c-ok">'+f+'</span>').join(' ')}</div>
         ${t.url ? `<a class="sniff-dex-link" href="${t.url}" target="_blank" rel="noopener">VIEW ON DEXSCREENER ↗</a>` : ''}
       </div>
     </div>
