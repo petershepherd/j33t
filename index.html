@@ -1147,7 +1147,7 @@
   .rs-list::-webkit-scrollbar-thumb { background: rgba(0,255,170,0.2); }
   .rs-row {
     display: grid;
-    grid-template-columns: 28px 1fr 64px 72px 72px 88px 72px;
+    grid-template-columns: 28px 1fr 64px 72px 88px 88px 72px;
     align-items: center;
     gap: 8px;
     padding: 8px 10px;
@@ -1178,7 +1178,7 @@
   .rs-empty { font-size: 11px; color: var(--muted); text-align: center; padding: 28px; }
   .rs-header-row {
     display: grid;
-    grid-template-columns: 28px 1fr 64px 72px 72px 88px 72px;
+    grid-template-columns: 28px 1fr 64px 72px 88px 88px 72px;
     gap: 8px;
     padding: 4px 10px 8px;
     font-family: var(--pixel);
@@ -4422,14 +4422,14 @@ async function loadSniffHistory() {
     });
 
     const headerRow = `
-      <div class="rs-loading-live">⚡ Live prices loaded — sniff performance updated</div>
+      <div class="rs-loading-live">⚡ Live prices + ATH tracked every 2 min</div>
       <div class="rs-header-row">
         <span>#</span>
         <span>TOKEN</span>
         <span style="text-align:center">RISK</span>
         <span style="text-align:right">LIQ</span>
-        <span style="text-align:right">CALL MCAP</span>
         <span style="text-align:right">SINCE CALL</span>
+        <span style="text-align:right">ATH SINCE CALL</span>
         <span style="text-align:right">SNIFFED</span>
       </div>`;
 
@@ -4438,39 +4438,38 @@ async function loadSniffHistory() {
       const cls   = rsRiskClass(score);
 
       // MCap változás megjelenítése
-      let mcapChangeHtml = '<span style="color:var(--muted);font-size:9px">—</span>';
-      if (t.mcapChange !== null && t.mcapChange !== undefined) {
-        const pct     = t.mcapChange;
-        const color   = pct > 0 ? 'var(--green)' : pct < -10 ? 'var(--red)' : '#fbbf24';
-        const arrow   = pct > 0 ? '▲' : '▼';
-        const pctFmt  = (pct > 0 ? '+' : '') + pct.toFixed(1) + '%';
-        const callMcap = rsFmtBig(t.mcap);
-        const nowMcap  = rsFmtBig(t.currentMcap);
-        mcapChangeHtml = `
-          <div class="rs-mcap-change">
+      const buildChangeCell = (pct, callVal, nowVal, naLabel = '—') => {
+        if (pct !== null && pct !== undefined) {
+          const color  = pct > 0 ? 'var(--green)' : pct < -10 ? 'var(--red)' : '#fbbf24';
+          const arrow  = pct > 0 ? '▲' : '▼';
+          const pctFmt = (pct > 0 ? '+' : '') + pct.toFixed(1) + '%';
+          return `<div class="rs-mcap-change">
             <span class="rs-change-pct" style="color:${color}">${arrow} ${pctFmt}</span>
-            <span class="rs-mcap-vals">${callMcap} → ${nowMcap}</span>
+            <span class="rs-mcap-vals">${rsFmtBig(callVal)} → ${rsFmtBig(nowVal)}</span>
           </div>`;
-      } else if (t.mcap) {
-        // van call mcap de nincs live adat
-        mcapChangeHtml = `
-          <div class="rs-mcap-change">
-            <span class="rs-change-pct" style="color:var(--muted)">N/A</span>
-            <span class="rs-mcap-vals">${rsFmtBig(t.mcap)} → ?</span>
+        } else if (callVal) {
+          return `<div class="rs-mcap-change">
+            <span class="rs-change-pct" style="color:var(--muted)">${naLabel}</span>
+            <span class="rs-mcap-vals">${rsFmtBig(callVal)} → ?</span>
           </div>`;
-      }
+        }
+        return `<span style="color:var(--muted);font-size:9px">—</span>`;
+      };
+
+      const sinceCallHtml = buildChangeCell(t.mcapChange, t.mcap, t.currentMcap);
+      const athHtml       = buildChangeCell(t.athMcapChange, t.mcap, t.athMcap, 'tracking...');
 
       return `
         <div class="rs-row risk-${cls}" ${t.url ? `onclick="window.open('${t.url}')" style="cursor:pointer"` : ''}>
           <div class="rs-rank">${i + 1}</div>
           <div>
             <div class="rs-token-name">${t.name || '???'}</div>
-            <div class="rs-token-sym">$${t.symbol || '???'}</div>
+            <div class="rs-token-sym">$${t.symbol || '???'} · ${rsFmtBig(t.mcap)} call</div>
           </div>
           <div class="rs-score ${cls}">${score}<br><span style="font-size:5px">${rsRiskLabel(score)}</span></div>
           <div class="rs-stat"><span>${rsFmtBig(t.liquidity)}</span><br>liquidity</div>
-          <div class="rs-stat"><span>${rsFmtBig(t.mcap)}</span><br>at call</div>
-          ${mcapChangeHtml}
+          ${sinceCallHtml}
+          ${athHtml}
           <div class="rs-time">${t.sniffedAt ? rsFmtAge(t.sniffedAt) : '—'}</div>
         </div>`;
     }).join('');
