@@ -4242,7 +4242,12 @@ function updateNavBadgeTooltip() {
 // DAILY SNIFF — Holder Exclusive
 // ============================================================
 const SNIFF_MIN_BALANCE = 100000;
-const SNIFF_MAX_PER_DAY = 3;
+
+function getSniffDailyLimit() {
+  if (!walletConnected) return 0;
+  if (j33tBalance >= 5000000) return 100; // 🐺 TOP DOG
+  return 3;                               // minden más holder
+}
 
 function sniffGetToday() {
   const d = new Date();
@@ -4291,7 +4296,8 @@ function sniffUpdateUI() {
   unlocked.style.display = 'block';
 
   const used = sniffGetUsage();
-  usedEl.textContent = used;
+  const limit = getSniffDailyLimit();
+  usedEl.textContent = `${used} / ${limit}`;
 
   // Next reset countdown
   const now   = new Date();
@@ -4301,7 +4307,7 @@ function sniffUpdateUI() {
   const mm    = Math.floor((diff % 3600000) / 60000);
   resetEl.textContent = `${hh}h ${mm}m`;
 
-  if (used >= SNIFF_MAX_PER_DAY) {
+  if (used >= getSniffDailyLimit()) {
     btn.disabled = true;
     btn.textContent = '🔒 LIMIT REACHED';
   } else {
@@ -4315,7 +4321,7 @@ async function runDailySniff() {
     showToast('Need 100,000 $J33T to use Daily Sniff!');
     return;
   }
-  if (sniffGetUsage() >= SNIFF_MAX_PER_DAY) {
+  if (sniffGetUsage() >= getSniffDailyLimit()) {
     showToast('Daily sniff limit reached! Resets at midnight UTC.');
     return;
   }
