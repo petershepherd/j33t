@@ -3661,44 +3661,6 @@
 </section>
 
 
-<!-- Launch Scanner -->
-<section class="sniff-section" id="launchScanner">
-  <div class="section-label">// FIRST 24 HOURS</div>
-  <h2 class="section-title">LAUNCH SCANNER</h2>
-  <p class="section-desc">J33T automatically scores every new Solana token — liquidity growth, buy pressure, dev wallet, sniper activity. Updated every 2 minutes. Max 24h old tokens only.</p>
-
-  <div class="sniff-locked" id="launchLocked">
-    <div class="sniff-locked-icon">🔒</div>
-    <div class="sniff-locked-text">10,000 $J33T required to access Launch Scanner</div>
-    <div class="sniff-locked-bal" id="launchLockedBal"></div>
-    <button class="btn" onclick="openWalletModal()">CONNECT WALLET</button>
-  </div>
-
-  <div id="launchUnlocked" style="display:none;">
-    <div class="launch-tabs">
-      <button class="launch-tab active" id="launchTabLive" onclick="switchLaunchTab('live')">🔴 LIVE SCAN</button>
-      <button class="launch-tab" id="launchTabFeed" onclick="switchLaunchTab('feed')">📋 RECENT ALERTS</button>
-    </div>
-
-    <div class="launch-controls">
-      <div class="launch-live-badge">
-        <div class="launch-live-dot"></div>
-        AUTO-REFRESH EVERY 30s
-      </div>
-      <div class="launch-next-refresh" id="launchNextRefresh">Next refresh in 30s</div>
-    </div>
-
-    <div class="sniff-loading" id="launchLoading">
-      <div class="sniff-loading-dot"></div>
-      <div class="sniff-loading-dot"></div>
-      <div class="sniff-loading-dot"></div>
-      <span style="margin-left:12px; font-size:10px; color:var(--muted);">Scanning new launches...</span>
-    </div>
-    <div class="sniff-error" id="launchError"></div>
-    <div class="launch-grid" id="launchGrid"></div>
-  </div>
-</section>
-
 <!-- Tokenomics -->
 <section id="tokenomics">
   <div class="section-label">// THE REAL NUMBERS</div>
