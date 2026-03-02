@@ -4559,9 +4559,14 @@ function disconnectWallet() {
 
   updateCardLimitUI();
   sniffUpdateUI();
+  fomoUpdateUI();
   liveFeedUpdateUI();
+  launchUpdateUI();
+  smartUpdateUI();
   buildTierTimeline();
+  buildTierTabGrid();
   updateNavBadgeTooltip();
+  loadSniffHistory();
   showToast('Wallet disconnected. 🐾');
 }
 
