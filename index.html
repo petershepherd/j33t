@@ -553,6 +553,64 @@
   }
   .launch-auth-ok  { color: var(--green); }
   .launch-auth-bad { color: var(--red); }
+
+  /* Launch Scanner track record */
+  .launch-track-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0,255,170,0.06);
+    border: 1px solid rgba(0,255,170,0.2);
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+  }
+  .launch-track-label {
+    font-family: var(--pixel);
+    font-size: 7px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .launch-track-val {
+    font-family: var(--pixel);
+    font-size: 14px;
+    color: var(--green);
+  }
+  .launch-track-val.negative { color: var(--red); }
+  .launch-track-sub {
+    font-size: 9px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  .launch-since-call {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .launch-since-pct {
+    font-family: var(--pixel);
+    font-size: 10px;
+    font-weight: bold;
+  }
+  .launch-since-pct.positive { color: var(--green); }
+  .launch-since-pct.negative { color: var(--red); }
+  .launch-since-pct.neutral  { color: #fbbf24; }
+  .launch-since-vals {
+    font-size: 8px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  .launch-ath-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 9px;
+    font-family: var(--mono);
+    color: var(--muted);
+  }
+  .launch-ath-val { color: var(--gold); }
   .launch-auth-unk { color: var(--muted); }
   .launch-card-footer {
     display: flex;
@@ -3676,6 +3734,13 @@
 
   <div id="launchUnlocked" style="display:none;">
 
+    <!-- Track record fejléc -->
+    <div class="launch-track-header" id="launchTrackHeader" style="display:none;">
+      <span class="launch-track-label">AVG SINCE CALL</span>
+      <span class="launch-track-val" id="launchTrackVal">—</span>
+      <span class="launch-track-sub" id="launchTrackSub"></span>
+    </div>
+
     <!-- Stage legend -->
     <div class="launch-legend">
       <div class="launch-legend-item">
@@ -5153,19 +5218,21 @@ async function loadLaunchAlerts() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'launch_alerts' }),
-      signal: AbortSignal.timeout(12000),
+      signal: AbortSignal.timeout(15000),
     });
     const d = await res.json();
     const tokens = d.tokens || [];
 
     if (!tokens.length) {
       feed.innerHTML = '<div class="rs-empty">No launches scanned yet — J33T is watching new pairs 👀</div>';
+      // Track record elrejtése
+      const th = document.getElementById('launchTrackHeader');
+      if (th) th.style.display = 'none';
       return;
     }
 
     const fmt    = v => v != null ? '$' + Math.round(v).toLocaleString() : '—';
-    const fmtPct = v => v != null ? (v > 0 ? '+' : '') + parseFloat(v).toFixed(1) + '%' : '—';
-    const pctCls = v => v == null ? '' : v > 0 ? 'c-ok' : 'c-bad';
+    const fmtPct = v => v != null ? (v > 0 ? '+' : '') + parseFloat(v).toFixed(1) + '%' : null;
     const now    = Date.now();
     const timeAgo = ts => {
       const diff = Math.floor((now - ts) / 60000);
@@ -5186,11 +5253,44 @@ async function loadLaunchAlerts() {
       return `<span class="launch-auth-unk">❓ ${label} unknown</span>`;
     };
 
-    feed.innerHTML = tokens.map(t => {
-      const mcapChange = t.mcapChange != null
-        ? `<span class="${pctCls(t.mcapChange)}">${fmtPct(t.mcapChange)}</span>`
-        : '—';
+    // Since Call cella HTML
+    const sinceCallHtml = (t) => {
+      if (t.mcapChange != null) {
+        const pct = t.mcapChange;
+        const cls = pct > 0 ? 'positive' : pct < -10 ? 'negative' : 'neutral';
+        const arrow = pct > 0 ? '▲' : '▼';
+        return `<div class="launch-since-call">
+          <span class="launch-since-pct ${cls}">${arrow} ${fmtPct(pct)}</span>
+          <span class="launch-since-vals">${fmt(t.mcap)} → ${fmt(t.currentMcap)}</span>
+        </div>`;
+      }
+      if (t.mcap) {
+        return `<div class="launch-since-call">
+          <span class="launch-since-pct neutral">tracking...</span>
+          <span class="launch-since-vals">${fmt(t.mcap)} → ?</span>
+        </div>`;
+      }
+      return '<span style="color:var(--muted);font-size:9px">—</span>';
+    };
 
+    // AVG SINCE CALL számítás — csak verified tokenek ahol van mcapChange
+    const verifiedWithChange = tokens.filter(t => t.stage === 'verified' && t.mcapChange != null);
+    const trackHeader = document.getElementById('launchTrackHeader');
+    const trackVal    = document.getElementById('launchTrackVal');
+    const trackSub    = document.getElementById('launchTrackSub');
+
+    if (verifiedWithChange.length > 0 && trackHeader && trackVal && trackSub) {
+      const avg = verifiedWithChange.reduce((s, t) => s + t.mcapChange, 0) / verifiedWithChange.length;
+      const avgFmt = (avg > 0 ? '+' : '') + avg.toFixed(1) + '%';
+      trackVal.textContent = avgFmt;
+      trackVal.className = 'launch-track-val' + (avg < 0 ? ' negative' : '');
+      trackSub.textContent = `${verifiedWithChange.length} verified call${verifiedWithChange.length > 1 ? 's' : ''}`;
+      trackHeader.style.display = 'flex';
+    } else if (trackHeader) {
+      trackHeader.style.display = 'none';
+    }
+
+    feed.innerHTML = tokens.map(t => {
       return `
         <div class="launch-card stage-${t.stage}" ${t.url ? `onclick="window.open('${t.url}')" style="cursor:pointer"` : ''}>
           <div class="launch-card-header">
@@ -5208,8 +5308,18 @@ async function loadLaunchAlerts() {
             <div>MCap (call)<span>${fmt(t.mcap)}</span></div>
             <div>Liquidity<span>${fmt(t.liquidityNow || t.liquidity)}</span></div>
             <div>Buy ratio<span class="${t.buyRatio >= 65 ? 'c-ok' : t.buyRatio < 45 ? 'c-bad' : 'c-warn'}">${t.buyRatio != null ? t.buyRatio + '%' : '—'}</span></div>
-            <div>Since call<span>${mcapChange}</span></div>
+            <div>Since call<span>${sinceCallHtml(t)}</span></div>
           </div>
+
+          ${(t.athMcapChange != null || t.athMcap != null) ? `
+          <div class="launch-ath-row">
+            <span>ATH since call:</span>
+            ${t.athMcapChange != null
+              ? `<span class="launch-ath-val">${t.athMcapChange > 0 ? '+' : ''}${t.athMcapChange.toFixed(1)}%</span>
+                 <span style="color:var(--muted)">(${fmt(t.mcap)} → ${fmt(t.athMcap)})</span>`
+              : `<span class="launch-ath-val">${fmt(t.athMcap)}</span>`
+            }
+          </div>` : ''}
 
           <div class="launch-auth-row">
             ${authBadge(t.freezeAuth, 'freeze')}
