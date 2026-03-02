@@ -3030,10 +3030,9 @@
   <div class="nav-logo">J33T<span class="blink">_</span></div>
   <ul class="nav-links" id="navLinks">
     <li><a href="#about" onclick="closeHamburger()">Origin</a></li>
-    <li><a href="#utility" onclick="closeHamburger()">Utility</a></li>
+    <li><a href="#utility" onclick="closeHamburger()">Tools</a></li>
+    <li><a href="#liveFeed" onclick="closeHamburger()">Live Feed</a></li>
     <li><a href="#pumpfun" onclick="closeHamburger()">Trust</a></li>
-    <li><a href="#holderTools" onclick="closeHamburger()">Tools</a></li>
-    <li><a href="#smartMoney" onclick="closeHamburger()">Smart$</a></li>
     <li><a href="#tokenomics" onclick="closeHamburger()">$J33T</a></li>
   </ul>
   <div class="nav-right">
@@ -3495,6 +3494,26 @@
 </section>
 
 
+
+
+
+<!-- Daily Sniff — Holder Exclusive -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!-- RUG OR NOT -->
 <section class="rug-section" id="rugornotSection">
   <div class="rug-inner">
@@ -3560,10 +3579,6 @@
     </div>
   </div>
 </section>
-
-
-<!-- Daily Sniff — Holder Exclusive -->
-
 <!-- Live Feed -->
 <section class="sniff-section" id="liveFeed">
   <div class="sniff-inner">
@@ -3595,7 +3610,6 @@
     </div>
   </div>
 </section>
-
 <section class="sniff-section" id="dailySniff">
   <div class="sniff-inner">
 
@@ -3647,44 +3661,6 @@
 
   </div>
 </section>
-
-
-<!-- FOMO Calculator -->
-<section class="sniff-section" id="fomoSection">
-  <div class="section-label">// WHAT DID YOU MISS?</div>
-  <h2 class="section-title">J33T'S FOMO REPORT</h2>
-  <p class="section-desc">Top Solana gainers from the last 7 days. Painful? Yes. Useful? Also yes.</p>
-
-  <div class="sniff-locked" id="fomoLocked">
-    <div class="sniff-locked-icon">🔒</div>
-    <div class="sniff-locked-text">100,000 $J33T required to unlock FOMO Report</div>
-    <div class="sniff-locked-bal" id="fomoLockedBal"></div>
-    <button class="btn" onclick="openWalletModal()">CONNECT WALLET</button>
-  </div>
-
-  <div id="fomoUnlocked" style="display:none;">
-    <div class="fomo-controls">
-      <button class="sniff-fetch-btn" id="fomoBtn" onclick="runFomoReport()">
-        😭 SHOW ME WHAT I MISSED
-      </button>
-      <div class="fomo-disclaimer">Top 7-day Solana gainers · NFA · DYOR · This will hurt.</div>
-    </div>
-
-    <div class="sniff-loading" id="fomoLoading">
-      <div class="sniff-loading-dot"></div>
-      <div class="sniff-loading-dot"></div>
-      <div class="sniff-loading-dot"></div>
-      <span style="margin-left:12px; font-size:10px; color:var(--muted);">J33T is digging through the gains...</span>
-    </div>
-
-    <div class="sniff-error" id="fomoError"></div>
-    <div class="fomo-grid" id="fomoGrid"></div>
-    <div class="fomo-summary" id="fomoSummary"></div>
-  </div>
-</section>
-
-
-
 <!-- Token Launch Scanner -->
 <section class="sniff-section" id="launchScanner">
   <div class="section-label">// FRESH OFF THE CHAIN</div>
@@ -3724,7 +3700,6 @@
     </div>
   </div>
 </section>
-
 <!-- Smart Money Tracker -->
 <section class="sniff-section" id="smartMoney">
   <div class="section-label">// FOLLOW THE SMART MONEY</div>
@@ -3763,8 +3738,39 @@
     </div>
   </div>
 </section>
+<!-- FOMO Calculator -->
+<section class="sniff-section" id="fomoSection">
+  <div class="section-label">// WHAT DID YOU MISS?</div>
+  <h2 class="section-title">J33T'S FOMO REPORT</h2>
+  <p class="section-desc">Top Solana gainers from the last 7 days. Painful? Yes. Useful? Also yes.</p>
 
+  <div class="sniff-locked" id="fomoLocked">
+    <div class="sniff-locked-icon">🔒</div>
+    <div class="sniff-locked-text">100,000 $J33T required to unlock FOMO Report</div>
+    <div class="sniff-locked-bal" id="fomoLockedBal"></div>
+    <button class="btn" onclick="openWalletModal()">CONNECT WALLET</button>
+  </div>
 
+  <div id="fomoUnlocked" style="display:none;">
+    <div class="fomo-controls">
+      <button class="sniff-fetch-btn" id="fomoBtn" onclick="runFomoReport()">
+        😭 SHOW ME WHAT I MISSED
+      </button>
+      <div class="fomo-disclaimer">Top 7-day Solana gainers · NFA · DYOR · This will hurt.</div>
+    </div>
+
+    <div class="sniff-loading" id="fomoLoading">
+      <div class="sniff-loading-dot"></div>
+      <div class="sniff-loading-dot"></div>
+      <div class="sniff-loading-dot"></div>
+      <span style="margin-left:12px; font-size:10px; color:var(--muted);">J33T is digging through the gains...</span>
+    </div>
+
+    <div class="sniff-error" id="fomoError"></div>
+    <div class="fomo-grid" id="fomoGrid"></div>
+    <div class="fomo-summary" id="fomoSummary"></div>
+  </div>
+</section>
 <!-- Tokenomics -->
 <section id="tokenomics">
   <div class="section-label">// THE REAL NUMBERS</div>
@@ -4268,7 +4274,7 @@ async function refreshPriceData() {
       data = await fetchJupiter();
     }
     if (!data) {
-      dbg('⚠️ Both APIs returned null — falling back to demo data', 
+      dbg('⚠️ Both APIs returned null — falling back to demo data',
         'Possible reasons: (1) Token not indexed yet (needs liquidity/volume), (2) Mint address wrong, (3) Network error');
     } else {
       dbg('✅ Live data loaded!', data);
@@ -4876,7 +4882,6 @@ let launchTab        = 'live';
 let launchTimer      = null;
 let launchCountdown  = 30;
 
-// launchUpdateUI — lásd lejjebb a helyes definíciót (100k limit)
 
 function switchLaunchTab(tab) {
   launchTab = tab;
