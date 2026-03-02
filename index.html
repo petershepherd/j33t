@@ -3917,6 +3917,10 @@
       <span class="wallet-option-icon">🪐</span>
       <span>Jupiter</span>
     </button>
+    <button class="wallet-option" onclick="connectWallet('seeker')">
+      <span class="wallet-option-icon">🔍</span>
+      <span>Seeker</span>
+    </button>
     <button class="modal-close" onclick="closeWalletModal()">CANCEL</button>
   </div>
 </div>
@@ -4448,6 +4452,8 @@ async function connectRealWallet(type) {
       provider = window.backpack;
     } else if (type === 'jupiter' && window.jupiter) {
       provider = window.jupiter;
+    } else if (type === 'seeker' && window.seeker) {
+      provider = window.seeker;
     }
 
     if (!provider) {
