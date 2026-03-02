@@ -5801,7 +5801,12 @@ const SNIFF_MIN_BALANCE = 100000;
 function getSniffDailyLimit() {
   if (!walletConnected) return 0;
   if (j33tBalance >= 5000000) return 100; // 🐺 TOP DOG
-  return 3;                               // minden más holder
+  if (j33tBalance >= 1000000) return 4;   // 🦾 PAWS OF STEEL
+  if (j33tBalance >= 500000)  return 3;   // 🏃 PACK RUNNER
+  if (j33tBalance >= 100000)  return 2;   // 👃 NOSE CERTIFIED
+  if (j33tBalance >= 50000)   return 2;   // 📢 LOUD WOOFER
+  if (j33tBalance >= 10000)   return 1;   // 🐽 FIRST SNIFF
+  return 0;
 }
 
 function sniffGetToday() {
