@@ -3037,7 +3037,64 @@
     100% { background: transparent; }
   }
   .ticker-item.updated { animation: flash-update 0.8s ease forwards; }
-</style>
+
+    /* ── VIEW SWITCHING ─────────────────────────────── */
+    [data-view="tools"]   { display: none; }
+    [data-view="landing"] { display: block; }
+    .hero[data-view="landing"] { display: flex; }
+    .ticker[data-view="landing"] { display: flex; }
+
+    body.tools-view [data-view="landing"] { display: none !important; }
+    body.tools-view [data-view="tools"]   { display: block; }
+
+    /* Tools nézet tab nav */
+    .tools-view-header {
+      padding: 100px 20px 20px;
+      text-align: center;
+      display: none;
+    }
+    body.tools-view .tools-view-header { display: block; }
+    .tools-view-header h2 {
+      font-family: var(--pixel);
+      font-size: clamp(0.8rem, 2vw, 1.2rem);
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .tools-tab-nav {
+      display: none;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 0 20px 30px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    body.tools-view .tools-tab-nav { display: flex; }
+    .tools-tab-btn {
+      font-family: var(--pixel);
+      font-size: 0.5rem;
+      padding: 8px 12px;
+      border: 1px solid var(--surface2);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tools-tab-btn:hover, .tools-tab-btn.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(245,200,66,0.07);
+    }
+    /* Tools nézetben csak az aktív tool szekció látszik */
+    body.tools-view [data-view="tools"] { display: none; }
+    body.tools-view [data-view="tools"].tools-active { display: block; }
+
+    /* Nav aktív state */
+    .nav-link-active { color: var(--gold) !important; }
+
+  </style>
 </head>
 <body>
 
@@ -3087,10 +3144,10 @@
 <nav>
   <div class="nav-logo">J33T<span class="blink">_</span></div>
   <ul class="nav-links" id="navLinks">
-    <li><a href="#about" onclick="closeHamburger()">Origin</a></li>
-    <li><a href="tools.html">Tools</a></li>
-    <li><a href="#pumpfun" onclick="closeHamburger()">Trust</a></li>
-    <li><a href="#tokenomics" onclick="closeHamburger()">$J33T</a></li>
+    <li><a href="#about" onclick="switchView('landing'); closeHamburger()">Origin</a></li>
+    <li><a href="#" onclick="switchView('tools'); closeHamburger(); return false;">Tools</a></li>
+    <li><a href="#pumpfun" onclick="switchView('landing'); closeHamburger()">Trust</a></li>
+    <li><a href="#tokenomics" onclick="switchView('landing'); closeHamburger()">$J33T</a></li>
   </ul>
   <div class="nav-right">
     <div class="nav-wallet-wrap" id="navWalletWrap">
@@ -3116,7 +3173,7 @@
 </nav>
 
 <!-- Hero -->
-<div class="hero">
+<div class="hero" data-view="landing">
   <div class="hero-badge ca-badge" id="heroCaBadge" onclick="copyHeroCA()" title="Click to copy contract address">
     <span class="ca-label">CA</span>
     <span class="ca-addr" id="heroCaAddr">355ses9YKA4pTvbyTqRDT4QjzuJ1CW23eLqsfi1npump</span>
@@ -3146,7 +3203,7 @@
 </div>
 
 <!-- Ticker -->
-<div class="ticker" id="tickerEl" onclick="tickerMoonMode()" style="cursor:pointer;" title="click me...">
+<div class="ticker" data-view="landing" id="tickerEl" onclick="tickerMoonMode()" style="cursor:pointer;" title="click me...">
   <div class="ticker-inner" id="ticker">
     <span class="ticker-item">$J33T <span>+420.69%</span></span>
     <span class="ticker-item">MARKET CAP <span>$1,337,000</span></span>
@@ -3166,7 +3223,22 @@
 </div>
 
 <!-- About -->
-<section id="about">
+<!-- TOOLS VIEW HEADER -->
+<div class="tools-view-header">
+  <h2>🐾 HOLDER TOOLS</h2>
+  <p style="font-family:var(--mono);font-size:0.8rem;color:var(--muted);margin-bottom:20px;">Connect your wallet to unlock tier-based access.</p>
+</div>
+<div class="tools-tab-nav">
+  <button class="tools-tab-btn active" onclick="switchToolTab('liveFeed', this)">📡 Live Feed</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('dailySniff', this)">👃 Daily Sniff</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('launchScanner', this)">🚀 Launch Scanner</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('smartMoney', this)">🧠 Smart Money</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('fomoSection', this)">📊 FOMO Report</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('rugornotSection', this)">🔍 Rug or Not</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('utility', this)">💎 Holder Utility</button>
+</div>
+
+<section id="about" data-view="landing">
   <div class="about-grid">
     <div class="about-photo">
       <!-- J33T CARD GENERATOR -->
@@ -3228,7 +3300,7 @@
 </section>
 
 <!-- Utility / Holder Gate -->
-<section id="utility" style="max-width:100%; padding: 80px 40px; background: var(--surface);">
+<section id="utility" data-view="tools" style="max-width:100%; padding: 80px 40px; background: var(--surface);">
   <div style="max-width:1100px; margin:0 auto;">
     <div class="section-label">// HOLDER UTILITY</div>
     <h2 class="section-title">$J33T HOLDER<br>EXCLUSIVE ACCESS</h2>
@@ -3396,7 +3468,7 @@
 </section>
 
 <!-- Pump.fun Satire + Trust Section -->
-<section id="pumpfun" class="pumpfun-section">
+<section id="pumpfun" data-view="landing" class="pumpfun-section">
   <div class="pumpfun-inner">
     <div class="section-label">// PUMP.FUN — THE REALITY CHECK</div>
     <h2 class="section-title" style="max-width:700px;">98.6% OF PUMP.FUN TOKENS<br>ARE RUGS OR PUMP-AND-DUMPS.<br>HERE'S WHAT THAT LOOKS LIKE.</h2>
@@ -3478,7 +3550,7 @@
 </section>
 
 <!-- DYOR / Safety Education -->
-<section class="safety-section" id="dyor">
+<section class="safety-section" id="dyor" data-view="landing">
   <div class="safety-inner">
     <div class="section-label">// DYOR — DO YOUR OWN RESEARCH</div>
     <h2 class="section-title">CRYPTO SAFETY 101<br>FROM J33T HERSELF</h2>
@@ -3572,7 +3644,7 @@
 
 
 <!-- RUG OR NOT -->
-<section class="rug-section" id="rugornotSection">
+<section class="rug-section" id="rugornotSection" data-view="tools">
   <div class="rug-inner">
     <div class="section-label">// J33T PRESENTS — AI POWERED</div>
     <h2 class="section-title">RUG<span style="color:var(--muted)"> OR </span>NOT?</h2>
@@ -3637,7 +3709,7 @@
   </div>
 </section>
 <!-- Live Feed -->
-<section class="sniff-section" id="liveFeed">
+<section class="sniff-section" id="liveFeed" data-view="tools" style="display:none;">
   <div class="sniff-inner">
     <div class="section-label">// UPDATED EVERY 2 MINUTES</div>
     <h2 class="section-title">J33T'S LIVE FEED 📡</h2>
@@ -3667,7 +3739,7 @@
     </div>
   </div>
 </section>
-<section class="sniff-section" id="dailySniff">
+<section class="sniff-section" id="dailySniff" data-view="tools">
   <div class="sniff-inner">
 
     <div class="section-label">// HOLDER EXCLUSIVE — 100,000+ $J33T</div>
@@ -3719,7 +3791,7 @@
   </div>
 </section>
 <!-- Token Launch Scanner -->
-<section class="sniff-section" id="launchScanner">
+<section class="sniff-section" id="launchScanner" data-view="tools">
   <div class="section-label">// FRESH OFF THE CHAIN</div>
   <h2 class="section-title">TOKEN LAUNCH SCANNER</h2>
   <p class="section-desc">J33T watches every new Solana token launch and runs it through a 3-stage filter. Early sniff → Survival check → Quality verified. Only the best make it through.</p>
@@ -3765,7 +3837,7 @@
   </div>
 </section>
 <!-- Smart Money Tracker -->
-<section class="sniff-section" id="smartMoney">
+<section class="sniff-section" id="smartMoney" data-view="tools">
   <div class="section-label">// FOLLOW THE SMART MONEY</div>
   <h2 class="section-title">SMART MONEY TRACKER</h2>
   <p class="section-desc">J33T tracks wallets that consistently buy early on winning tokens. When they move — you'll know. Delay depends on your tier.</p>
@@ -3803,7 +3875,7 @@
   </div>
 </section>
 <!-- FOMO Calculator -->
-<section class="sniff-section" id="fomoSection">
+<section class="sniff-section" id="fomoSection" data-view="tools">
   <div class="section-label">// WHAT DID YOU MISS?</div>
   <h2 class="section-title">J33T'S FOMO REPORT</h2>
   <p class="section-desc">Top Solana gainers from the last 7 days. Painful? Yes. Useful? Also yes.</p>
@@ -3836,7 +3908,7 @@
   </div>
 </section>
 <!-- Tokenomics -->
-<section id="tokenomics">
+<section id="tokenomics" data-view="landing">
   <div class="section-label">// THE REAL NUMBERS</div>
   <h2 class="section-title">$J33T ON-CHAIN</h2>
   <p class="section-desc">Everything verifiable. Everything public. Nothing to hide.</p>
@@ -3925,6 +3997,48 @@
 </div>
 
 <script>
+// ── VIEW SWITCHING ────────────────────────────────────────────
+const TOOL_IDS = ['liveFeed','dailySniff','launchScanner','smartMoney','fomoSection','rugornotSection','utility'];
+
+function switchView(view) {
+  if (view === 'tools') {
+    document.body.classList.add('tools-view');
+    // Alapból az első tool aktív
+    switchToolTab('liveFeed', document.querySelector('.tools-tab-btn'));
+    window.scrollTo(0, 0);
+    // Nav link kiemelés
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('nav-link-active'));
+    const toolsLink = [...document.querySelectorAll('.nav-links a')].find(a => a.textContent.trim() === 'Tools');
+    if (toolsLink) toolsLink.classList.add('nav-link-active');
+  } else {
+    document.body.classList.remove('tools-view');
+    // Nav link kiemelés visszaállítása
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('nav-link-active'));
+  }
+  // URL hash frissítése
+  history.replaceState(null, '', view === 'tools' ? '#tools' : '#');
+}
+
+function switchToolTab(tabId, btn) {
+  // Elrejt minden tool szekciót
+  TOOL_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('tools-active');
+  });
+  // Megmutatja a kiválasztottat
+  const target = document.getElementById(tabId);
+  if (target) target.classList.add('tools-active');
+  // Gomb kiemelés
+  document.querySelectorAll('.tools-tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// Ha #tools hash-sel töltődik az oldal, egyből tools nézet
+if (window.location.hash === '#tools') {
+  document.addEventListener('DOMContentLoaded', () => switchView('tools'));
+}
+
 
 // ── HAMBURGER MENU ──────────────────────────────────────────
 function toggleHamburger() {
