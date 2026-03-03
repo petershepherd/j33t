@@ -3171,57 +3171,9 @@
   </div>
 </nav>
 
-<!-- Hero -->
-<div class="hero">
-  <div class="hero-badge ca-badge" id="heroCaBadge" onclick="copyHeroCA()" title="Click to copy contract address">
-    <span class="ca-label">CA</span>
-    <span class="ca-addr" id="heroCaAddr">355ses9YKA4pTvbyTqRDT4QjzuJ1CW23eLqsfi1npump</span>
-    <span class="ca-copy-icon" id="heroCaIcon">⎘</span>
-  </div>
 
-  <div class="dog-container">
-    <div class="dog-halo"></div>
-    <canvas class="dog-pixel" id="dogCanvas" width="240" height="240" onclick="petTheDog(event)" style="cursor:pointer;"></canvas>
-  </div>
 
-  <h1 class="hero-title">
-    <span class="glitch" data-text="J33T">J33T</span>
-  </h1>
 
-  <p class="hero-sub">
-    Born <span>Jan 2009</span>. Still not selling since 2009.<br>
-    <span>$J33T</span> — small dog. big energy.
-  </p>
-
-  <div class="hero-age">Good girl for <span id="ageCounter">—</span> days and counting</div>
-
-  <div class="hero-cta">
-    <button class="btn-primary" onclick="openWalletModal()">GET $J33T</button>
-    <button class="btn-secondary" onclick="document.getElementById('utility').scrollIntoView()">HOLDER PERKS</button>
-  </div>
-</div>
-
-<!-- Ticker -->
-<div class="ticker" id="tickerEl" onclick="tickerMoonMode()" style="cursor:pointer;" title="click me...">
-  <div class="ticker-inner" id="ticker">
-    <span class="ticker-item">$J33T <span>+420.69%</span></span>
-    <span class="ticker-item">MARKET CAP <span>$1,337,000</span></span>
-    <span class="ticker-item">HOLDERS <span>8,888</span></span>
-    <span class="ticker-item">BORN <span>JAN 2009</span></span>
-    <span class="ticker-item">CHAIN <span>SOLANA</span></span>
-    <span class="ticker-item">GOOD GIRL SCORE <span>100/100</span></span>
-    <span class="ticker-item">DEV SOLD? <span>NOPE, SHE'S A GOOD GIRL</span></span>
-    <span class="ticker-item">$J33T <span>+420.69%</span></span>
-    <span class="ticker-item">MARKET CAP <span>$1,337,000</span></span>
-    <span class="ticker-item">HOLDERS <span>8,888</span></span>
-    <span class="ticker-item">BORN <span>JAN 2009</span></span>
-    <span class="ticker-item">CHAIN <span>SOLANA</span></span>
-    <span class="ticker-item">GOOD GIRL SCORE <span>100/100</span></span>
-    <span class="ticker-item">DEV SOLD? <span>NOPE, SHE'S A GOOD GIRL</span></span>
-  </div>
-</div>
-
-<!-- About -->
 
 
   <!-- TOOLS HERO -->
@@ -7661,5 +7613,46 @@ document.querySelectorAll('section:not(#about), .safety-section, .pumpfun-sectio
 });
 </script>
 
+
+<div class="modal" id="walletModal">
+  <div class="modal-box">
+    <div class="modal-title" id="walletModalTitle">CONNECT WALLET</div>
+    <div style="font-size:9px; color:var(--muted); font-family:var(--mono); text-align:center; margin-bottom:20px; line-height:1.7;">
+      Your real $J33T balance will be read on-chain.<br>
+      <span style="color:var(--green);">No transactions will be made.</span>
+    </div>
+    <button class="wallet-option" onclick="connectWallet('phantom')">
+      <span class="wallet-option-icon">👻</span>
+      <span>Phantom</span>
+    </button>
+    <button class="wallet-option" onclick="connectWallet('solflare')">
+      <span class="wallet-option-icon">☀️</span>
+      <span>Solflare</span>
+    </button>
+    <button class="wallet-option" onclick="connectWallet('backpack')">
+      <span class="wallet-option-icon">🎒</span>
+      <span>Backpack</span>
+    </button>
+    <button class="wallet-option" onclick="connectWallet('jupiter')">
+      <span class="wallet-option-icon">🪐</span>
+      <span>Jupiter</span>
+    </button>
+    <button class="wallet-option" onclick="connectWallet('seeker')">
+      <span class="wallet-option-icon">🔍</span>
+      <span>Seeker</span>
+    </button>
+    <button class="modal-close" onclick="closeWalletModal()">CANCEL</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<div class="egg-found-overlay" id="eggFoundOverlay">
+  <div class="egg-found-box">
+    <div class="egg-found-icon" id="eggFoundIcon">🥚</div>
+    <div class="egg-found-label">EASTER EGG FOUND</div>
+    <div class="egg-found-name" id="eggFoundName">???</div>
+    <div class="egg-found-desc" id="eggFoundDesc"></div>
+    <div class="egg-found-count" id="eggFoundCount"></div>
+  </div>
+</div>
 </body>
 </html>
