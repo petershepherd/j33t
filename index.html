@@ -3039,21 +3039,28 @@
   .ticker-item.updated { animation: flash-update 0.8s ease forwards; }
 
     /* ── VIEW SWITCHING ─────────────────────────────── */
-    [data-view="tools"]   { display: none; }
+    /* Landing elemek alapból látszanak */
     [data-view="landing"] { display: block; }
     .hero[data-view="landing"] { display: flex; }
     .ticker[data-view="landing"] { display: flex; }
 
-    body.tools-view [data-view="landing"] { display: none !important; }
-    body.tools-view [data-view="tools"]   { display: block; }
+    /* Tool szekciók alapból rejtve */
+    [data-view="tools"] { display: none !important; }
 
-    /* Tools nézet tab nav */
+    /* Tools nézetben: landing elemek rejtve, tool header/nav látszik */
+    body.tools-view [data-view="landing"] { display: none !important; }
+    body.tools-view .tools-view-header   { display: block !important; }
+    body.tools-view .tools-tab-nav       { display: flex !important; }
+
+    /* Tools nézetben CSAK az .tools-active szekció látszik */
+    body.tools-view [data-view="tools"].tools-active { display: block !important; }
+
+    /* Tools header/nav alapból rejtve */
     .tools-view-header {
-      padding: 100px 20px 20px;
+      padding: 100px 20px 10px;
       text-align: center;
       display: none;
     }
-    body.tools-view .tools-view-header { display: block; }
     .tools-view-header h2 {
       font-family: var(--pixel);
       font-size: clamp(0.8rem, 2vw, 1.2rem);
@@ -3065,11 +3072,10 @@
       gap: 6px;
       justify-content: center;
       flex-wrap: wrap;
-      padding: 0 20px 30px;
-      max-width: 900px;
+      padding: 0 20px 20px;
+      max-width: 960px;
       margin: 0 auto;
     }
-    body.tools-view .tools-tab-nav { display: flex; }
     .tools-tab-btn {
       font-family: var(--pixel);
       font-size: 0.5rem;
@@ -3087,9 +3093,6 @@
       color: var(--gold);
       background: rgba(245,200,66,0.07);
     }
-    /* Tools nézetben csak az aktív tool szekció látszik */
-    body.tools-view [data-view="tools"] { display: none; }
-    body.tools-view [data-view="tools"].tools-active { display: block; }
 
     /* Nav aktív state */
     .nav-link-active { color: var(--gold) !important; }
@@ -3709,7 +3712,7 @@
   </div>
 </section>
 <!-- Live Feed -->
-<section class="sniff-section" id="liveFeed" data-view="tools" style="display:none;">
+<section class="sniff-section" id="liveFeed" data-view="tools">
   <div class="sniff-inner">
     <div class="section-label">// UPDATED EVERY 2 MINUTES</div>
     <h2 class="section-title">J33T'S LIVE FEED 📡</h2>
@@ -4003,41 +4006,44 @@ const TOOL_IDS = ['liveFeed','dailySniff','launchScanner','smartMoney','fomoSect
 function switchView(view) {
   if (view === 'tools') {
     document.body.classList.add('tools-view');
-    // Alapból az első tool aktív
-    switchToolTab('liveFeed', document.querySelector('.tools-tab-btn'));
+    // Első tab aktiválása
+    const firstBtn = document.querySelector('.tools-tab-btn');
+    switchToolTab('liveFeed', firstBtn);
     window.scrollTo(0, 0);
-    // Nav link kiemelés
+    // Nav kiemelés
     document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('nav-link-active'));
-    const toolsLink = [...document.querySelectorAll('.nav-links a')].find(a => a.textContent.trim() === 'Tools');
-    if (toolsLink) toolsLink.classList.add('nav-link-active');
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      if (a.textContent.trim() === 'Tools') a.classList.add('nav-link-active');
+    });
+    history.replaceState(null, '', '#tools');
   } else {
     document.body.classList.remove('tools-view');
-    // Nav link kiemelés visszaállítása
     document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('nav-link-active'));
+    history.replaceState(null, '', '#');
   }
-  // URL hash frissítése
-  history.replaceState(null, '', view === 'tools' ? '#tools' : '#');
 }
 
 function switchToolTab(tabId, btn) {
-  // Elrejt minden tool szekciót
+  // Minden tool szekció tools-active osztályát eltávolítjuk
   TOOL_IDS.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.classList.remove('tools-active');
   });
-  // Megmutatja a kiválasztottat
+  // Csak a kiválasztott kap tools-active-t
   const target = document.getElementById(tabId);
   if (target) target.classList.add('tools-active');
-  // Gomb kiemelés
+  // Tab gomb kiemelés
   document.querySelectorAll('.tools-tab-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   window.scrollTo(0, 0);
 }
 
-// Ha #tools hash-sel töltődik az oldal, egyből tools nézet
-if (window.location.hash === '#tools') {
-  document.addEventListener('DOMContentLoaded', () => switchView('tools'));
-}
+// #tools hash esetén azonnal tools nézet
+(function() {
+  if (window.location.hash === '#tools') {
+    document.addEventListener('DOMContentLoaded', () => switchView('tools'));
+  }
+})();
 
 
 // ── HAMBURGER MENU ──────────────────────────────────────────
