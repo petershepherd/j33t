@@ -4413,17 +4413,51 @@ let walletConnected = false;
 let j33tBalance = 0;
 let walletAddr = '';
 let walletFullAddr = ''; // teljes pubkey a KV műveletekhez
-// Restore session
+// Restore session + auto-reconnect wallet provider
 try {
   const saved = localStorage.getItem('j33t_wallet_v1');
   if (saved) {
     const d = JSON.parse(saved);
     if (d.connected && d.addr) {
+      // Azonnal betöltjük a mentett state-et (UI nem villog)
       walletConnected = true;
       j33tBalance = d.balance || 0;
       walletAddr = d.addr;
       walletFullAddr = d.fullAddr || d.addr;
-      setTimeout(() => applyWalletState(), 300);
+      setTimeout(() => applyWalletState(), 100);
+
+      // Háttérben csendes reconnect — frissíti az egyenleget, nem kér engedélyt
+      setTimeout(async () => {
+        try {
+          const walletType = d.walletType || 'phantom';
+          let provider = null;
+          if      (walletType === 'phantom'  && window.solana?.isPhantom)   provider = window.solana;
+          else if (walletType === 'solflare' && window.solflare?.isSolflare) provider = window.solflare;
+          else if (walletType === 'backpack' && window.backpack)             provider = window.backpack;
+          else if (walletType === 'jupiter'  && window.jupiter)              provider = window.jupiter;
+          else if (walletType === 'seeker'   && window.seeker)               provider = window.seeker;
+
+          if (provider) {
+            // eagerly connect — nem dob popup-ot, csak ha már engedélyezett
+            const resp = await provider.connect({ onlyIfTrusted: true });
+            const pubkey = resp.publicKey.toString();
+            walletFullAddr = pubkey;
+            walletAddr = pubkey.slice(0,4) + '...' + pubkey.slice(-4);
+            walletConnected = true;
+            // Frissített egyenleg
+            j33tBalance = await fetchRealBalance(pubkey);
+            // Mentsük a friss adatot
+            localStorage.setItem('j33t_wallet_v1', JSON.stringify({
+              connected: true, balance: j33tBalance,
+              addr: walletAddr, fullAddr: walletFullAddr,
+              real: true, walletType
+            }));
+            applyWalletState();
+          }
+        } catch(e) {
+          // onlyIfTrusted reject = nem volt korábbi engedély, maradunk a mentett state-nél
+        }
+      }, 600);
     }
   }
 } catch(e) {}
@@ -4471,7 +4505,7 @@ async function connectRealWallet(type) {
     j33tBalance = await fetchRealBalance(pubkey);
 
     try {
-      localStorage.setItem('j33t_wallet_v1', JSON.stringify({connected: true, balance: j33tBalance, addr: walletAddr, fullAddr: walletFullAddr, real: true}));
+      localStorage.setItem('j33t_wallet_v1', JSON.stringify({connected: true, balance: j33tBalance, addr: walletAddr, fullAddr: walletFullAddr, real: true, walletType: type}));
     } catch(e) {}
 
     applyWalletState();
