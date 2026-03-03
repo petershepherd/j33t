@@ -3039,34 +3039,21 @@
   .ticker-item.updated { animation: flash-update 0.8s ease forwards; }
 
     /* ── VIEW SWITCHING ─────────────────────────────── */
-    /* Landing elemek alapból látszanak */
+    [data-view="tools"]   { display: none; }
     [data-view="landing"] { display: block; }
-    .hero[data-view="landing"] { display: flex; }
+    .hero[data-view="landing"]   { display: flex; }
     .ticker[data-view="landing"] { display: flex; }
 
-    /* Tool szekciók alapból rejtve */
-    [data-view="tools"] { display: none; }
-
-    /* Tools nézetben: landing elemek rejtve, tool header/nav látszik */
     body.tools-view [data-view="landing"] { display: none !important; }
-    body.tools-view .tools-view-header   { display: block; }
-    body.tools-view .tools-tab-nav       { display: flex; }
+    body.tools-view section.tools-active  { display: block !important; }
 
-    /* Tools nézetben CSAK az .tools-active szekció látszik — magasabb specificitás */
-    body.tools-view section.tools-active { display: block; }
-
-    /* Tools header/nav alapból rejtve */
     .tools-view-header {
       padding: 100px 20px 10px;
       text-align: center;
       display: none;
     }
-    .tools-view-header h2 {
-      font-family: var(--pixel);
-      font-size: clamp(0.8rem, 2vw, 1.2rem);
-      color: var(--gold);
-      margin-bottom: 8px;
-    }
+    body.tools-view .tools-view-header { display: block; }
+
     .tools-tab-nav {
       display: none;
       gap: 6px;
@@ -3075,7 +3062,11 @@
       padding: 0 20px 20px;
       max-width: 960px;
       margin: 0 auto;
+      position: relative;
+      z-index: 10;
     }
+    body.tools-view .tools-tab-nav { display: flex; }
+
     .tools-tab-btn {
       font-family: var(--pixel);
       font-size: 0.5rem;
@@ -3087,14 +3078,14 @@
       border-radius: 4px;
       transition: all 0.2s;
       white-space: nowrap;
+      position: relative;
+      z-index: 10;
     }
     .tools-tab-btn:hover, .tools-tab-btn.active {
       border-color: var(--gold);
       color: var(--gold);
       background: rgba(245,200,66,0.07);
     }
-
-    /* Nav aktív state */
     .nav-link-active { color: var(--gold) !important; }
 
   </style>
@@ -3175,6 +3166,22 @@
   </div>
 </nav>
 
+<!-- TOOLS VIEW HEADER -->
+<div class="tools-view-header">
+  <h2>🐾 HOLDER TOOLS</h2>
+  <p style="font-family:var(--mono);font-size:0.8rem;color:var(--muted);margin-bottom:20px;">Connect your wallet to unlock tier-based access.</p>
+</div>
+<div class="tools-tab-nav">
+  <button class="tools-tab-btn active" onclick="switchToolTab('liveFeed', this)">📡 Live Feed</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('dailySniff', this)">👃 Daily Sniff</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('launchScanner', this)">🚀 Launch Scanner</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('smartMoney', this)">🧠 Smart Money</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('fomoSection', this)">📊 FOMO Report</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('rugornotSection', this)">🔍 Rug or Not</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('utility', this)">💎 Holder Utility</button>
+</div>
+
+
 <!-- Hero -->
 <div class="hero" data-view="landing">
   <div class="hero-badge ca-badge" id="heroCaBadge" onclick="copyHeroCA()" title="Click to copy contract address">
@@ -3226,20 +3233,7 @@
 </div>
 
 <!-- About -->
-<!-- TOOLS VIEW HEADER -->
-<div class="tools-view-header">
-  <h2>🐾 HOLDER TOOLS</h2>
-  <p style="font-family:var(--mono);font-size:0.8rem;color:var(--muted);margin-bottom:20px;">Connect your wallet to unlock tier-based access.</p>
-</div>
-<div class="tools-tab-nav">
-  <button class="tools-tab-btn active" onclick="switchToolTab('liveFeed', this)">📡 Live Feed</button>
-  <button class="tools-tab-btn" onclick="switchToolTab('dailySniff', this)">👃 Daily Sniff</button>
-  <button class="tools-tab-btn" onclick="switchToolTab('launchScanner', this)">🚀 Launch Scanner</button>
-  <button class="tools-tab-btn" onclick="switchToolTab('smartMoney', this)">🧠 Smart Money</button>
-  <button class="tools-tab-btn" onclick="switchToolTab('fomoSection', this)">📊 FOMO Report</button>
-  <button class="tools-tab-btn" onclick="switchToolTab('rugornotSection', this)">🔍 Rug or Not</button>
-  <button class="tools-tab-btn" onclick="switchToolTab('utility', this)">💎 Holder Utility</button>
-</div>
+
 
 <section id="about" data-view="landing">
   <div class="about-grid">
@@ -4006,44 +4000,35 @@ const TOOL_IDS = ['liveFeed','dailySniff','launchScanner','smartMoney','fomoSect
 function switchView(view) {
   if (view === 'tools') {
     document.body.classList.add('tools-view');
-    // Első tab aktiválása
-    const firstBtn = document.querySelector('.tools-tab-btn');
-    switchToolTab('liveFeed', firstBtn);
+    switchToolTab('liveFeed', document.querySelector('.tools-tab-btn'));
     window.scrollTo(0, 0);
-    // Nav kiemelés
-    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('nav-link-active'));
     document.querySelectorAll('.nav-links a').forEach(a => {
-      if (a.textContent.trim() === 'Tools') a.classList.add('nav-link-active');
+      a.classList.toggle('nav-link-active', a.textContent.trim() === 'Tools');
     });
     history.replaceState(null, '', '#tools');
   } else {
     document.body.classList.remove('tools-view');
     document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('nav-link-active'));
-    history.replaceState(null, '', '#');
+    history.replaceState(null, '', location.pathname);
   }
 }
 
 function switchToolTab(tabId, btn) {
-  // Minden tool szekció tools-active osztályát eltávolítjuk
   TOOL_IDS.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.classList.remove('tools-active');
   });
-  // Csak a kiválasztott kap tools-active-t
   const target = document.getElementById(tabId);
   if (target) target.classList.add('tools-active');
-  // Tab gomb kiemelés
   document.querySelectorAll('.tools-tab-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   window.scrollTo(0, 0);
 }
 
-// #tools hash esetén azonnal tools nézet
-(function() {
-  if (window.location.hash === '#tools') {
-    document.addEventListener('DOMContentLoaded', () => switchView('tools'));
-  }
-})();
+// #tools hash esetén: switchView hívás DOMContentLoaded után
+window.addEventListener('DOMContentLoaded', function() {
+  if (window.location.hash === '#tools') switchView('tools');
+});
 
 
 // ── HAMBURGER MENU ──────────────────────────────────────────
