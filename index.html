@@ -3045,15 +3045,15 @@
     .ticker[data-view="landing"] { display: flex; }
 
     /* Tool szekciók alapból rejtve */
-    [data-view="tools"] { display: none !important; }
+    [data-view="tools"] { display: none; }
 
     /* Tools nézetben: landing elemek rejtve, tool header/nav látszik */
     body.tools-view [data-view="landing"] { display: none !important; }
-    body.tools-view .tools-view-header   { display: block !important; }
-    body.tools-view .tools-tab-nav       { display: flex !important; }
+    body.tools-view .tools-view-header   { display: block; }
+    body.tools-view .tools-tab-nav       { display: flex; }
 
-    /* Tools nézetben CSAK az .tools-active szekció látszik */
-    body.tools-view [data-view="tools"].tools-active { display: block !important; }
+    /* Tools nézetben CSAK az .tools-active szekció látszik — magasabb specificitás */
+    body.tools-view section.tools-active { display: block; }
 
     /* Tools header/nav alapból rejtve */
     .tools-view-header {
