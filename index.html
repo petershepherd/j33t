@@ -3087,6 +3087,11 @@
       background: rgba(245,200,66,0.07);
     }
     .nav-link-active { color: var(--gold) !important; }
+    .wallet-desktop-only {
+      font-size: 7px;
+      color: var(--muted);
+      opacity: 0.7;
+    }
 
   </style>
 </head>
@@ -3985,6 +3990,9 @@
       Your real $J33T balance will be read on-chain.<br>
       <span style="color:var(--green);">No transactions will be made.</span>
     </div>
+    <div id="mobileWalletNote" style="display:none; font-size:8px; color:var(--gold); font-family:var(--mono); text-align:center; margin-bottom:16px; padding:8px 12px; border:1px solid rgba(245,200,66,0.2); background:rgba(245,200,66,0.05); border-radius:4px; line-height:1.7;">
+      📱 On mobile, tapping Phantom, Solflare or Backpack<br>will open the site inside their app browser.
+    </div>
     <button class="wallet-option" onclick="connectWallet('phantom')">
       <span class="wallet-option-icon">👻</span>
       <span>Phantom</span>
@@ -3999,7 +4007,7 @@
     </button>
     <button class="wallet-option" onclick="connectWallet('jupiter')">
       <span class="wallet-option-icon">🪐</span>
-      <span>Jupiter</span>
+      <span>Jupiter <span class="wallet-desktop-only">· desktop</span></span>
     </button>
     <button class="wallet-option" onclick="connectWallet('seeker')">
       <span class="wallet-option-icon">🔍</span>
@@ -4585,6 +4593,9 @@ try {
 
 function openWalletModal() {
   document.getElementById('walletModal').classList.add('open');
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const note = document.getElementById('mobileWalletNote');
+  if (note) note.style.display = isMobile ? 'block' : 'none';
 }
 function closeWalletModal() { document.getElementById('walletModal').classList.remove('open'); }
 
@@ -4611,7 +4622,28 @@ async function connectRealWallet(type) {
     }
 
     if (!provider) {
-      showToast(`${type.charAt(0).toUpperCase()+type.slice(1)} not found. Please install it and try again.`);
+      // Mobil deep link — megnyitja a wallet app beépített böngészőjében
+      const currentUrl = encodeURIComponent(window.location.href);
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        let deepLink = null;
+        if (type === 'phantom') {
+          deepLink = `https://phantom.app/ul/browse/${currentUrl}?ref=${currentUrl}`;
+        } else if (type === 'solflare') {
+          deepLink = `https://solflare.com/ul/v1/browse/${currentUrl}?ref=${currentUrl}`;
+        } else if (type === 'backpack') {
+          deepLink = `https://backpack.app/browse/${currentUrl}`;
+        }
+
+        if (deepLink) {
+          showToast(`Opening ${type.charAt(0).toUpperCase()+type.slice(1)} app... 🐾`);
+          window.location.href = deepLink;
+          return;
+        }
+      }
+
+      showToast(`${type.charAt(0).toUpperCase()+type.slice(1)} not found. On mobile, open this site inside the ${type.charAt(0).toUpperCase()+type.slice(1)} app browser.`);
       return;
     }
 
