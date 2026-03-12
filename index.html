@@ -3093,6 +3093,204 @@
       opacity: 0.7;
     }
 
+.intel-section { max-width: 960px; margin: 0 auto; padding: 40px 20px; }
+.intel-header { text-align: center; margin-bottom: 32px; }
+.intel-header h2 { font-family: var(--pixel); font-size: clamp(0.9rem, 2.5vw, 1.3rem); color: var(--gold); margin-bottom: 8px; }
+.intel-header p { color: var(--muted); font-size: 0.75rem; max-width: 600px; margin: 0 auto; }
+
+.intel-key-card {
+  background: var(--surface);
+  border: 1px solid rgba(245,200,66,0.15);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.intel-key-card h3 { font-family: var(--pixel); font-size: 0.6rem; color: var(--gold); margin-bottom: 12px; }
+.intel-key-display {
+  background: var(--bg);
+  border: 1px solid var(--surface2);
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--green);
+  word-break: break-all;
+  margin-bottom: 12px;
+  position: relative;
+}
+.intel-key-display.hidden-key { color: var(--muted); }
+.intel-key-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.intel-key-actions button {
+  font-family: var(--pixel);
+  font-size: 0.45rem;
+  padding: 8px 16px;
+  border: 1px solid var(--surface2);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+.intel-key-actions button:hover { border-color: var(--gold); color: var(--gold); }
+.intel-key-actions button.danger:hover { border-color: var(--red); color: var(--red); }
+.intel-key-warning {
+  font-size: 0.6rem;
+  color: var(--red);
+  margin-top: 8px;
+  display: none;
+}
+.intel-key-warning.show { display: block; }
+
+.intel-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.intel-stat-card {
+  background: var(--surface);
+  border: 1px solid var(--surface2);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+.intel-stat-val {
+  font-family: var(--pixel);
+  font-size: clamp(0.8rem, 2vw, 1.2rem);
+  color: var(--gold);
+  display: block;
+  margin-bottom: 4px;
+}
+.intel-stat-lbl {
+  font-size: 0.55rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.intel-streak-bar {
+  background: var(--surface);
+  border: 1px solid var(--surface2);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.intel-streak-fire { font-size: 1.5rem; }
+.intel-streak-info { flex: 1; min-width: 150px; }
+.intel-streak-days { font-family: var(--pixel); font-size: 0.7rem; color: var(--gold); }
+.intel-streak-next { font-size: 0.6rem; color: var(--muted); margin-top: 4px; }
+.intel-streak-progress {
+  width: 100%;
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.intel-streak-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--green));
+  border-radius: 3px;
+  transition: width 0.5s;
+}
+
+.intel-level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-family: var(--pixel);
+  font-size: 0.5rem;
+  border: 1px solid var(--surface2);
+  background: var(--surface);
+}
+.intel-level-badge.contributor { border-color: #cd7f32; color: #cd7f32; }
+.intel-level-badge.active { border-color: #c0c0c0; color: #c0c0c0; }
+.intel-level-badge.power { border-color: #ffd700; color: #ffd700; }
+.intel-level-badge.diamond { border-color: #b9f2ff; color: #b9f2ff; }
+
+.intel-tokens-list {
+  background: var(--surface);
+  border: 1px solid var(--surface2);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.intel-tokens-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--surface2);
+  font-family: var(--pixel);
+  font-size: 0.55rem;
+  color: var(--gold);
+}
+.intel-token-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 80px 60px;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-size: 0.65rem;
+  align-items: center;
+}
+.intel-token-row:last-child { border-bottom: none; }
+.intel-token-row:hover { background: rgba(245,200,66,0.03); }
+.intel-token-name { color: var(--text); font-weight: 700; }
+.intel-token-symbol { color: var(--muted); font-size: 0.55rem; }
+.intel-token-score { text-align: center; }
+.intel-token-score.positive { color: var(--green); }
+.intel-token-score.negative { color: var(--red); }
+.intel-token-risk { text-align: center; }
+.intel-token-date { text-align: right; color: var(--muted); font-size: 0.55rem; }
+.intel-empty { text-align: center; padding: 32px; color: var(--muted); font-size: 0.65rem; }
+
+.intel-leaderboard { margin-bottom: 24px; }
+.intel-lb-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 80px 80px 60px;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-size: 0.6rem;
+  align-items: center;
+}
+.intel-lb-row.header { color: var(--muted); font-size: 0.5rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--surface2); }
+.intel-lb-rank { text-align: center; color: var(--gold); font-family: var(--pixel); font-size: 0.55rem; }
+.intel-lb-level { font-size: 0.5rem; }
+.intel-lb-streak { text-align: center; }
+.intel-lb-submissions { text-align: center; }
+.intel-lb-multiplier { text-align: right; color: var(--gold); }
+
+.intel-locked {
+  text-align: center;
+  padding: 60px 20px;
+}
+.intel-locked-icon { font-size: 2rem; margin-bottom: 12px; }
+.intel-locked-text { color: var(--muted); font-size: 0.7rem; margin-bottom: 16px; }
+
+.intel-airdrop-notice {
+  background: rgba(245,200,66,0.05);
+  border: 1px solid rgba(245,200,66,0.15);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+  font-size: 0.6rem;
+  color: var(--text);
+  text-align: center;
+}
+.intel-airdrop-notice strong { color: var(--gold); }
+
+@media (max-width: 600px) {
+  .intel-token-row { grid-template-columns: 1fr 60px 60px; }
+  .intel-token-date { display: none; }
+  .intel-lb-row { grid-template-columns: 30px 1fr 60px 50px; }
+  .intel-lb-multiplier { display: none; }
+}
+
   </style>
 </head>
 <body>
@@ -3147,6 +3345,7 @@
     <li><a href="#" onclick="switchView('tools'); closeHamburger(); return false;">Tools</a></li>
     <li><a href="#pumpfun" onclick="switchView('landing'); closeHamburger()">Trust</a></li>
     <li><a href="#tokenomics" onclick="switchView('landing'); closeHamburger()">$J33T</a></li>
+    <li><a href="#" onclick="switchView('tools'); setTimeout(()=>switchToolTab('intelDashboard', document.querySelector('[data-tab=intel]')), 50); closeHamburger(); return false;">Intel</a></li>
   </ul>
   <div class="nav-right">
     <div class="nav-wallet-wrap" id="navWalletWrap">
@@ -3184,6 +3383,7 @@
   <button class="tools-tab-btn" onclick="switchToolTab('fomoSection', this)">📊 FOMO Report</button>
   <button class="tools-tab-btn" onclick="switchToolTab('rugornotSection', this)">🔍 Rug or Not</button>
   <button class="tools-tab-btn" onclick="switchToolTab('utility', this)">💎 Holder Utility</button>
+  <button class="tools-tab-btn" data-tab="intel" onclick="switchToolTab('intelDashboard', this)">🧬 Intel</button>
 </div>
 
 
@@ -3970,6 +4170,121 @@
 
 </section>
 
+<!-- J33T INTEL DASHBOARD SECTION -->
+<section class="sniff-section" id="intelDashboard" data-view="tools">
+  <div class="intel-section">
+    <div class="intel-header">
+      <h2>🧬 J33T INTEL</h2>
+      <p>On-chain intelligence platform. Analyze tokens, contribute data, earn rewards. Your key, your data, your edge.</p>
+    </div>
+
+    <!-- NOT CONNECTED STATE -->
+    <div id="intelLocked" class="intel-locked">
+      <div class="intel-locked-icon">🔐</div>
+      <div class="intel-locked-text">Connect your wallet to access J33T Intel</div>
+      <button class="btn" onclick="openWalletModal()">CONNECT WALLET</button>
+    </div>
+
+    <!-- CONNECTED STATE -->
+    <div id="intelUnlocked" style="display:none;">
+
+      <!-- AIRDROP NOTICE -->
+      <div class="intel-airdrop-notice">
+        ⚠️ <strong>Future airdrops and rewards will ONLY go to active Intel contributors.</strong><br>
+        The longer your daily streak, the higher your reward multiplier. Start contributing today!
+      </div>
+
+      <!-- API KEY CARD -->
+      <div class="intel-key-card">
+        <h3>🔑 YOUR INTEL API KEY</h3>
+        <div id="intelKeyDisplay" class="intel-key-display hidden-key">
+          No key generated yet
+        </div>
+        <div class="intel-key-actions">
+          <button id="intelGenBtn" onclick="intelGenerateKey()">GENERATE KEY</button>
+          <button id="intelCopyBtn" onclick="intelCopyKey()" style="display:none;">📋 COPY</button>
+          <button id="intelShowBtn" onclick="intelToggleKey()" style="display:none;">👁 SHOW/HIDE</button>
+          <button id="intelRevokeBtn" onclick="intelRevokeKey()" class="danger" style="display:none;">🗑 REVOKE & REGENERATE</button>
+        </div>
+        <div id="intelKeyWarning" class="intel-key-warning">
+          ⚠️ This key is shown only once! Copy it now and store it safely. Do NOT share it with anyone.
+        </div>
+        <div style="margin-top:12px; font-size:0.55rem; color:var(--muted);">
+          Add this key to your J33T Intel CLI config: <code style="color:var(--green);">J33T_INTEL_KEY=your_key_here</code>
+        </div>
+      </div>
+
+      <!-- STATS GRID -->
+      <div class="intel-stats-grid">
+        <div class="intel-stat-card">
+          <span class="intel-stat-val" id="intelTotalSubmissions">—</span>
+          <span class="intel-stat-lbl">Your Analyses</span>
+        </div>
+        <div class="intel-stat-card">
+          <span class="intel-stat-val" id="intelGlobalSubmissions">—</span>
+          <span class="intel-stat-lbl">Global Analyses</span>
+        </div>
+        <div class="intel-stat-card">
+          <span class="intel-stat-val" id="intelContributors">—</span>
+          <span class="intel-stat-lbl">Contributors</span>
+        </div>
+        <div class="intel-stat-card">
+          <span class="intel-stat-val" id="intelYourRank">—</span>
+          <span class="intel-stat-lbl">Your Rank</span>
+        </div>
+      </div>
+
+      <!-- STREAK BAR -->
+      <div class="intel-streak-bar">
+        <div class="intel-streak-fire" id="intelStreakEmoji">🔥</div>
+        <div class="intel-streak-info">
+          <div class="intel-streak-days" id="intelStreakDays">0 day streak</div>
+          <div class="intel-streak-next" id="intelStreakNext">Submit your first analysis to start!</div>
+          <div class="intel-streak-progress">
+            <div class="intel-streak-fill" id="intelStreakFill" style="width:0%"></div>
+          </div>
+        </div>
+        <div id="intelLevelBadge" class="intel-level-badge">Not contributing</div>
+      </div>
+
+      <!-- RECENT TOKENS -->
+      <div class="intel-tokens-list">
+        <div class="intel-tokens-header">📋 YOUR RECENT ANALYSES</div>
+        <div id="intelTokensList">
+          <div class="intel-empty">No analyses yet. Run <code>j33t backtest &lt;TOKEN_CA&gt; --contribute</code> to start!</div>
+        </div>
+      </div>
+
+      <!-- LEADERBOARD -->
+      <div class="intel-tokens-list intel-leaderboard">
+        <div class="intel-tokens-header">🏆 TOP CONTRIBUTORS</div>
+        <div class="intel-lb-row header">
+          <div>#</div>
+          <div>Contributor</div>
+          <div style="text-align:center">Streak</div>
+          <div style="text-align:center">Analyses</div>
+          <div style="text-align:right">Multiplier</div>
+        </div>
+        <div id="intelLeaderboard">
+          <div class="intel-empty">Loading leaderboard...</div>
+        </div>
+      </div>
+
+      <!-- CONTRIBUTOR LEVELS INFO -->
+      <div class="intel-key-card" style="border-color: rgba(255,255,255,0.05);">
+        <h3>📊 CONTRIBUTOR LEVELS & REWARDS</h3>
+        <div style="font-size:0.6rem; color:var(--text); line-height:1.8;">
+          <div>🥉 <strong>Contributor</strong> — 1+ submission → +1 daily analysis, pattern library access</div>
+          <div>🥈 <strong>Active</strong> — 7-day streak → +2 daily analyses, airdrop eligible (1x)</div>
+          <div>🥇 <strong>Power</strong> — 30-day streak → +3 daily analyses, airdrop multiplier 2x</div>
+          <div>💎 <strong>Diamond</strong> — 90-day streak → +5 daily analyses, airdrop multiplier 5x</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- Footer -->
 <footer>
   <div class="footer-logo">J33T © 2009–∞</div>
@@ -4019,7 +4334,7 @@
 
 <script>
 // ── VIEW SWITCHING ────────────────────────────────────────────
-const TOOL_IDS = ['liveFeed','dailySniff','launchScanner','smartMoney','fomoSection','rugornotSection','utility'];
+const TOOL_IDS = ['liveFeed','dailySniff','launchScanner','smartMoney','fomoSection','rugornotSection','utility','intelDashboard'];
 
 function switchView(view) {
   if (view === 'tools') {
@@ -8040,6 +8355,261 @@ document.querySelectorAll('section:not(#about), .safety-section, .pumpfun-sectio
   el.style.transition='opacity 0.7s ease, transform 0.7s ease';
   observer.observe(el);
 });
+</script>
+
+<script>
+// ── J33T INTEL DASHBOARD ──────────────────────────────────────
+
+const INTEL_API = 'https://j33t-intel-api.juhasz-peter1986.workers.dev';
+const INTEL_WORKER = 'https://j33t-sniff.j33t.workers.dev';
+let intelApiKey = null;
+let intelKeyVisible = false;
+
+function intelUpdateUI() {
+  const locked = document.getElementById('intelLocked');
+  const unlocked = document.getElementById('intelUnlocked');
+  if (!locked || !unlocked) return;
+
+  if (!walletConnected) {
+    locked.style.display = '';
+    unlocked.style.display = 'none';
+    return;
+  }
+
+  locked.style.display = 'none';
+  unlocked.style.display = '';
+
+  try {
+    const saved = localStorage.getItem('j33t_intel_key');
+    if (saved) {
+      intelApiKey = saved;
+      intelShowKeyState('saved');
+    }
+  } catch(e) {}
+
+  intelLoadStats();
+  intelLoadLeaderboard();
+  intelLoadProfile();
+}
+
+async function intelGenerateKey() {
+  if (!walletConnected || !walletFullAddr) {
+    showToast('Connect your wallet first!');
+    return;
+  }
+
+  const btn = document.getElementById('intelGenBtn');
+  btn.textContent = 'GENERATING...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(INTEL_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'generate_intel_key', wallet: walletFullAddr }),
+    });
+    const data = await res.json();
+
+    if (data.error) {
+      showToast('Key generation failed: ' + data.error);
+      btn.textContent = 'GENERATE KEY';
+      btn.disabled = false;
+      return;
+    }
+
+    intelApiKey = data.apiKey;
+    try { localStorage.setItem('j33t_intel_key', intelApiKey); } catch(e) {}
+    intelShowKeyState('new');
+    showToast('Intel API key generated! Copy it now — it won\'t be shown again. 🔑');
+  } catch(e) {
+    showToast('Error: ' + e.message);
+    btn.textContent = 'GENERATE KEY';
+    btn.disabled = false;
+  }
+}
+
+function intelShowKeyState(state) {
+  const display = document.getElementById('intelKeyDisplay');
+  const genBtn = document.getElementById('intelGenBtn');
+  const copyBtn = document.getElementById('intelCopyBtn');
+  const showBtn = document.getElementById('intelShowBtn');
+  const revokeBtn = document.getElementById('intelRevokeBtn');
+  const warning = document.getElementById('intelKeyWarning');
+
+  if (state === 'new') {
+    display.textContent = intelApiKey;
+    display.classList.remove('hidden-key');
+    intelKeyVisible = true;
+    genBtn.style.display = 'none';
+    copyBtn.style.display = '';
+    showBtn.style.display = '';
+    revokeBtn.style.display = '';
+    warning.classList.add('show');
+  } else if (state === 'saved') {
+    display.textContent = intelApiKey.slice(0, 12) + '••••••••••••••••';
+    display.classList.add('hidden-key');
+    intelKeyVisible = false;
+    genBtn.style.display = 'none';
+    copyBtn.style.display = '';
+    showBtn.style.display = '';
+    revokeBtn.style.display = '';
+    warning.classList.remove('show');
+  }
+}
+
+function intelToggleKey() {
+  if (!intelApiKey) return;
+  const display = document.getElementById('intelKeyDisplay');
+  intelKeyVisible = !intelKeyVisible;
+  if (intelKeyVisible) {
+    display.textContent = intelApiKey;
+    display.classList.remove('hidden-key');
+  } else {
+    display.textContent = intelApiKey.slice(0, 12) + '••••••••••••••••';
+    display.classList.add('hidden-key');
+  }
+}
+
+function intelCopyKey() {
+  if (!intelApiKey) return;
+  navigator.clipboard.writeText(intelApiKey).then(() => {
+    showToast('API key copied to clipboard! 📋');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = intelApiKey;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    showToast('API key copied! 📋');
+  });
+}
+
+async function intelRevokeKey() {
+  if (!confirm('Are you sure? This will invalidate your current key. You\'ll need to update your CLI config with the new key.')) return;
+
+  try {
+    await fetch(INTEL_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'revoke_intel_key', wallet: walletFullAddr }),
+    });
+  } catch(e) {}
+
+  intelApiKey = null;
+  try { localStorage.removeItem('j33t_intel_key'); } catch(e) {}
+
+  document.getElementById('intelKeyDisplay').textContent = 'Key revoked. Generate a new one.';
+  document.getElementById('intelKeyDisplay').classList.add('hidden-key');
+  document.getElementById('intelGenBtn').style.display = '';
+  document.getElementById('intelGenBtn').textContent = 'GENERATE NEW KEY';
+  document.getElementById('intelGenBtn').disabled = false;
+  document.getElementById('intelCopyBtn').style.display = 'none';
+  document.getElementById('intelShowBtn').style.display = 'none';
+  document.getElementById('intelRevokeBtn').style.display = 'none';
+  document.getElementById('intelKeyWarning').classList.remove('show');
+
+  showToast('Key revoked. Generate a new one. 🔄');
+  setTimeout(() => intelGenerateKey(), 500);
+}
+
+async function intelLoadStats() {
+  try {
+    const res = await fetch(`${INTEL_API}/api/leaderboard/stats`);
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('intelGlobalSubmissions').textContent = data.data.totalSubmissions || 0;
+      document.getElementById('intelContributors').textContent = data.data.totalContributors || 0;
+    }
+  } catch(e) {}
+}
+
+async function intelLoadProfile() {
+  try {
+    const res = await fetch(`${INTEL_API}/api/contributor/profile`);
+    const data = await res.json();
+    if (data.success && data.data.contributing) {
+      const d = data.data;
+      document.getElementById('intelTotalSubmissions').textContent = d.totalSubmissions || 0;
+
+      const streak = d.currentStreak || 0;
+      document.getElementById('intelStreakDays').textContent = streak + ' day streak';
+      document.getElementById('intelStreakEmoji').textContent = streak >= 7 ? '🔥' : streak >= 1 ? '✨' : '💤';
+
+      let nextText = '';
+      if (streak >= 90) nextText = 'MAX LEVEL! You\'re a Diamond Contributor 💎';
+      else if (streak >= 30) nextText = (90 - streak) + ' days to Diamond (5x airdrop)';
+      else if (streak >= 7) nextText = (30 - streak) + ' days to Power (2x airdrop)';
+      else if (streak >= 1) nextText = (7 - streak) + ' days to Active (airdrop eligible)';
+      else nextText = 'Submit your first analysis to start!';
+      document.getElementById('intelStreakNext').textContent = nextText;
+
+      let progress = 0;
+      if (streak >= 90) progress = 100;
+      else if (streak >= 30) progress = ((streak - 30) / 60) * 100;
+      else if (streak >= 7) progress = ((streak - 7) / 23) * 100;
+      else progress = (streak / 7) * 100;
+      document.getElementById('intelStreakFill').style.width = Math.min(100, progress) + '%';
+
+      const badge = document.getElementById('intelLevelBadge');
+      badge.className = 'intel-level-badge ' + (d.level || '');
+      badge.textContent = (d.levelEmoji || '') + ' ' + (d.levelName || 'Not contributing');
+
+      if (d.airdropMultiplier > 0) {
+        document.getElementById('intelYourRank').textContent = d.airdropMultiplier + 'x';
+      }
+    }
+  } catch(e) {}
+}
+
+async function intelLoadLeaderboard() {
+  try {
+    const res = await fetch(`${INTEL_API}/api/contributor/leaderboard?limit=10`);
+    const data = await res.json();
+    if (data.success && data.data.entries?.length) {
+      const container = document.getElementById('intelLeaderboard');
+      container.innerHTML = data.data.entries.map(e => `
+        <div class="intel-lb-row">
+          <div class="intel-lb-rank">${e.rank}</div>
+          <div>
+            <span>${e.levelEmoji || ''}</span>
+            <span style="color:var(--muted);font-size:0.55rem;">${e.contributorId.slice(0,8)}...</span>
+          </div>
+          <div class="intel-lb-streak">${e.currentStreak}d 🔥</div>
+          <div class="intel-lb-submissions">${e.totalSubmissions}</div>
+          <div class="intel-lb-multiplier">${e.airdropMultiplier > 0 ? e.airdropMultiplier + 'x' : '—'}</div>
+        </div>
+      `).join('');
+    }
+  } catch(e) {}
+}
+
+// Hook into wallet connect
+const _origApplyWalletState = typeof applyWalletState === 'function' ? applyWalletState : null;
+if (_origApplyWalletState) {
+  const _origFn = applyWalletState;
+  applyWalletState = function() {
+    _origFn();
+    intelUpdateUI();
+  };
+}
+
+// Hook into disconnect
+const _origDisconnect = typeof disconnectWallet === 'function' ? disconnectWallet : null;
+if (_origDisconnect) {
+  const _origDcFn = disconnectWallet;
+  disconnectWallet = function() {
+    _origDcFn();
+    intelApiKey = null;
+    const locked = document.getElementById('intelLocked');
+    const unlocked = document.getElementById('intelUnlocked');
+    if (locked) locked.style.display = '';
+    if (unlocked) unlocked.style.display = 'none';
+  };
+}
+
+// Initial load ha már csatlakozva van
+setTimeout(() => { if (walletConnected) intelUpdateUI(); }, 1000);
 </script>
 </body>
 </html>
