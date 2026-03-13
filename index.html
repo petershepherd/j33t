@@ -8514,7 +8514,7 @@ async function intelLoadStats() {
 
 async function intelLoadProfile() {
   try {
-    var res = await fetch(INTEL_API + '/api/contributor/profile');
+    var res = await fetch(INTEL_API + '/api/contributor/profile' + (intelApiKey ? '?apiKey=' + intelApiKey : ''));
     var data = await res.json();
     if (data.success && data.data.contributing) {
       var d = data.data;
