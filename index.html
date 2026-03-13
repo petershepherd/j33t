@@ -8378,6 +8378,7 @@ function intelUpdateUI() {
   intelLoadStats();
   intelLoadLeaderboard();
   intelLoadProfile();
+  intelLoadMyAnalyses();
 }
 
 async function intelGenerateKey() {
@@ -8568,6 +8569,27 @@ async function intelLoadLeaderboard() {
     }
   } catch(e) {}
 }
+    async function intelLoadMyAnalyses() {
+      if (!intelApiKey) return;
+      try {
+        var res = await fetch(INTEL_API + '/api/submissions/my/recent?apiKey=' + intelApiKey + '&limit=10');
+        var data = await res.json();
+        if (data.success && data.data.submissions && data.data.submissions.length) {
+          var container = document.getElementById('intelTokensList');
+          container.innerHTML = data.data.submissions.map(function(s) {
+            var date = new Date(s.created_at).toLocaleDateString();
+            var ca = s.token_ca.slice(0,6) + '...' + s.token_ca.slice(-4);
+            var patternClass = s.pattern_type === 'positive' ? 'positive' : s.pattern_type === 'negative' ? 'negative' : '';
+            return '<div class="intel-token-row">' +
+              '<div><span class="intel-token-name">' + ca + '</span></div>' +
+              '<div class="intel-token-score ' + patternClass + '">' + s.potential_score + '/100</div>' +
+              '<div class="intel-token-risk">' + s.rugpull_risk_score + '/100</div>' +
+              '<div class="intel-token-date">' + date + '</div>' +
+            '</div>';
+          }).join('');
+        }
+      } catch(e) {}
+    }
 
 // Hook: wallet connect után frissítjük az Intel UI-t
 (function() {
