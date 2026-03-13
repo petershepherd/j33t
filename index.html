@@ -4178,23 +4178,19 @@
       <p>On-chain intelligence platform. Analyze tokens, contribute data, earn rewards. Your key, your data, your edge.</p>
     </div>
 
-    <!-- NOT CONNECTED STATE -->
     <div id="intelLocked" class="intel-locked">
       <div class="intel-locked-icon">🔐</div>
       <div class="intel-locked-text">Connect your wallet to access J33T Intel</div>
       <button class="btn" onclick="openWalletModal()">CONNECT WALLET</button>
     </div>
 
-    <!-- CONNECTED STATE -->
     <div id="intelUnlocked" style="display:none;">
 
-      <!-- AIRDROP NOTICE -->
       <div class="intel-airdrop-notice">
         ⚠️ <strong>Future airdrops and rewards will ONLY go to active Intel contributors.</strong><br>
         The longer your daily streak, the higher your reward multiplier. Start contributing today!
       </div>
 
-      <!-- API KEY CARD -->
       <div class="intel-key-card">
         <h3>🔑 YOUR INTEL API KEY</h3>
         <div id="intelKeyDisplay" class="intel-key-display hidden-key">
@@ -4214,7 +4210,6 @@
         </div>
       </div>
 
-      <!-- STATS GRID -->
       <div class="intel-stats-grid">
         <div class="intel-stat-card">
           <span class="intel-stat-val" id="intelTotalSubmissions">—</span>
@@ -4230,13 +4225,12 @@
         </div>
         <div class="intel-stat-card">
           <span class="intel-stat-val" id="intelYourRank">—</span>
-          <span class="intel-stat-lbl">Your Rank</span>
+          <span class="intel-stat-lbl">Airdrop Multiplier</span>
         </div>
       </div>
 
-      <!-- STREAK BAR -->
       <div class="intel-streak-bar">
-        <div class="intel-streak-fire" id="intelStreakEmoji">🔥</div>
+        <div class="intel-streak-fire" id="intelStreakEmoji">💤</div>
         <div class="intel-streak-info">
           <div class="intel-streak-days" id="intelStreakDays">0 day streak</div>
           <div class="intel-streak-next" id="intelStreakNext">Submit your first analysis to start!</div>
@@ -4247,7 +4241,6 @@
         <div id="intelLevelBadge" class="intel-level-badge">Not contributing</div>
       </div>
 
-      <!-- RECENT TOKENS -->
       <div class="intel-tokens-list">
         <div class="intel-tokens-header">📋 YOUR RECENT ANALYSES</div>
         <div id="intelTokensList">
@@ -4255,7 +4248,6 @@
         </div>
       </div>
 
-      <!-- LEADERBOARD -->
       <div class="intel-tokens-list intel-leaderboard">
         <div class="intel-tokens-header">🏆 TOP CONTRIBUTORS</div>
         <div class="intel-lb-row header">
@@ -4270,7 +4262,6 @@
         </div>
       </div>
 
-      <!-- CONTRIBUTOR LEVELS INFO -->
       <div class="intel-key-card" style="border-color: rgba(255,255,255,0.05);">
         <h3>📊 CONTRIBUTOR LEVELS & REWARDS</h3>
         <div style="font-size:0.6rem; color:var(--text); line-height:1.8;">
@@ -8358,10 +8349,7 @@ document.querySelectorAll('section:not(#about), .safety-section, .pumpfun-sectio
 </script>
 
 <script>
-// ── J33T INTEL DASHBOARD ──────────────────────────────────────
-
 const INTEL_API = 'https://j33t-intel-api.juhasz-peter1986.workers.dev';
-const INTEL_WORKER = 'https://j33t-proxy.juhasz-peter1986.workers.dev';
 let intelApiKey = null;
 let intelKeyVisible = false;
 
@@ -8403,24 +8391,24 @@ async function intelGenerateKey() {
   btn.disabled = true;
 
   try {
-    const res = await fetch(INTEL_WORKER, {
+    const res = await fetch(INTEL_API + '/api/keys/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'generate_intel_key', wallet: walletFullAddr }),
+      body: JSON.stringify({ walletAddress: walletFullAddr }),
     });
     const data = await res.json();
 
-    if (data.error) {
-      showToast('Key generation failed: ' + data.error);
+    if (!data.success) {
+      showToast('Key generation failed: ' + (data.error?.message || 'Unknown error'));
       btn.textContent = 'GENERATE KEY';
       btn.disabled = false;
       return;
     }
 
-    intelApiKey = data.apiKey;
+    intelApiKey = data.data.apiKey;
     try { localStorage.setItem('j33t_intel_key', intelApiKey); } catch(e) {}
     intelShowKeyState('new');
-    showToast('Intel API key generated! Copy it now — it won\'t be shown again. 🔑');
+    showToast('Intel API key generated! Copy it now! 🔑');
   } catch(e) {
     showToast('Error: ' + e.message);
     btn.textContent = 'GENERATE KEY';
@@ -8472,10 +8460,10 @@ function intelToggleKey() {
 
 function intelCopyKey() {
   if (!intelApiKey) return;
-  navigator.clipboard.writeText(intelApiKey).then(() => {
+  navigator.clipboard.writeText(intelApiKey).then(function() {
     showToast('API key copied to clipboard! 📋');
-  }).catch(() => {
-    const ta = document.createElement('textarea');
+  }).catch(function() {
+    var ta = document.createElement('textarea');
     ta.value = intelApiKey;
     document.body.appendChild(ta);
     ta.select();
@@ -8486,13 +8474,13 @@ function intelCopyKey() {
 }
 
 async function intelRevokeKey() {
-  if (!confirm('Are you sure? This will invalidate your current key. You\'ll need to update your CLI config with the new key.')) return;
+  if (!confirm('Are you sure? This will invalidate your current key. You will need to update your CLI config with the new key.')) return;
 
   try {
-    await fetch(INTEL_WORKER, {
+    await fetch(INTEL_API + '/api/keys/revoke', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'revoke_intel_key', wallet: walletFullAddr }),
+      body: JSON.stringify({ walletAddress: walletFullAddr }),
     });
   } catch(e) {}
 
@@ -8509,14 +8497,14 @@ async function intelRevokeKey() {
   document.getElementById('intelRevokeBtn').style.display = 'none';
   document.getElementById('intelKeyWarning').classList.remove('show');
 
-  showToast('Key revoked. Generate a new one. 🔄');
-  setTimeout(() => intelGenerateKey(), 500);
+  showToast('Key revoked. Generating new one... 🔄');
+  setTimeout(function() { intelGenerateKey(); }, 500);
 }
 
 async function intelLoadStats() {
   try {
-    const res = await fetch(`${INTEL_API}/api/leaderboard/stats`);
-    const data = await res.json();
+    var res = await fetch(INTEL_API + '/api/leaderboard/stats');
+    var data = await res.json();
     if (data.success) {
       document.getElementById('intelGlobalSubmissions').textContent = data.data.totalSubmissions || 0;
       document.getElementById('intelContributors').textContent = data.data.totalContributors || 0;
@@ -8526,32 +8514,32 @@ async function intelLoadStats() {
 
 async function intelLoadProfile() {
   try {
-    const res = await fetch(`${INTEL_API}/api/contributor/profile`);
-    const data = await res.json();
+    var res = await fetch(INTEL_API + '/api/contributor/profile');
+    var data = await res.json();
     if (data.success && data.data.contributing) {
-      const d = data.data;
+      var d = data.data;
       document.getElementById('intelTotalSubmissions').textContent = d.totalSubmissions || 0;
 
-      const streak = d.currentStreak || 0;
+      var streak = d.currentStreak || 0;
       document.getElementById('intelStreakDays').textContent = streak + ' day streak';
       document.getElementById('intelStreakEmoji').textContent = streak >= 7 ? '🔥' : streak >= 1 ? '✨' : '💤';
 
-      let nextText = '';
-      if (streak >= 90) nextText = 'MAX LEVEL! You\'re a Diamond Contributor 💎';
+      var nextText = '';
+      if (streak >= 90) nextText = 'MAX LEVEL! Diamond Contributor 💎';
       else if (streak >= 30) nextText = (90 - streak) + ' days to Diamond (5x airdrop)';
       else if (streak >= 7) nextText = (30 - streak) + ' days to Power (2x airdrop)';
       else if (streak >= 1) nextText = (7 - streak) + ' days to Active (airdrop eligible)';
       else nextText = 'Submit your first analysis to start!';
       document.getElementById('intelStreakNext').textContent = nextText;
 
-      let progress = 0;
+      var progress = 0;
       if (streak >= 90) progress = 100;
       else if (streak >= 30) progress = ((streak - 30) / 60) * 100;
       else if (streak >= 7) progress = ((streak - 7) / 23) * 100;
       else progress = (streak / 7) * 100;
       document.getElementById('intelStreakFill').style.width = Math.min(100, progress) + '%';
 
-      const badge = document.getElementById('intelLevelBadge');
+      var badge = document.getElementById('intelLevelBadge');
       badge.className = 'intel-level-badge ' + (d.level || '');
       badge.textContent = (d.levelEmoji || '') + ' ' + (d.levelName || 'Not contributing');
 
@@ -8564,52 +8552,49 @@ async function intelLoadProfile() {
 
 async function intelLoadLeaderboard() {
   try {
-    const res = await fetch(`${INTEL_API}/api/contributor/leaderboard?limit=10`);
-    const data = await res.json();
-    if (data.success && data.data.entries?.length) {
-      const container = document.getElementById('intelLeaderboard');
-      container.innerHTML = data.data.entries.map(e => `
-        <div class="intel-lb-row">
-          <div class="intel-lb-rank">${e.rank}</div>
-          <div>
-            <span>${e.levelEmoji || ''}</span>
-            <span style="color:var(--muted);font-size:0.55rem;">${e.contributorId.slice(0,8)}...</span>
-          </div>
-          <div class="intel-lb-streak">${e.currentStreak}d 🔥</div>
-          <div class="intel-lb-submissions">${e.totalSubmissions}</div>
-          <div class="intel-lb-multiplier">${e.airdropMultiplier > 0 ? e.airdropMultiplier + 'x' : '—'}</div>
-        </div>
-      `).join('');
+    var res = await fetch(INTEL_API + '/api/contributor/leaderboard?limit=10');
+    var data = await res.json();
+    if (data.success && data.data.entries && data.data.entries.length) {
+      var container = document.getElementById('intelLeaderboard');
+      container.innerHTML = data.data.entries.map(function(e) {
+        return '<div class="intel-lb-row">' +
+          '<div class="intel-lb-rank">' + e.rank + '</div>' +
+          '<div><span>' + (e.levelEmoji || '') + '</span> <span style="color:var(--muted);font-size:0.55rem;">' + e.contributorId.slice(0,8) + '...</span></div>' +
+          '<div class="intel-lb-streak">' + e.currentStreak + 'd 🔥</div>' +
+          '<div class="intel-lb-submissions">' + e.totalSubmissions + '</div>' +
+          '<div class="intel-lb-multiplier">' + (e.airdropMultiplier > 0 ? e.airdropMultiplier + 'x' : '—') + '</div>' +
+        '</div>';
+      }).join('');
     }
   } catch(e) {}
 }
 
-// Hook into wallet connect
-const _origApplyWalletState = typeof applyWalletState === 'function' ? applyWalletState : null;
-if (_origApplyWalletState) {
-  const _origFn = applyWalletState;
-  applyWalletState = function() {
-    _origFn();
-    intelUpdateUI();
-  };
-}
-
-// Hook into disconnect
-const _origDisconnect = typeof disconnectWallet === 'function' ? disconnectWallet : null;
-if (_origDisconnect) {
-  const _origDcFn = disconnectWallet;
-  disconnectWallet = function() {
-    _origDcFn();
-    intelApiKey = null;
-    const locked = document.getElementById('intelLocked');
-    const unlocked = document.getElementById('intelUnlocked');
-    if (locked) locked.style.display = '';
-    if (unlocked) unlocked.style.display = 'none';
-  };
-}
-
-// Initial load ha már csatlakozva van
-setTimeout(() => { if (walletConnected) intelUpdateUI(); }, 1000);
+// Hook: wallet connect után frissítjük az Intel UI-t
+(function() {
+  var checkReady = setInterval(function() {
+    if (typeof applyWalletState === 'function') {
+      clearInterval(checkReady);
+      var origApply = applyWalletState;
+      applyWalletState = function() {
+        origApply();
+        intelUpdateUI();
+      };
+      var origDisconnect = disconnectWallet;
+      disconnectWallet = function() {
+        origDisconnect();
+        intelApiKey = null;
+        var locked = document.getElementById('intelLocked');
+        var unlocked = document.getElementById('intelUnlocked');
+        if (locked) locked.style.display = '';
+        if (unlocked) unlocked.style.display = 'none';
+      };
+      // Ha már be van lépve, frissítsük
+      if (typeof walletConnected !== 'undefined' && walletConnected) {
+        intelUpdateUI();
+      }
+    }
+  }, 200);
+})();
 </script>
 </body>
 </html>
