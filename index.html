@@ -9059,8 +9059,9 @@ async function intelLoadLeaderboard() {
       };
       var origDisconnect = disconnectWallet;
       disconnectWallet = function() {
-        origDisconnect();
-        intelApiKey = null;
+              origDisconnect();
+              intelApiKey = null;
+              try { localStorage.removeItem('j33t_intel_key'); } catch(e) {}
         var locked = document.getElementById('intelLocked');
         var unlocked = document.getElementById('intelUnlocked');
         if (locked) locked.style.display = '';
