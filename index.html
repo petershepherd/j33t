@@ -4227,6 +4227,10 @@
           <span class="intel-stat-val" id="intelYourRank">—</span>
           <span class="intel-stat-lbl">Airdrop Multiplier</span>
         </div>
+        <div class="intel-stat-card">
+          <span class="intel-stat-val" id="intelTrustScore">50</span>
+          <span class="intel-stat-lbl">Trust Score</span>
+        </div>
       </div>
 
       <div class="intel-streak-bar">
@@ -8542,7 +8546,16 @@ async function intelLoadProfile() {
 
       var badge = document.getElementById('intelLevelBadge');
       badge.className = 'intel-level-badge ' + (d.level || '');
-      badge.textContent = (d.levelEmoji || '') + ' ' + (d.levelName || 'Not contributing');
+      badge.textContent = (d.levelEmoji || '') + ' ' + (d.levelName || 'Not contributing') + (d.trustScore !== undefined ? ' · Trust: ' + Math.round(d.trustScore) : '');
+      
+      if (d.trustScore !== undefined) {
+              document.getElementById('intelTrustScore').textContent = Math.round(d.trustScore);
+              var trustEl = document.getElementById('intelTrustScore');
+              if (d.trustScore >= 80) trustEl.style.color = 'var(--green)';
+              else if (d.trustScore >= 50) trustEl.style.color = 'var(--gold)';
+              else if (d.trustScore >= 25) trustEl.style.color = '#ff8800';
+              else trustEl.style.color = 'var(--red)';
+            }
 
       if (d.airdropMultiplier > 0) {
         document.getElementById('intelYourRank').textContent = d.airdropMultiplier + 'x';
