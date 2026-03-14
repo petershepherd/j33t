@@ -8839,10 +8839,33 @@ function intelUpdateUI() {
 
   try {
       const saved = walletFullAddr ? localStorage.getItem('j33t_intel_key_' + walletFullAddr) : null;
-    if (saved) {
-      intelApiKey = saved;
-      intelShowKeyState('saved');
-    }
+      if (saved) {
+        intelApiKey = saved;
+        intelShowKeyState('saved');
+      } else if (walletFullAddr) {
+        fetch(INTEL_API + '/api/keys/status/' + walletFullAddr)
+          .then(function(res) { return res.json(); })
+          .then(function(data) {
+            if (data.success && data.data.hasKey) {
+              document.getElementById('intelKeyDisplay').textContent = 'You have an active Intel key, but it is not stored in this browser.';
+              document.getElementById('intelGenBtn').textContent = 'REGENERATE KEY (keeps all your data)';
+              document.getElementById('intelTotalSubmissions').textContent = data.data.totalSubmissions || 0;
+              document.getElementById('intelTrustScore').textContent = Math.round(data.data.trustScore);
+              var trustEl = document.getElementById('intelTrustScore');
+              if (data.data.trustScore >= 80) trustEl.style.color = 'var(--green)';
+              else if (data.data.trustScore >= 50) trustEl.style.color = 'var(--gold)';
+              else if (data.data.trustScore >= 25) trustEl.style.color = '#ff8800';
+              else trustEl.style.color = 'var(--red)';
+              var streak = data.data.currentStreak || 0;
+              document.getElementById('intelStreakDays').textContent = streak + ' day streak';
+              document.getElementById('intelStreakEmoji').textContent = streak >= 7 ? '🔥' : streak >= 1 ? '✨' : '💤';
+              if (data.data.airdropMultiplier > 0) {
+                document.getElementById('intelYourRank').textContent = data.data.airdropMultiplier + 'x';
+              }
+            }
+          })
+          .catch(function() {});
+      }
   } catch(e) {}
 
   intelLoadStats();
