@@ -3526,6 +3526,147 @@
       .intel-signals-grid { grid-template-columns: 1fr; }
     }
 
+    .intel-live-ticker {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 900;
+      pointer-events: none;
+      padding: 12px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .intel-toast {
+      pointer-events: auto;
+      background: var(--surface);
+      border: 1px solid var(--surface2);
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: intelToastIn 0.3s ease-out, intelToastOut 0.3s ease-in 4.7s forwards;
+      max-width: 500px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .intel-toast:hover { border-color: var(--gold); }
+    .intel-toast.disputed { border-color: rgba(255,68,102,0.4); }
+    .intel-toast .toast-icon { font-size: 0.8rem; flex-shrink: 0; }
+    .intel-toast .toast-text { flex: 1; }
+    .intel-toast .toast-contributor { color: var(--gold); }
+    .intel-toast .toast-trust { font-size: 0.5rem; margin-left: 4px; }
+    .intel-toast .toast-trust.positive { color: var(--green); }
+    .intel-toast .toast-trust.negative { color: var(--red); }
+    .intel-toast .toast-check-link {
+      color: var(--gold);
+      font-family: var(--pixel);
+      font-size: 0.4rem;
+      text-decoration: none;
+      padding: 3px 8px;
+      border: 1px solid var(--gold);
+      border-radius: 3px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .intel-toast .toast-check-link:hover { background: rgba(245,200,66,0.15); }
+    @keyframes intelToastIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes intelToastOut {
+      from { opacity: 1; }
+      to { opacity: 0; transform: translateY(10px); }
+    }
+
+    .intel-community-check {
+      background: var(--surface);
+      border: 1px solid rgba(255,68,102,0.2);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .intel-community-check h3 {
+      font-family: var(--pixel);
+      font-size: 0.6rem;
+      color: var(--red);
+      margin-bottom: 12px;
+    }
+    .intel-dispute-card {
+      background: var(--bg);
+      border: 1px solid var(--surface2);
+      border-radius: 6px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .intel-dispute-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .intel-dispute-ca {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--text);
+    }
+    .intel-dispute-conflict {
+      font-size: 0.5rem;
+      color: var(--muted);
+    }
+    .intel-dispute-conflict .user-says { color: var(--red); }
+    .intel-dispute-conflict .scoring-says { color: var(--green); }
+    .intel-dispute-reason {
+      font-size: 0.55rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-style: italic;
+    }
+    .intel-dispute-scores {
+      display: flex;
+      gap: 16px;
+      font-size: 0.55rem;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .intel-dispute-votes {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .intel-vote-btn {
+      font-family: var(--pixel);
+      font-size: 0.4rem;
+      padding: 6px 14px;
+      border: 1px solid var(--surface2);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .intel-vote-btn.agree:hover { border-color: var(--green); color: var(--green); }
+    .intel-vote-btn.disagree:hover { border-color: var(--red); color: var(--red); }
+    .intel-vote-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .intel-vote-count {
+      font-size: 0.5rem;
+      color: var(--muted);
+    }
+    .intel-no-disputes {
+      text-align: center;
+      padding: 20px;
+      color: var(--muted);
+      font-size: 0.6rem;
+    }
   </style>
 </head>
 <body>
@@ -4559,7 +4700,15 @@
           <div class="intel-empty">Loading leaderboard...</div>
         </div>
       </div>
-
+      <div class="intel-community-check" id="intelCommunityCheck">
+        <h3>⚖️ COMMUNITY CHECK — DISPUTED ANALYSES</h3>
+        <div style="font-size:0.55rem;color:var(--muted);margin-bottom:14px;">
+          These submissions have conflicting classifications. Vote to help resolve them and earn trust points.
+        </div>
+        <div id="intelDisputeList">
+          <div class="intel-no-disputes">Loading disputed submissions...</div>
+        </div>
+      </div>
       <div class="intel-key-card" style="border-color: rgba(255,255,255,0.05);">
         <h3>📊 CONTRIBUTOR LEVELS & REWARDS</h3>
         <div style="font-size:0.6rem; color:var(--text); line-height:1.8;">
@@ -9531,5 +9680,191 @@ function intelNewAnalysis() {
   document.getElementById('intelTokenCA').focus();
 }
 </script>
+<script>
+// ── LIVE ACTIVITY TICKER ──────────────────────────────────────
+
+var intelLastActivityTs = 0;
+var intelTickerTimer = null;
+
+function intelStartTicker() {
+  // Poll every 15 seconds for new activity
+  intelFetchActivity();
+  intelTickerTimer = setInterval(intelFetchActivity, 15000);
+}
+
+async function intelFetchActivity() {
+  try {
+    var url = INTEL_API + '/api/activity/recent?limit=5';
+    if (intelLastActivityTs) url += '&since=' + intelLastActivityTs;
+    var res = await fetch(url);
+    var data = await res.json();
+    if (data.success && data.data.events && data.data.events.length) {
+      data.data.events.reverse().forEach(function(event) {
+        if (event.createdAt > intelLastActivityTs) {
+          intelLastActivityTs = event.createdAt;
+          intelShowTickerToast(event);
+        }
+      });
+    }
+  } catch(e) {}
+}
+
+function intelShowTickerToast(event) {
+  var container = document.getElementById('intelLiveTicker');
+  if (!container) return;
+
+  var icons = {
+    submission: '📊',
+    disputed: '⚠️',
+    vote: '🗳️',
+    level_up: '🎉',
+    streak: '🔥',
+  };
+
+  var icon = icons[event.type] || '📡';
+  var trustClass = event.trustChange > 0 ? 'positive' : event.trustChange < 0 ? 'negative' : '';
+  var trustText = event.trustChange !== 0 ? (event.trustChange > 0 ? '+' : '') + event.trustChange + ' pts' : '';
+
+  var toast = document.createElement('div');
+  toast.className = 'intel-toast' + (event.type === 'disputed' ? ' disputed' : '');
+
+  var html = '<span class="toast-icon">' + icon + '</span>';
+  html += '<span class="toast-text">';
+  html += '<span class="toast-contributor">' + event.contributor + '</span> ';
+  html += event.details;
+  if (trustText) html += ' <span class="toast-trust ' + trustClass + '">' + trustText + '</span>';
+  html += '</span>';
+
+  if (event.type === 'disputed') {
+    html += '<a class="toast-check-link" onclick="intelScrollToCheck(); return false;" href="#">CHECK →</a>';
+  }
+
+  toast.innerHTML = html;
+  container.appendChild(toast);
+
+  // Remove after animation
+  setTimeout(function() {
+    if (toast.parentNode) toast.parentNode.removeChild(toast);
+  }, 5200);
+
+  // Max 3 toasts visible
+  while (container.children.length > 3) {
+    container.removeChild(container.firstChild);
+  }
+}
+
+function intelScrollToCheck() {
+  // Switch to Intel tab and scroll to community check
+  if (typeof switchView === 'function') switchView('tools');
+  setTimeout(function() {
+    if (typeof switchToolTab === 'function') {
+      var btn = document.querySelector('[data-tab=intel]');
+      switchToolTab('intelDashboard', btn);
+    }
+    setTimeout(function() {
+      var el = document.getElementById('intelCommunityCheck');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  }, 100);
+}
+
+// Start ticker when page loads
+setTimeout(intelStartTicker, 2000);
+
+
+// ── COMMUNITY CHECK PANEL ─────────────────────────────────────
+
+function intelLoadDisputes() {
+  fetch(INTEL_API + '/api/votes/disputed?limit=10')
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (!data.success) return;
+      var disputes = data.data.submissions || [];
+      var container = document.getElementById('intelDisputeList');
+      if (!container) return;
+
+      if (!disputes.length) {
+        container.innerHTML = '<div class="intel-no-disputes">No disputed submissions right now. All clear! ✅</div>';
+        return;
+      }
+
+      container.innerHTML = disputes.map(function(d) {
+        var shortCA = d.tokenCA.slice(0, 8) + '...' + d.tokenCA.slice(-6);
+        return '<div class="intel-dispute-card" id="dispute_' + d.id + '">' +
+          '<div class="intel-dispute-header">' +
+            '<span class="intel-dispute-ca">' + shortCA + '</span>' +
+            '<span class="intel-dispute-conflict">' +
+              'User says: <span class="user-says">' + d.userPattern.toUpperCase() + '</span> · ' +
+              'Scoring says: <span class="scoring-says">' + d.scoringPattern.toUpperCase() + '</span>' +
+            '</span>' +
+          '</div>' +
+          '<div class="intel-dispute-scores">' +
+            '<span>Potential: <strong>' + d.potentialScore + '/100</strong></span>' +
+            '<span>Risk: <strong>' + d.riskScore + '/100</strong></span>' +
+          '</div>' +
+          '<div class="intel-dispute-reason">"' + d.disputeReason + '"</div>' +
+          '<div class="intel-dispute-votes">' +
+            '<button class="intel-vote-btn agree" onclick="intelCastVote(\'' + d.id + '\', \'agree\', this)">👍 AGREE WITH USER (' + d.agreeVotes + ')</button>' +
+            '<button class="intel-vote-btn disagree" onclick="intelCastVote(\'' + d.id + '\', \'disagree\', this)">👎 AGREE WITH SCORING (' + d.disagreeVotes + ')</button>' +
+            '<span class="intel-vote-count">' + (d.agreeVotes + d.disagreeVotes) + '/5 votes</span>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    })
+    .catch(function() {});
+}
+
+async function intelCastVote(submissionId, vote, btn) {
+  if (!intelApiKey) {
+    showToast('You need an Intel API key to vote. Generate one above!');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'VOTING...';
+
+  try {
+    var res = await fetch(INTEL_API + '/api/votes/cast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        submissionId: submissionId,
+        vote: vote,
+        apiKey: intelApiKey,
+      }),
+    });
+    var data = await res.json();
+
+    if (data.success) {
+      showToast('Vote recorded! Thank you for helping the community. 🗳️');
+      // Refresh disputes
+      setTimeout(intelLoadDisputes, 500);
+    } else {
+      showToast(data.error?.message || 'Vote failed');
+      btn.disabled = false;
+      btn.textContent = vote === 'agree' ? '👍 AGREE WITH USER' : '👎 AGREE WITH SCORING';
+    }
+  } catch(e) {
+    showToast('Error: ' + e.message);
+    btn.disabled = false;
+  }
+}
+
+// Load disputes when Intel tab opens
+var origSwitchToolTab = typeof switchToolTab === 'function' ? switchToolTab : null;
+if (origSwitchToolTab) {
+  var _origSwitch = switchToolTab;
+  switchToolTab = function(tabId, btn) {
+    _origSwitch(tabId, btn);
+    if (tabId === 'intelDashboard') {
+      intelLoadDisputes();
+    }
+  };
+}
+
+// Initial load
+setTimeout(intelLoadDisputes, 1500);
+</script>
+<div class="intel-live-ticker" id="intelLiveTicker"></div>
 </body>
 </html>
