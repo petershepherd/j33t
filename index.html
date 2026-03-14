@@ -8815,7 +8815,7 @@ function intelUpdateUI() {
   unlocked.style.display = '';
 
   // Reset dashboard if no API key
-  if (!localStorage.getItem('j33t_intel_key')) {
+  if (!walletFullAddr || !localStorage.getItem('j33t_intel_key_' + walletFullAddr)) {
     document.getElementById('intelTotalSubmissions').textContent = '—';
     document.getElementById('intelYourRank').textContent = '—';
     document.getElementById('intelTrustScore').textContent = '50';
@@ -8838,7 +8838,7 @@ function intelUpdateUI() {
   }
 
   try {
-    const saved = localStorage.getItem('j33t_intel_key');
+      const saved = walletFullAddr ? localStorage.getItem('j33t_intel_key_' + walletFullAddr) : null;
     if (saved) {
       intelApiKey = saved;
       intelShowKeyState('saved');
@@ -8877,7 +8877,7 @@ async function intelGenerateKey() {
     }
 
     intelApiKey = data.data.apiKey;
-    try { localStorage.setItem('j33t_intel_key', intelApiKey); } catch(e) {}
+    try { localStorage.setItem('j33t_intel_key_' + walletFullAddr, intelApiKey); } catch(e) {}
     intelShowKeyState('new');
     showToast('Intel API key generated! Copy it now! 🔑');
   } catch(e) {
@@ -8956,7 +8956,7 @@ async function intelRevokeKey() {
   } catch(e) {}
 
   intelApiKey = null;
-  try { localStorage.removeItem('j33t_intel_key'); } catch(e) {}
+  try { if (walletFullAddr) localStorage.removeItem('j33t_intel_key_' + walletFullAddr); } catch(e) {}
 
   document.getElementById('intelKeyDisplay').textContent = 'Key revoked. Generate a new one.';
   document.getElementById('intelKeyDisplay').classList.add('hidden-key');
@@ -9084,7 +9084,6 @@ async function intelLoadLeaderboard() {
       disconnectWallet = function() {
               origDisconnect();
               intelApiKey = null;
-              try { localStorage.removeItem('j33t_intel_key'); } catch(e) {}
         var locked = document.getElementById('intelLocked');
         var unlocked = document.getElementById('intelUnlocked');
         if (locked) locked.style.display = '';
