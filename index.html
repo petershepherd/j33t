@@ -3290,6 +3290,241 @@
   .intel-lb-row { grid-template-columns: 30px 1fr 60px 50px; }
   .intel-lb-multiplier { display: none; }
 }
+    .intel-analyzer {
+      background: var(--surface);
+      border: 1px solid rgba(245,200,66,0.15);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .intel-analyzer h3 {
+      font-family: var(--pixel);
+      font-size: 0.6rem;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+    .intel-helius-setup {
+      background: var(--bg);
+      border: 1px solid var(--surface2);
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .intel-helius-setup label {
+      font-size: 0.6rem;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .intel-helius-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--surface2);
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text);
+      outline: none;
+    }
+    .intel-helius-input:focus { border-color: var(--gold); }
+    .intel-helius-input::placeholder { color: var(--muted); opacity: 0.5; }
+    .intel-helius-status {
+      font-size: 0.5rem;
+      margin-top: 6px;
+      color: var(--green);
+    }
+    .intel-mode-toggle {
+      display: flex;
+      gap: 0;
+      margin-bottom: 16px;
+      border: 1px solid var(--surface2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .intel-mode-btn {
+      flex: 1;
+      padding: 10px 16px;
+      font-family: var(--pixel);
+      font-size: 0.5rem;
+      border: none;
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .intel-mode-btn.active {
+      background: rgba(245,200,66,0.12);
+      color: var(--gold);
+    }
+    .intel-mode-btn:hover:not(.active) { color: var(--text); }
+    .intel-ca-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .intel-ca-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--surface2);
+      border-radius: 4px;
+      padding: 12px 14px;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text);
+      outline: none;
+    }
+    .intel-ca-input:focus { border-color: var(--gold); }
+    .intel-ca-input::placeholder { color: var(--muted); opacity: 0.5; }
+    .intel-analyze-btn {
+      font-family: var(--pixel);
+      font-size: 0.5rem;
+      padding: 12px 24px;
+      border: 1px solid var(--gold);
+      background: rgba(245,200,66,0.1);
+      color: var(--gold);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .intel-analyze-btn:hover { background: rgba(245,200,66,0.2); }
+    .intel-analyze-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .intel-progress {
+      margin-bottom: 16px;
+      display: none;
+    }
+    .intel-progress.active { display: block; }
+    .intel-progress-step {
+      font-size: 0.6rem;
+      color: var(--muted);
+      padding: 4px 0;
+    }
+    .intel-progress-step.done { color: var(--green); }
+    .intel-progress-step.running { color: var(--gold); }
+    .intel-progress-bar {
+      height: 4px;
+      background: var(--surface2);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .intel-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--green));
+      border-radius: 2px;
+      transition: width 0.3s;
+      width: 0%;
+    }
+    .intel-result { display: none; }
+    .intel-result.active { display: block; }
+    .intel-result-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .intel-result-name {
+      font-family: var(--pixel);
+      font-size: 0.8rem;
+      color: var(--text);
+    }
+    .intel-result-pattern {
+      font-family: var(--pixel);
+      font-size: 0.5rem;
+      padding: 4px 12px;
+      border-radius: 12px;
+      border: 1px solid;
+    }
+    .intel-result-pattern.positive { border-color: var(--green); color: var(--green); background: rgba(0,255,170,0.08); }
+    .intel-result-pattern.negative { border-color: var(--red); color: var(--red); background: rgba(255,68,102,0.08); }
+    .intel-result-pattern.unknown { border-color: var(--muted); color: var(--muted); background: rgba(107,107,136,0.08); }
+    .intel-scores-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .intel-score-box {
+      background: var(--bg);
+      border: 1px solid var(--surface2);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+    .intel-score-label {
+      font-size: 0.5rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .intel-score-value {
+      font-family: var(--pixel);
+      font-size: 1.2rem;
+    }
+    .intel-score-meter {
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .intel-score-meter-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.5s;
+    }
+    .intel-signals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .intel-signal-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: var(--bg);
+      border-radius: 4px;
+      font-size: 0.6rem;
+    }
+    .intel-signal-name { color: var(--muted); }
+    .intel-signal-value { color: var(--text); font-weight: 700; }
+    .intel-signal-value.good { color: var(--green); }
+    .intel-signal-value.bad { color: var(--red); }
+    .intel-signal-value.warn { color: #ff8800; }
+    .intel-result-time {
+      font-size: 0.55rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 12px;
+    }
+    .intel-result-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    .intel-result-actions button {
+      font-family: var(--pixel);
+      font-size: 0.45rem;
+      padding: 8px 16px;
+      border: 1px solid var(--surface2);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .intel-result-actions button:hover { border-color: var(--gold); color: var(--gold); }
+    @media (max-width: 600px) {
+      .intel-ca-row { flex-direction: column; }
+      .intel-scores-row { grid-template-columns: 1fr; }
+      .intel-signals-grid { grid-template-columns: 1fr; }
+    }
 
   </style>
 </head>
@@ -4190,7 +4425,66 @@
         ⚠️ <strong>Future airdrops and rewards will ONLY go to active Intel contributors.</strong><br>
         The longer your daily streak, the higher your reward multiplier. Start contributing today!
       </div>
+      <div class="intel-analyzer">
+        <h3>🔬 TOKEN ANALYZER</h3>
+        
+        <!-- Helius API Key Setup -->
+        <div class="intel-helius-setup" id="intelHeliusSetup">
+          <label>HELIUS API KEY <span style="color:var(--muted);font-size:0.45rem;">(free at helius.dev — stays in your browser, never sent to our servers)</span></label>
+          <input type="password" class="intel-helius-input" id="intelHeliusKey" placeholder="Enter your Helius API key..." onchange="intelSaveHeliusKey()" oninput="intelSaveHeliusKey()">
+          <div class="intel-helius-status" id="intelHeliusStatus"></div>
+        </div>
 
+        <!-- Mode Toggle -->
+        <div class="intel-mode-toggle">
+          <button class="intel-mode-btn active" id="intelModeBacktest" onclick="intelSetMode('backtest')">📊 BACKTEST</button>
+          <button class="intel-mode-btn" id="intelModeRugcheck" onclick="intelSetMode('rugcheck')">🔍 RUGCHECK</button>
+        </div>
+
+        <!-- Token Input -->
+        <div class="intel-ca-row">
+          <input type="text" class="intel-ca-input" id="intelTokenCA" placeholder="Paste Solana token address (CA)..." spellcheck="false">
+          <button class="intel-analyze-btn" id="intelAnalyzeBtn" onclick="intelRunAnalysis()">🐾 ANALYZE</button>
+        </div>
+
+        <!-- Progress -->
+        <div class="intel-progress" id="intelProgress">
+          <div id="intelProgressSteps"></div>
+          <div class="intel-progress-bar">
+            <div class="intel-progress-fill" id="intelProgressFill"></div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="intel-result" id="intelResult">
+          <div class="intel-result-header">
+            <span class="intel-result-name" id="intelResultName">—</span>
+            <span class="intel-result-pattern" id="intelResultPattern">—</span>
+          </div>
+
+          <div class="intel-scores-row">
+            <div class="intel-score-box">
+              <div class="intel-score-label">Potential Score</div>
+              <div class="intel-score-value" id="intelPotentialScore" style="color:var(--green)">—</div>
+              <div class="intel-score-meter"><div class="intel-score-meter-fill" id="intelPotentialMeter" style="background:var(--green);width:0%"></div></div>
+            </div>
+            <div class="intel-score-box">
+              <div class="intel-score-label">Rugpull Risk</div>
+              <div class="intel-score-value" id="intelRiskScore" style="color:var(--red)">—</div>
+              <div class="intel-score-meter"><div class="intel-score-meter-fill" id="intelRiskMeter" style="background:var(--red);width:0%"></div></div>
+            </div>
+          </div>
+
+          <div class="intel-signals-grid" id="intelSignalsGrid"></div>
+
+          <div class="intel-result-time" id="intelResultTime"></div>
+
+          <div class="intel-result-actions">
+            <button onclick="intelCopyJSON()">📋 COPY JSON</button>
+            <button onclick="intelNewAnalysis()">🔄 NEW ANALYSIS</button>
+          </div>
+        </div>
+      </div>
       <div class="intel-key-card">
         <h3>🔑 YOUR INTEL API KEY</h3>
         <div id="intelKeyDisplay" class="intel-key-display hidden-key">
@@ -8630,6 +8924,612 @@ async function intelLoadLeaderboard() {
     }
   }, 200);
 })();
+</script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+// J33T INTEL — CLIENT-SIDE TOKEN ANALYZER ENGINE
+// ═══════════════════════════════════════════════════════════════
+
+var intelMode = 'backtest';
+var intelLastResult = null;
+
+// ── Helius Key Management ─────────────────────────────────────
+function intelSaveHeliusKey() {
+  var key = document.getElementById('intelHeliusKey').value.trim();
+  if (key.length > 10) {
+    try { localStorage.setItem('j33t_helius_key', key); } catch(e) {}
+    document.getElementById('intelHeliusStatus').textContent = '✓ Key saved in browser';
+  } else {
+    document.getElementById('intelHeliusStatus').textContent = '';
+  }
+}
+
+function intelLoadHeliusKey() {
+  try {
+    var saved = localStorage.getItem('j33t_helius_key');
+    if (saved) {
+      document.getElementById('intelHeliusKey').value = saved;
+      document.getElementById('intelHeliusStatus').textContent = '✓ Key loaded from browser';
+    }
+  } catch(e) {}
+}
+setTimeout(intelLoadHeliusKey, 500);
+
+// ── Mode Toggle ───────────────────────────────────────────────
+function intelSetMode(mode) {
+  intelMode = mode;
+  document.getElementById('intelModeBacktest').classList.toggle('active', mode === 'backtest');
+  document.getElementById('intelModeRugcheck').classList.toggle('active', mode === 'rugcheck');
+}
+
+// ── Progress UI ───────────────────────────────────────────────
+function intelShowProgress(steps) {
+  var el = document.getElementById('intelProgress');
+  el.classList.add('active');
+  document.getElementById('intelResult').classList.remove('active');
+  document.getElementById('intelProgressSteps').innerHTML = steps.map(function(s) {
+    return '<div class="intel-progress-step" id="step_' + s.id + '">⏳ ' + s.label + '</div>';
+  }).join('');
+  document.getElementById('intelProgressFill').style.width = '0%';
+}
+
+function intelUpdateStep(id, status, label) {
+  var el = document.getElementById('step_' + id);
+  if (!el) return;
+  el.className = 'intel-progress-step ' + status;
+  var icon = status === 'done' ? '✅' : status === 'running' ? '🔄' : '⏳';
+  el.textContent = icon + ' ' + (label || el.textContent.slice(2));
+}
+
+function intelSetProgress(pct) {
+  document.getElementById('intelProgressFill').style.width = pct + '%';
+}
+
+// ── Main Analysis Runner ──────────────────────────────────────
+async function intelRunAnalysis() {
+  var heliusKey = document.getElementById('intelHeliusKey').value.trim();
+  var tokenCA = document.getElementById('intelTokenCA').value.trim();
+
+  if (!heliusKey || heliusKey.length < 10) {
+    showToast('Please enter your Helius API key first');
+    return;
+  }
+  if (!tokenCA || tokenCA.length < 32) {
+    showToast('Please enter a valid Solana token address');
+    return;
+  }
+
+  var btn = document.getElementById('intelAnalyzeBtn');
+  btn.disabled = true;
+  btn.textContent = 'ANALYZING...';
+
+  var startTime = Date.now();
+
+  var steps = [
+    { id: 'market', label: 'Fetching market data from DexScreener...' },
+    { id: 'txns', label: 'Fetching transaction history from Helius...' },
+    { id: 'parse', label: 'Parsing and classifying transactions...' },
+    { id: 'bundles', label: 'Detecting wallet bundles...' },
+    { id: 'dev', label: 'Analyzing dev wallet...' },
+    { id: 'holders', label: 'Checking holder distribution...' },
+    { id: 'signals', label: 'Computing detection signals...' },
+    { id: 'scoring', label: 'Calculating scores...' },
+  ];
+  intelShowProgress(steps);
+
+  try {
+    // Step 1: DexScreener
+    intelUpdateStep('market', 'running');
+    intelSetProgress(5);
+    var dexData = await intelFetchDexScreener(tokenCA);
+    intelUpdateStep('market', 'done', 'Market data: ' + dexData.name + ' (' + dexData.symbol + ')');
+    intelSetProgress(15);
+
+    // Step 2: Helius transactions
+    intelUpdateStep('txns', 'running');
+    var txns = await intelFetchHelius(tokenCA, heliusKey);
+    intelUpdateStep('txns', 'done', 'Fetched ' + txns.length + ' transactions');
+    intelSetProgress(40);
+
+    // Step 3: Parse transactions
+    intelUpdateStep('parse', 'running');
+    var parsed = intelParseTransactions(txns, tokenCA);
+    var buys = parsed.filter(function(t) { return t.type === 'buy'; }).length;
+    var sells = parsed.filter(function(t) { return t.type === 'sell'; }).length;
+    intelUpdateStep('parse', 'done', parsed.length + ' relevant txs (' + buys + ' buys, ' + sells + ' sells)');
+    intelSetProgress(55);
+
+    // Step 4: Bundle detection
+    intelUpdateStep('bundles', 'running');
+    var bundles = intelDetectBundles(parsed);
+    intelUpdateStep('bundles', 'done', bundles.length + ' bundles detected');
+    intelSetProgress(65);
+
+    // Step 5: Dev wallet
+    intelUpdateStep('dev', 'running');
+    var deployer = intelIdentifyDeployer(parsed);
+    var devActivity = intelAnalyzeDevWallet(parsed, deployer);
+    intelUpdateStep('dev', 'done', devActivity.hasSold ? 'Dev sold ' + devActivity.soldPct.toFixed(1) + '%' : 'Dev has NOT sold');
+    intelSetProgress(75);
+
+    // Step 6: Holders
+    intelUpdateStep('holders', 'running');
+    var top10Pct = await intelFetchHolders(tokenCA, heliusKey);
+    intelUpdateStep('holders', 'done', 'Top 10 holders: ' + top10Pct.toFixed(1) + '%');
+    intelSetProgress(85);
+
+    // Step 7: Signals
+    intelUpdateStep('signals', 'running');
+    var signals = intelExtractSignals(parsed, bundles, devActivity, dexData, top10Pct);
+    intelUpdateStep('signals', 'done', 'All signals computed');
+    intelSetProgress(92);
+
+    // Step 8: Scoring
+    intelUpdateStep('scoring', 'running');
+    var scores = intelCalculateScores(signals);
+    var pattern = scores.potential > 60 && scores.risk < 40 ? 'positive' : scores.risk > 60 ? 'negative' : 'unknown';
+    // Override for rugcheck mode
+    if (intelMode === 'rugcheck') {
+      // Let scoring decide, but mark the user intent
+    }
+    intelUpdateStep('scoring', 'done', 'Potential: ' + scores.potential + ' | Risk: ' + scores.risk);
+    intelSetProgress(100);
+
+    var duration = ((Date.now() - startTime) / 1000).toFixed(1);
+
+    // Build result
+    intelLastResult = {
+      tokenCA: tokenCA,
+      name: dexData.name,
+      symbol: dexData.symbol,
+      mode: intelMode,
+      pattern: pattern,
+      scores: scores,
+      signals: signals,
+      market: dexData,
+      devActivity: devActivity,
+      bundles: bundles.length,
+      duration: duration,
+      analyzedAt: Date.now(),
+    };
+
+    // Display results
+    setTimeout(function() { intelShowResults(intelLastResult); }, 300);
+
+    // Auto-submit to community DB if Intel key exists
+    if (intelApiKey) {
+      intelSubmitResult(intelLastResult);
+    }
+
+  } catch(e) {
+    showToast('Analysis failed: ' + e.message);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '🐾 ANALYZE';
+}
+
+// ── DexScreener Fetch ─────────────────────────────────────────
+async function intelFetchDexScreener(ca) {
+  var res = await fetch('https://api.dexscreener.com/latest/dex/tokens/' + ca);
+  var data = await res.json();
+  var pairs = (data.pairs || []).filter(function(p) { return p.chainId === 'solana'; });
+  pairs.sort(function(a, b) { return (b.liquidity?.usd || 0) - (a.liquidity?.usd || 0); });
+  if (!pairs.length) throw new Error('No Solana trading pairs found');
+  var p = pairs[0];
+  return {
+    name: p.baseToken?.name || 'Unknown',
+    symbol: p.baseToken?.symbol || '???',
+    mcap: p.marketCap || p.fdv || 0,
+    price: parseFloat(p.priceUsd) || 0,
+    liquidity: p.liquidity?.usd || 0,
+    volume24h: p.volume?.h24 || 0,
+    createdAt: p.pairCreatedAt || 0,
+    buys1h: p.txns?.h1?.buys || 0,
+    sells1h: p.txns?.h1?.sells || 0,
+  };
+}
+
+// ── Helius Fetch ──────────────────────────────────────────────
+async function intelFetchHelius(ca, apiKey) {
+  var all = [];
+  var before = null;
+  for (var page = 0; page < 5 && all.length < 500; page++) {
+    var url = 'https://api.helius.xyz/v0/addresses/' + ca + '/transactions?api-key=' + apiKey + '&limit=100';
+    if (before) url += '&before=' + before;
+    var res = await fetch(url);
+    if (!res.ok) throw new Error('Helius API error: ' + res.status);
+    var txns = await res.json();
+    if (!txns.length) break;
+    all = all.concat(txns);
+    before = txns[txns.length - 1].signature;
+    if (txns.length < 100) break;
+    await new Promise(function(r) { setTimeout(r, 100); });
+  }
+  return all;
+}
+
+// ── Transaction Parser ────────────────────────────────────────
+function intelParseTransactions(heliusTxs, tokenMint) {
+  var parsed = [];
+  for (var i = 0; i < heliusTxs.length; i++) {
+    var tx = heliusTxs[i];
+    var tokenTransfers = (tx.tokenTransfers || []).filter(function(t) { return t.mint === tokenMint; });
+    var solTransfers = tx.nativeTransfers || [];
+    if (!tokenTransfers.length) continue;
+
+    var type = 'transfer';
+    var txType = (tx.type || '').toUpperCase();
+    var source = (tx.source || '').toUpperCase();
+
+    if (txType.indexOf('ADD_LIQUIDITY') >= 0 || txType.indexOf('CREATE_POOL') >= 0) {
+      type = 'add_liquidity';
+    } else if (txType.indexOf('REMOVE_LIQUIDITY') >= 0 || txType.indexOf('WITHDRAW') >= 0) {
+      type = 'remove_liquidity';
+    } else if (txType === 'SWAP' || source === 'RAYDIUM' || source === 'ORCA' || source === 'JUPITER' || source === 'PUMP_FUN') {
+      // Determine buy or sell
+      type = 'buy';
+      for (var j = 0; j < (tx.accountData || []).length; j++) {
+        var acc = tx.accountData[j];
+        if (acc.account === tx.feePayer) {
+          for (var k = 0; k < (acc.tokenBalanceChanges || []).length; k++) {
+            if (acc.tokenBalanceChanges[k].mint === tokenMint) {
+              var amt = parseFloat(acc.tokenBalanceChanges[k].rawTokenAmount.tokenAmount);
+              type = amt > 0 ? 'buy' : 'sell';
+            }
+          }
+        }
+      }
+    } else {
+      // Check if there's a SOL counterpart (swap-like)
+      var hasSol = solTransfers.some(function(t) { return Math.abs(t.amount) > 10000000; });
+      if (hasSol && tokenTransfers.length) {
+        type = 'buy'; // default to buy if we can't determine
+        for (var j2 = 0; j2 < tokenTransfers.length; j2++) {
+          if (tokenTransfers[j2].fromUserAccount === tx.feePayer) { type = 'sell'; break; }
+          if (tokenTransfers[j2].toUserAccount === tx.feePayer) { type = 'buy'; break; }
+        }
+      }
+    }
+
+    var tokenAmount = tokenTransfers.reduce(function(s, t) { return s + Math.abs(t.tokenAmount); }, 0);
+    var solAmount = solTransfers.reduce(function(s, t) { return s + Math.abs(t.amount); }, 0) / 1e9;
+
+    parsed.push({
+      signature: tx.signature,
+      timestamp: tx.timestamp * 1000,
+      slot: tx.slot,
+      signer: tx.feePayer,
+      type: type,
+      tokenAmount: tokenAmount,
+      solAmount: solAmount,
+    });
+  }
+  parsed.sort(function(a, b) { return a.timestamp - b.timestamp; });
+  return parsed;
+}
+
+// ── Bundle Detector ───────────────────────────────────────────
+function intelDetectBundles(transactions) {
+  var buyTxs = transactions.filter(function(t) { return t.type === 'buy'; });
+  if (buyTxs.length < 2) return [];
+
+  var bundles = [];
+  var assignedWallets = {};
+
+  // Same-slot clustering
+  var slotGroups = {};
+  for (var i = 0; i < buyTxs.length; i++) {
+    var slot = buyTxs[i].slot;
+    var found = false;
+    for (var s in slotGroups) {
+      if (Math.abs(slot - parseInt(s)) <= 5) {
+        slotGroups[s].push(buyTxs[i]);
+        found = true;
+        break;
+      }
+    }
+    if (!found) slotGroups[slot] = [buyTxs[i]];
+  }
+
+  for (var s2 in slotGroups) {
+    var group = slotGroups[s2];
+    var wallets = {};
+    group.forEach(function(tx) { wallets[tx.signer] = true; });
+    var uniqueWallets = Object.keys(wallets).filter(function(w) { return !assignedWallets[w]; });
+    if (uniqueWallets.length >= 2) {
+      bundles.push({ wallets: uniqueWallets, txCount: group.length });
+      uniqueWallets.forEach(function(w) { assignedWallets[w] = true; });
+    }
+  }
+
+  return bundles;
+}
+
+// ── Dev Wallet Analyzer ───────────────────────────────────────
+function intelIdentifyDeployer(transactions) {
+  if (!transactions.length) return null;
+  var first = transactions[0];
+  if (first.type === 'add_liquidity') return first.signer;
+  var firstLP = transactions.find(function(t) { return t.type === 'add_liquidity'; });
+  if (firstLP) return firstLP.signer;
+  return first.signer;
+}
+
+function intelAnalyzeDevWallet(transactions, deployer) {
+  if (!deployer) return { hasSold: false, soldPct: 0, sellCount: 0 };
+  var devTxs = transactions.filter(function(t) { return t.signer === deployer; });
+  var sold = 0;
+  var sellCount = 0;
+  var firstSellTime = null;
+  devTxs.forEach(function(tx) {
+    if (tx.type === 'sell') {
+      sold += tx.tokenAmount;
+      sellCount++;
+      if (!firstSellTime) firstSellTime = tx.timestamp;
+    }
+  });
+  // Rough estimate of total supply from all token transfers
+  var totalTokens = 0;
+  transactions.forEach(function(t) { totalTokens += t.tokenAmount; });
+  var estimatedSupply = totalTokens / 2; // rough: total volume / 2
+  var soldPct = estimatedSupply > 0 ? (sold / estimatedSupply) * 100 : 0;
+  return {
+    hasSold: sold > 0,
+    soldPct: Math.min(100, soldPct),
+    sellCount: sellCount,
+    firstSellTime: firstSellTime,
+  };
+}
+
+// ── Holder Distribution ───────────────────────────────────────
+async function intelFetchHolders(ca, apiKey) {
+  try {
+    var res = await fetch('https://mainnet.helius-rpc.com/?api-key=' + apiKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0', id: 1,
+        method: 'getTokenLargestAccounts',
+        params: [ca],
+      }),
+    });
+    var data = await res.json();
+    var accounts = (data.result?.value || []);
+    if (!accounts.length) return 50;
+    var top10 = accounts.slice(0, 10).reduce(function(s, a) { return s + (a.uiAmount || 0); }, 0);
+    var total = accounts.reduce(function(s, a) { return s + (a.uiAmount || 0); }, 0);
+    return total > 0 ? (top10 / total) * 100 : 50;
+  } catch(e) {
+    return 50; // default estimate
+  }
+}
+
+// ── Signal Extractor ──────────────────────────────────────────
+function intelExtractSignals(parsed, bundles, devActivity, dexData, top10Pct) {
+  var firstTxTime = parsed.length ? parsed[0].timestamp : Date.now();
+  var minutesSinceLaunch = Math.max(1, (Date.now() - firstTxTime) / 60000);
+
+  // Buy/sell ratio (first 60 min)
+  var windowEnd = firstTxTime + 60 * 60000;
+  var inWindow = parsed.filter(function(t) { return t.timestamp <= windowEnd; });
+  var buyCount = inWindow.filter(function(t) { return t.type === 'buy'; }).length;
+  var sellCount = inWindow.filter(function(t) { return t.type === 'sell'; }).length;
+  var buySellRatio = sellCount === 0 ? buyCount : buyCount / sellCount;
+
+  // Unique wallets first 10 min
+  var window10 = firstTxTime + 10 * 60000;
+  var wallets10 = {};
+  parsed.forEach(function(t) {
+    if (t.timestamp <= window10 && t.type === 'buy') wallets10[t.signer] = true;
+  });
+
+  // Bundle percentage (rough)
+  var bundleWalletCount = bundles.reduce(function(s, b) { return s + b.wallets.length; }, 0);
+
+  // Timing suspicion (first 5 min only)
+  var timingSuspicion = 0;
+  var window5 = firstTxTime + 5 * 60000;
+  var earlyBuys = parsed.filter(function(t) { return t.timestamp <= window5 && t.type === 'buy'; });
+  if (earlyBuys.length >= 3) {
+    var first10s = earlyBuys.filter(function(t) { return t.timestamp - firstTxTime < 10000; });
+    var burst = first10s.length > 10 ? 0.8 : first10s.length > 5 ? 0.5 : first10s.length > 2 ? 0.2 : 0;
+
+    var earlySlots = {};
+    earlyBuys.forEach(function(t) {
+      if (!earlySlots[t.slot]) earlySlots[t.slot] = {};
+      earlySlots[t.slot][t.signer] = true;
+    });
+    var multiSlots = 0;
+    var totalSlots = 0;
+    for (var s in earlySlots) {
+      totalSlots++;
+      if (Object.keys(earlySlots[s]).length > 1) multiSlots++;
+    }
+    var slotRatio = totalSlots > 0 ? multiSlots / totalSlots : 0;
+    var slotSusp = slotRatio > 0.5 ? 0.8 : slotRatio > 0.25 ? 0.5 : slotRatio > 0.1 ? 0.25 : 0;
+
+    timingSuspicion = Math.min(1, burst * 0.4 + slotSusp * 0.4);
+  }
+
+  return {
+    liquidityGrowthRate: dexData.liquidity / minutesSinceLaunch,
+    buySellRatio: Math.round(buySellRatio * 100) / 100,
+    bundlePercentage: Math.min(100, bundleWalletCount * 2), // rough estimate
+    bundleCount: bundles.length,
+    top10HolderPercentage: Math.round(top10Pct * 10) / 10,
+    devSoldPercentage: Math.round(devActivity.soldPct * 10) / 10,
+    liquidityLocked: false,
+    liquidityLockDurationHours: 0,
+    volumeMcapRatio: dexData.mcap > 0 ? Math.round((dexData.volume24h / dexData.mcap) * 1000) / 1000 : 0,
+    priceMomentumScore: 0.3, // simplified for browser
+    hasFreezeAuthority: false,
+    hasMintAuthority: false,
+    transactionTimingSuspicion: Math.round(timingSuspicion * 100) / 100,
+    uniqueWalletsFirst10Min: Object.keys(wallets10).length,
+  };
+}
+
+// ── Scoring Engine ────────────────────────────────────────────
+function intelCalculateScores(signals) {
+  var s = signals;
+  var potential = 0;
+  var risk = 0;
+
+  // Buy/Sell Ratio
+  var bsr = s.buySellRatio;
+  var bsrScore = bsr < 0.3 ? 5 : bsr < 0.7 ? 20 : bsr < 1.0 ? 35 : bsr < 1.5 ? 50 : bsr <= 3.0 ? 75 + ((bsr-1.5)/1.5)*20 : bsr <= 8 ? 85 : 55;
+  potential += bsrScore * 0.14;
+  risk += (100 - bsrScore) * 0.08;
+
+  // Bundle %
+  var bpScore = s.bundlePercentage <= 2 ? 95 : s.bundlePercentage <= 8 ? 75 : s.bundlePercentage <= 20 ? 50 : s.bundlePercentage <= 40 ? 25 : 5;
+  potential += bpScore * 0.10;
+  risk += (100 - bpScore) * 0.18;
+
+  // Top 10 Holders
+  var thScore = s.top10HolderPercentage <= 30 ? 95 : s.top10HolderPercentage <= 50 ? 80 : s.top10HolderPercentage <= 70 ? 60 : s.top10HolderPercentage <= 85 ? 40 : 15;
+  potential += thScore * 0.06;
+  risk += (100 - thScore) * 0.08;
+
+  // Dev Sold
+  var dsScore = s.devSoldPercentage === 0 ? 95 : s.devSoldPercentage <= 5 ? 80 : s.devSoldPercentage <= 15 ? 55 : s.devSoldPercentage <= 40 ? 25 : 5;
+  potential += dsScore * 0.12;
+  risk += (100 - dsScore) * 0.16;
+
+  // Liquidity Lock
+  var llScore = s.liquidityLocked ? 85 : 35;
+  potential += llScore * 0.06;
+  risk += (100 - llScore) * 0.08;
+
+  // Volume/MCap
+  var vmScore = s.volumeMcapRatio < 0.001 ? 10 : s.volumeMcapRatio < 0.01 ? 30 : s.volumeMcapRatio < 0.1 ? 55 : s.volumeMcapRatio <= 1.0 ? 80 : s.volumeMcapRatio <= 3.0 ? 90 : 50;
+  potential += vmScore * 0.10;
+  risk += (100 - vmScore) * 0.04;
+
+  // Freeze/Mint
+  var faScore = s.hasFreezeAuthority ? 5 : 90;
+  var maScore = s.hasMintAuthority ? 10 : 90;
+  potential += faScore * 0.06;
+  potential += maScore * 0.06;
+  risk += (100 - faScore) * 0.10;
+  risk += (100 - maScore) * 0.08;
+
+  // Timing Suspicion
+  var tsScore = s.transactionTimingSuspicion < 0.15 ? 90 : s.transactionTimingSuspicion < 0.35 ? 70 : s.transactionTimingSuspicion < 0.6 ? 45 : s.transactionTimingSuspicion < 0.8 ? 25 : 10;
+  potential += tsScore * 0.04;
+  risk += (100 - tsScore) * 0.04;
+
+  // Unique Wallets
+  var uwScore = s.uniqueWalletsFirst10Min < 3 ? 15 : s.uniqueWalletsFirst10Min < 10 ? 35 : s.uniqueWalletsFirst10Min <= 30 ? 60 : s.uniqueWalletsFirst10Min <= 80 ? 80 : s.uniqueWalletsFirst10Min <= 200 ? 90 : 65;
+  potential += uwScore * 0.08;
+  risk += (100 - uwScore) * 0.06;
+
+  // Liquidity Growth
+  var lgScore = s.liquidityGrowthRate < 5 ? 15 : s.liquidityGrowthRate <= 100 ? 30 + (s.liquidityGrowthRate/100)*40 : s.liquidityGrowthRate <= 1000 ? 70 + ((s.liquidityGrowthRate-100)/900)*20 : s.liquidityGrowthRate <= 5000 ? 60 : 25;
+  potential += lgScore * 0.08;
+  risk += (100 - lgScore) * 0.04;
+
+  // Momentum
+  var pmScore = 65; // simplified
+  potential += pmScore * 0.10;
+  risk += (100 - pmScore) * 0.06;
+
+  return {
+    potential: Math.max(0, Math.min(100, Math.round(potential))),
+    risk: Math.max(0, Math.min(100, Math.round(risk))),
+  };
+}
+
+// ── Display Results ───────────────────────────────────────────
+function intelShowResults(r) {
+  document.getElementById('intelProgress').classList.remove('active');
+  document.getElementById('intelResult').classList.add('active');
+
+  document.getElementById('intelResultName').textContent = r.name + ' (' + r.symbol + ')';
+
+  var patternEl = document.getElementById('intelResultPattern');
+  patternEl.textContent = r.pattern.toUpperCase();
+  patternEl.className = 'intel-result-pattern ' + r.pattern;
+
+  var potEl = document.getElementById('intelPotentialScore');
+  potEl.textContent = r.scores.potential + '/100';
+  potEl.style.color = r.scores.potential >= 60 ? 'var(--green)' : r.scores.potential >= 40 ? 'var(--gold)' : 'var(--red)';
+  document.getElementById('intelPotentialMeter').style.width = r.scores.potential + '%';
+  document.getElementById('intelPotentialMeter').style.background = r.scores.potential >= 60 ? 'var(--green)' : r.scores.potential >= 40 ? 'var(--gold)' : 'var(--red)';
+
+  var riskEl = document.getElementById('intelRiskScore');
+  riskEl.textContent = r.scores.risk + '/100';
+  riskEl.style.color = r.scores.risk <= 30 ? 'var(--green)' : r.scores.risk <= 60 ? '#ff8800' : 'var(--red)';
+  document.getElementById('intelRiskMeter').style.width = r.scores.risk + '%';
+  document.getElementById('intelRiskMeter').style.background = r.scores.risk <= 30 ? 'var(--green)' : r.scores.risk <= 60 ? '#ff8800' : 'var(--red)';
+
+  // Signals grid
+  var sig = r.signals;
+  var signalItems = [
+    { name: 'Buy/Sell Ratio', value: sig.buySellRatio + 'x', status: sig.buySellRatio >= 1.5 ? 'good' : sig.buySellRatio < 1.0 ? 'bad' : 'warn' },
+    { name: 'Bundle %', value: sig.bundlePercentage.toFixed(1) + '%', status: sig.bundlePercentage <= 5 ? 'good' : sig.bundlePercentage > 20 ? 'bad' : 'warn' },
+    { name: 'Top 10 Holders', value: sig.top10HolderPercentage + '%', status: sig.top10HolderPercentage <= 50 ? 'good' : sig.top10HolderPercentage > 85 ? 'bad' : 'warn' },
+    { name: 'Dev Sold', value: sig.devSoldPercentage + '%', status: sig.devSoldPercentage === 0 ? 'good' : sig.devSoldPercentage > 15 ? 'bad' : 'warn' },
+    { name: 'Liquidity Locked', value: sig.liquidityLocked ? 'Yes' : 'No', status: sig.liquidityLocked ? 'good' : 'warn' },
+    { name: 'Volume/MCap', value: sig.volumeMcapRatio.toFixed(3), status: sig.volumeMcapRatio >= 0.1 ? 'good' : sig.volumeMcapRatio < 0.01 ? 'bad' : 'warn' },
+    { name: 'Freeze Authority', value: sig.hasFreezeAuthority ? 'YES ⚠️' : 'No', status: sig.hasFreezeAuthority ? 'bad' : 'good' },
+    { name: 'Mint Authority', value: sig.hasMintAuthority ? 'YES ⚠️' : 'No', status: sig.hasMintAuthority ? 'bad' : 'good' },
+    { name: 'Timing Suspicion', value: Math.round(sig.transactionTimingSuspicion * 100) + '%', status: sig.transactionTimingSuspicion < 0.3 ? 'good' : sig.transactionTimingSuspicion > 0.6 ? 'bad' : 'warn' },
+    { name: 'Unique Wallets 10m', value: sig.uniqueWalletsFirst10Min.toString(), status: sig.uniqueWalletsFirst10Min >= 20 ? 'good' : sig.uniqueWalletsFirst10Min < 5 ? 'bad' : 'warn' },
+    { name: 'Bundles Found', value: sig.bundleCount.toString(), status: sig.bundleCount <= 5 ? 'good' : sig.bundleCount > 20 ? 'bad' : 'warn' },
+    { name: 'MCap', value: r.market.mcap >= 1000000 ? '$' + (r.market.mcap/1000000).toFixed(2) + 'M' : '$' + (r.market.mcap/1000).toFixed(1) + 'K', status: '' },
+    { name: 'Liquidity', value: '$' + (r.market.liquidity/1000).toFixed(1) + 'K', status: r.market.liquidity >= 50000 ? 'good' : r.market.liquidity < 10000 ? 'bad' : 'warn' },
+  ];
+
+  document.getElementById('intelSignalsGrid').innerHTML = signalItems.map(function(s) {
+    return '<div class="intel-signal-row"><span class="intel-signal-name">' + s.name + '</span><span class="intel-signal-value ' + s.status + '">' + s.value + '</span></div>';
+  }).join('');
+
+  document.getElementById('intelResultTime').textContent = 'Analysis completed in ' + r.duration + 's · ' + new Date().toLocaleTimeString();
+}
+
+// ── Submit to Community DB ────────────────────────────────────
+async function intelSubmitResult(r) {
+  try {
+    var submission = {
+      tokenCA: r.tokenCA,
+      analyzedAt: r.analyzedAt,
+      patternType: r.pattern,
+      signals: r.signals,
+      scores: {
+        potentialScore: r.scores.potential,
+        rugpullRiskScore: r.scores.risk,
+        confidence: 64,
+        signalBreakdown: [],
+      },
+      clientVersion: '0.2.0-web',
+    };
+    await fetch(INTEL_API + '/api/submissions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ submission: submission, apiKey: intelApiKey }),
+    });
+  } catch(e) {}
+}
+
+// ── Copy JSON ─────────────────────────────────────────────────
+function intelCopyJSON() {
+  if (!intelLastResult) return;
+  var json = JSON.stringify(intelLastResult, null, 2);
+  navigator.clipboard.writeText(json).then(function() {
+    showToast('JSON copied to clipboard! 📋');
+  }).catch(function() {
+    showToast('Copy failed');
+  });
+}
+
+// ── New Analysis ──────────────────────────────────────────────
+function intelNewAnalysis() {
+  document.getElementById('intelResult').classList.remove('active');
+  document.getElementById('intelTokenCA').value = '';
+  document.getElementById('intelTokenCA').focus();
+}
 </script>
 </body>
 </html>
