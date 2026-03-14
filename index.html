@@ -8814,6 +8814,29 @@ function intelUpdateUI() {
   locked.style.display = 'none';
   unlocked.style.display = '';
 
+  // Reset dashboard if no API key
+  if (!localStorage.getItem('j33t_intel_key')) {
+    document.getElementById('intelTotalSubmissions').textContent = '—';
+    document.getElementById('intelYourRank').textContent = '—';
+    document.getElementById('intelTrustScore').textContent = '50';
+    document.getElementById('intelTrustScore').style.color = 'var(--gold)';
+    document.getElementById('intelStreakDays').textContent = '0 day streak';
+    document.getElementById('intelStreakEmoji').textContent = '💤';
+    document.getElementById('intelStreakNext').textContent = 'Generate your Intel API key to start!';
+    document.getElementById('intelStreakFill').style.width = '0%';
+    document.getElementById('intelLevelBadge').className = 'intel-level-badge';
+    document.getElementById('intelLevelBadge').textContent = 'Not contributing';
+    document.getElementById('intelTokensList').innerHTML = '<div class="intel-empty">Generate your Intel API key, then run analyses to see them here.</div>';
+    document.getElementById('intelKeyDisplay').textContent = 'No key generated yet';
+    document.getElementById('intelKeyDisplay').classList.add('hidden-key');
+    document.getElementById('intelGenBtn').style.display = '';
+    document.getElementById('intelGenBtn').textContent = 'GENERATE KEY';
+    document.getElementById('intelGenBtn').disabled = false;
+    document.getElementById('intelCopyBtn').style.display = 'none';
+    document.getElementById('intelShowBtn').style.display = 'none';
+    document.getElementById('intelRevokeBtn').style.display = 'none';
+  }
+
   try {
     const saved = localStorage.getItem('j33t_intel_key');
     if (saved) {
