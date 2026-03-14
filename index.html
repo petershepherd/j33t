@@ -9814,24 +9814,69 @@ function intelLoadDisputes() {
 
       container.innerHTML = disputes.map(function(d) {
         var shortCA = d.tokenCA.slice(0, 8) + '...' + d.tokenCA.slice(-6);
+        var dexLink = 'https://dexscreener.com/solana/' + d.tokenCA;
+        var solscanLink = 'https://solscan.io/token/' + d.tokenCA;
+        var timeAgo = Math.round((Date.now() - d.createdAt) / 60000);
+        var timeStr = timeAgo < 60 ? timeAgo + 'm ago' : Math.round(timeAgo / 60) + 'h ago';
+        var totalVotes = d.agreeVotes + d.disagreeVotes;
+        var progressPct = Math.min(100, (totalVotes / 5) * 100);
+
         return '<div class="intel-dispute-card" id="dispute_' + d.id + '">' +
+
           '<div class="intel-dispute-header">' +
-            '<span class="intel-dispute-ca">' + shortCA + '</span>' +
-            '<span class="intel-dispute-conflict">' +
+            '<div>' +
+              '<div style="font-family:var(--pixel);font-size:0.55rem;color:var(--gold);margin-bottom:4px;">⚖️ DISPUTED ANALYSIS</div>' +
+              '<div style="font-size:0.5rem;color:var(--muted);">Submitted ' + timeStr + '</div>' +
+            '</div>' +
+            '<div class="intel-dispute-conflict">' +
               'User says: <span class="user-says">' + d.userPattern.toUpperCase() + '</span> · ' +
               'Scoring says: <span class="scoring-says">' + d.scoringPattern.toUpperCase() + '</span>' +
-            '</span>' +
+            '</div>' +
           '</div>' +
-          '<div class="intel-dispute-scores">' +
-            '<span>Potential: <strong>' + d.potentialScore + '/100</strong></span>' +
-            '<span>Risk: <strong>' + d.riskScore + '/100</strong></span>' +
+
+          '<div style="background:var(--surface);border:1px solid var(--surface2);border-radius:4px;padding:10px 12px;margin-bottom:10px;">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">' +
+              '<div>' +
+                '<div style="font-family:var(--mono);font-size:0.6rem;color:var(--text);margin-bottom:4px;">' + d.tokenCA + '</div>' +
+                '<div style="display:flex;gap:12px;font-size:0.5rem;">' +
+                  '<a href="' + dexLink + '" target="_blank" style="color:var(--gold);text-decoration:none;">📊 DexScreener ↗</a>' +
+                  '<a href="' + solscanLink + '" target="_blank" style="color:var(--accent);text-decoration:none;">🔍 Solscan ↗</a>' +
+                  '<span style="color:var(--muted);">📋 <span style="cursor:pointer;text-decoration:underline;" onclick="navigator.clipboard.writeText(\'' + d.tokenCA + '\');showToast(\'CA copied!\')">Copy CA</span></span>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
           '</div>' +
+
+          '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:10px;">' +
+            '<div style="background:var(--surface);border-radius:4px;padding:8px;text-align:center;">' +
+              '<div style="font-size:0.45rem;color:var(--muted);margin-bottom:2px;">POTENTIAL</div>' +
+              '<div style="font-family:var(--pixel);font-size:0.6rem;color:' + (d.potentialScore >= 60 ? 'var(--green)' : d.potentialScore >= 40 ? 'var(--gold)' : 'var(--red)') + ';">' + d.potentialScore + '/100</div>' +
+            '</div>' +
+            '<div style="background:var(--surface);border-radius:4px;padding:8px;text-align:center;">' +
+              '<div style="font-size:0.45rem;color:var(--muted);margin-bottom:2px;">RISK</div>' +
+              '<div style="font-family:var(--pixel);font-size:0.6rem;color:' + (d.riskScore <= 30 ? 'var(--green)' : d.riskScore <= 60 ? '#ff8800' : 'var(--red)') + ';">' + d.riskScore + '/100</div>' +
+            '</div>' +
+            '<div style="background:var(--surface);border-radius:4px;padding:8px;text-align:center;">' +
+              '<div style="font-size:0.45rem;color:var(--muted);margin-bottom:2px;">USER SAYS</div>' +
+              '<div style="font-family:var(--pixel);font-size:0.55rem;color:' + (d.userPattern === 'positive' ? 'var(--green)' : 'var(--red)') + ';">' + d.userPattern.toUpperCase() + '</div>' +
+            '</div>' +
+            '<div style="background:var(--surface);border-radius:4px;padding:8px;text-align:center;">' +
+              '<div style="font-size:0.45rem;color:var(--muted);margin-bottom:2px;">SCORING SAYS</div>' +
+              '<div style="font-family:var(--pixel);font-size:0.55rem;color:' + (d.scoringPattern === 'positive' ? 'var(--green)' : d.scoringPattern === 'negative' ? 'var(--red)' : 'var(--gold)') + ';">' + d.scoringPattern.toUpperCase() + '</div>' +
+            '</div>' +
+          '</div>' +
+
           '<div class="intel-dispute-reason">"' + d.disputeReason + '"</div>' +
-          '<div class="intel-dispute-votes">' +
-            '<button class="intel-vote-btn agree" onclick="intelCastVote(\'' + d.id + '\', \'agree\', this)">👍 AGREE WITH USER (' + d.agreeVotes + ')</button>' +
-            '<button class="intel-vote-btn disagree" onclick="intelCastVote(\'' + d.id + '\', \'disagree\', this)">👎 AGREE WITH SCORING (' + d.disagreeVotes + ')</button>' +
-            '<span class="intel-vote-count">' + (d.agreeVotes + d.disagreeVotes) + '/5 votes</span>' +
+
+          '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">' +
+            '<button class="intel-vote-btn agree" onclick="intelCastVote(\'' + d.id + '\', \'agree\', this)">👍 USER IS RIGHT (' + d.agreeVotes + ')</button>' +
+            '<button class="intel-vote-btn disagree" onclick="intelCastVote(\'' + d.id + '\', \'disagree\', this)">👎 SCORING IS RIGHT (' + d.disagreeVotes + ')</button>' +
+            '<span class="intel-vote-count">' + totalVotes + '/5 votes needed</span>' +
+            '<div style="flex:1;min-width:80px;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;">' +
+              '<div style="height:100%;width:' + progressPct + '%;background:linear-gradient(90deg,var(--gold),var(--green));border-radius:2px;transition:width 0.3s;"></div>' +
+            '</div>' +
           '</div>' +
+
         '</div>';
       }).join('');
     })
