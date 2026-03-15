@@ -9273,6 +9273,7 @@ async function intelRunAnalysis() {
     var duration = ((Date.now() - startTime) / 1000).toFixed(1);
 
     // Build result
+    var rawData = { transactions: parsed, bundles: bundles, deployer: deployer, dexData: dexData };
     intelLastResult = {
       tokenCA: tokenCA,
       name: dexData.name,
@@ -9285,6 +9286,7 @@ async function intelRunAnalysis() {
       devActivity: devActivity,
       bundles: bundles.length,
       duration: duration,
+      rawData: rawData,
       analyzedAt: Date.now(),
     };
 
@@ -9687,6 +9689,9 @@ function intelShowResults(r) {
 // ── Submit to Community DB ────────────────────────────────────
 async function intelSubmitResult(r) {
   try {
+    // Extract detailed patterns from the raw analysis data
+    var patterns = intelExtractPatterns(r);
+
     var submission = {
       tokenCA: r.tokenCA,
       analyzedAt: r.analyzedAt,
@@ -9703,7 +9708,7 @@ async function intelSubmitResult(r) {
     await fetch(INTEL_API + '/api/submissions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ submission: submission, apiKey: intelApiKey }),
+      body: JSON.stringify({ submission: submission, apiKey: intelApiKey, patterns: patterns }),
     });
   } catch(e) {}
 }
@@ -9720,6 +9725,166 @@ function intelCopyJSON() {
 }
 
 // ── New Analysis ──────────────────────────────────────────────
+function intelExtractPatterns(r) {
+  if (!r.rawData || !r.rawData.transactions) return null;
+
+  var txs = r.rawData.transactions.slice().sort(function(a, b) { return a.timestamp - b.timestamp; });
+  var deployer = r.rawData.deployer;
+  var bundles = r.rawData.bundles || [];
+  if (!txs.length) return null;
+
+  var t0 = txs[0].timestamp;
+  function secSince(ts) { return (ts - t0) / 1000; }
+  function filterWindow(ms) { return txs.filter(function(t) { return t.timestamp - t0 <= ms; }); }
+  function getBuys(arr) { return arr.filter(function(t) { return t.type === 'buy'; }); }
+  function getSells(arr) { return arr.filter(function(t) { return t.type === 'sell'; }); }
+  function uniqueSigners(arr) { var s = {}; arr.forEach(function(t) { s[t.signer] = true; }); return Object.keys(s).length; }
+  function totalSol(arr) { return arr.reduce(function(s, t) { return s + (t.solAmount || 0); }, 0); }
+
+  var w30s = filterWindow(30000);
+  var w60s = filterWindow(60000);
+  var w5m = filterWindow(300000);
+  var w15m = filterWindow(900000);
+  var w30m = filterWindow(1800000);
+  var w1h = filterWindow(3600000);
+
+  var buys5m = getBuys(w5m);
+  var sells5m = getSells(w5m);
+  var buys30s = getBuys(w30s);
+  var buys60s = getBuys(w60s);
+  var sells60s = getSells(w60s);
+
+  var slots30s = {};
+  buys30s.forEach(function(t) { slots30s[t.slot] = (slots30s[t.slot] || 0) + 1; });
+  var slotsUsed30s = Object.keys(slots30s).length;
+  var maxBuysPerSlot30s = slotsUsed30s > 0 ? Math.max.apply(null, Object.values(slots30s)) : 0;
+
+  var bundleTotalWallets = bundles.reduce(function(s, b) { return s + b.wallets.length; }, 0);
+  var largestBundle = bundles.reduce(function(max, b) { return Math.max(max, b.wallets.length); }, 0);
+  var bundleWalletSet = {};
+  bundles.forEach(function(b) { b.wallets.forEach(function(w) { bundleWalletSet[w] = true; }); });
+  var bundleBuys = buys5m.filter(function(t) { return bundleWalletSet[t.signer]; });
+  var bundleSolSpent = totalSol(bundleBuys);
+
+  var firstBundleTimeSec = 0;
+  if (bundles.length > 0) {
+    var bw = {}; bundles[0].wallets.forEach(function(w) { bw[w] = true; });
+    var fbt = txs.find(function(t) { return bw[t.signer] && t.type === 'buy'; });
+    if (fbt) firstBundleTimeSec = secSince(fbt.timestamp);
+  }
+
+  var bundleSlots = {};
+  bundleBuys.forEach(function(t) { bundleSlots[t.slot] = true; });
+  var bsArr = Object.keys(bundleSlots).map(Number).sort(function(a, b) { return a - b; });
+  var bundleSlotsSpan = bsArr.length > 1 ? bsArr[bsArr.length - 1] - bsArr[0] : 0;
+
+  var devTxs = deployer ? txs.filter(function(t) { return t.signer === deployer; }) : [];
+  var devFirstTx = devTxs[0];
+  var devSells1h = deployer ? getSells(w1h).filter(function(t) { return t.signer === deployer; }) : [];
+  var devFirstSell = devSells1h[0];
+  var devLPAdds = devTxs.filter(function(t) { return t.type === 'add_liquidity'; });
+  var devLPRemoves = devTxs.filter(function(t) { return t.type === 'remove_liquidity'; });
+  var devFirstRemove = devLPRemoves[0];
+  var devSellTokens = devSells1h.reduce(function(s, t) { return s + (t.tokenAmount || 0); }, 0);
+  var totalTokenVol = txs.reduce(function(s, t) { return s + (t.tokenAmount || 0); }, 0);
+  var estimatedSupply = totalTokenVol / 2;
+
+  var lpAdds1h = w1h.filter(function(t) { return t.type === 'add_liquidity'; });
+  var lpRemoves1h = w1h.filter(function(t) { return t.type === 'remove_liquidity'; });
+  var firstLP = txs.find(function(t) { return t.type === 'add_liquidity'; });
+  var firstRemoveLP = txs.find(function(t) { return t.type === 'remove_liquidity'; });
+
+  var buysPerMin5m = buys5m.length / 5;
+  var buys30m = getBuys(w30m);
+  var buysPerMin30m = buys30m.length / 30;
+
+  var sellPressureStart = null;
+  for (var min = 1; min <= 60; min++) {
+    var ws = t0 + (min - 1) * 60000;
+    var we = t0 + min * 60000;
+    var mt = txs.filter(function(t) { return t.timestamp >= ws && t.timestamp < we; });
+    var mb = mt.filter(function(t) { return t.type === 'buy'; }).length;
+    var ms2 = mt.filter(function(t) { return t.type === 'sell'; }).length;
+    if (ms2 > mb && ms2 >= 2) { sellPressureStart = (min - 1) * 60; break; }
+  }
+
+  function bsr(arr) { var b = getBuys(arr).length; var s = getSells(arr).length; return s === 0 ? b : Math.round((b / s) * 100) / 100; }
+  var w1m = filterWindow(60000);
+
+  var allBuys = getBuys(txs);
+  var timeBetween = [];
+  for (var i = 1; i < allBuys.length && i < 200; i++) {
+    timeBetween.push((allBuys[i].timestamp - allBuys[i - 1].timestamp) / 1000);
+  }
+  var avgTB = timeBetween.length > 0 ? timeBetween.reduce(function(s, t) { return s + t; }, 0) / timeBetween.length : 0;
+  var variance = timeBetween.length > 1 ? timeBetween.reduce(function(s, t) { return s + Math.pow(t - avgTB, 2); }, 0) / timeBetween.length : 0;
+  var stddev = Math.sqrt(variance);
+
+  var slotCounts = {};
+  allBuys.forEach(function(t) { slotCounts[t.slot] = (slotCounts[t.slot] || 0) + 1; });
+  var sameSlotBuys = Object.values(slotCounts).filter(function(c) { return c > 1; }).reduce(function(s, c) { return s + c; }, 0);
+  var pctSameSlot = allBuys.length > 0 ? sameSlotBuys / allBuys.length : 0;
+
+  var buyerCounts = {};
+  allBuys.forEach(function(t) { buyerCounts[t.signer] = (buyerCounts[t.signer] || 0) + 1; });
+  var totalBuyers = Object.keys(buyerCounts).length;
+  var returnBuyers = Object.values(buyerCounts).filter(function(c) { return c > 1; }).length;
+  var returnRate = totalBuyers > 0 ? returnBuyers / totalBuyers : 0;
+
+  return {
+    first_5min_total_txs: w5m.length,
+    first_5min_buy_count: buys5m.length,
+    first_5min_sell_count: sells5m.length,
+    first_5min_unique_buyers: uniqueSigners(buys5m),
+    first_5min_unique_sellers: uniqueSigners(sells5m),
+    first_5min_total_sol_volume: Math.round(totalSol(buys5m) * 1000) / 1000,
+    first_5min_avg_buy_size_sol: buys5m.length > 0 ? Math.round((totalSol(buys5m) / buys5m.length) * 1000) / 1000 : 0,
+    first_5min_largest_buy_sol: buys5m.length > 0 ? Math.round(Math.max.apply(null, buys5m.map(function(t) { return t.solAmount || 0; })) * 1000) / 1000 : 0,
+    first_30s_buy_count: buys30s.length,
+    first_30s_unique_buyers: uniqueSigners(buys30s),
+    first_30s_total_sol: Math.round(totalSol(buys30s) * 1000) / 1000,
+    first_30s_slots_used: slotsUsed30s,
+    first_30s_max_buys_per_slot: maxBuysPerSlot30s,
+    first_60s_buy_count: buys60s.length,
+    first_60s_unique_buyers: uniqueSigners(buys60s),
+    first_60s_sell_count: sells60s.length,
+    bundle_count: bundles.length,
+    bundle_total_wallets: bundleTotalWallets,
+    bundle_avg_wallets_per_bundle: bundles.length > 0 ? Math.round((bundleTotalWallets / bundles.length) * 10) / 10 : 0,
+    bundle_largest_wallet_count: largestBundle,
+    bundle_first_bundle_time_sec: Math.round(firstBundleTimeSec * 10) / 10,
+    bundle_avg_buy_size_sol: bundleBuys.length > 0 ? Math.round((bundleSolSpent / bundleBuys.length) * 1000) / 1000 : 0,
+    bundle_total_sol_spent: Math.round(bundleSolSpent * 1000) / 1000,
+    bundle_slots_span: bundleSlotsSpan,
+    bundle_pct_of_early_buys: buys5m.length > 0 ? Math.round((bundleBuys.length / buys5m.length) * 1000) / 10 : 0,
+    dev_first_action: devFirstTx ? devFirstTx.type : null,
+    dev_first_action_time_sec: devFirstTx ? Math.round(secSince(devFirstTx.timestamp) * 10) / 10 : 0,
+    dev_first_sell_time_sec: devFirstSell ? Math.round(secSince(devFirstSell.timestamp) * 10) / 10 : null,
+    dev_sell_count_1h: devSells1h.length,
+    dev_sell_pct_1h: estimatedSupply > 0 ? Math.round((devSellTokens / estimatedSupply) * 1000) / 10 : 0,
+    dev_added_liquidity: devLPAdds.length,
+    dev_removed_liquidity: devLPRemoves.length,
+    dev_remove_liq_time_sec: devFirstRemove ? Math.round(secSince(devFirstRemove.timestamp) * 10) / 10 : null,
+    liq_initial_sol: firstLP ? Math.round(firstLP.solAmount * 1000) / 1000 : 0,
+    liq_added_count_1h: lpAdds1h.length,
+    liq_removed_count_1h: lpRemoves1h.length,
+    liq_removed_pct_1h: 0,
+    liq_first_remove_time_sec: firstRemoveLP ? Math.round(secSince(firstRemoveLP.timestamp) * 10) / 10 : null,
+    buys_per_min_avg_5min: Math.round(buysPerMin5m * 10) / 10,
+    buys_per_min_avg_30min: Math.round(buysPerMin30m * 10) / 10,
+    sell_pressure_start_time_sec: sellPressureStart,
+    buy_sell_ratio_1min: bsr(w1m),
+    buy_sell_ratio_5min: bsr(w5m),
+    buy_sell_ratio_15min: bsr(w15m),
+    buy_sell_ratio_60min: bsr(w1h),
+    avg_time_between_buys_sec: Math.round(avgTB * 100) / 100,
+    stddev_time_between_buys: Math.round(stddev * 100) / 100,
+    pct_buys_in_same_slot: Math.round(pctSameSlot * 1000) / 10,
+    unique_buyer_return_rate: Math.round(returnRate * 1000) / 10,
+    has_freeze_authority: 0,
+    has_mint_authority: 0,
+  };
+}
 function intelNewAnalysis() {
   document.getElementById('intelResult').classList.remove('active');
   document.getElementById('intelTokenCA').value = '';
