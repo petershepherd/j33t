@@ -3667,6 +3667,157 @@
       color: var(--muted);
       font-size: 0.6rem;
     }
+.src-toggle {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border: 1px solid var(--surface2);
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 420px;
+}
+.src-toggle-btn {
+  flex: 1;
+  padding: 11px 16px;
+  font-family: var(--pixel);
+  font-size: 0.5rem;
+  border: none;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 1px;
+}
+.src-toggle-btn.active { background: rgba(245,200,66,0.12); color: var(--gold); }
+.src-toggle-btn:hover:not(.active) { color: var(--text); }
+
+/* Protocol telemetry strip */
+.dusd-proto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  background: var(--surface2);
+  border: 1px solid rgba(0,255,170,0.12);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+.dusd-proto-item { text-align: center; }
+.dusd-proto-val {
+  font-family: var(--pixel);
+  font-size: 0.7rem;
+  color: var(--green);
+  display: block;
+  margin-bottom: 3px;
+}
+.dusd-proto-lbl {
+  font-size: 0.5rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Market cards */
+.dusd-grid { display: flex; flex-direction: column; gap: 12px; }
+.dusd-card {
+  background: var(--surface2);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-left: 3px solid var(--gold);
+  border-radius: 6px;
+  padding: 16px 18px;
+  transition: border-color 0.2s;
+}
+.dusd-card:hover { border-color: rgba(245,200,66,0.4); }
+.dusd-card.graduated { border-left-color: var(--green); }
+.dusd-card.curve { border-left-color: #fbbf24; }
+
+.dusd-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.dusd-img {
+  width: 40px; height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--surface);
+}
+.dusd-title { flex: 1; min-width: 0; }
+.dusd-name { font-size: 0.85rem; font-weight: 700; color: var(--text); }
+.dusd-sym { font-family: var(--pixel); font-size: 0.5rem; color: var(--muted); margin-top: 3px; }
+.dusd-badges { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; flex-shrink: 0; }
+.dusd-badge {
+  font-family: var(--pixel);
+  font-size: 0.4rem;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.dusd-badge.curve { border-color: #fbbf24; color: #fbbf24; background: rgba(251,191,36,0.08); }
+.dusd-badge.graduated { border-color: var(--green); color: var(--green); background: rgba(0,255,170,0.08); }
+.dusd-badge.burn { border-color: #ff6644; color: #ff6644; background: rgba(255,102,68,0.08); }
+.dusd-badge.revenue { border-color: var(--muted); color: var(--muted); }
+.dusd-badge.split { border-color: var(--accent); color: var(--accent); background: rgba(123,97,255,0.08); }
+
+/* Graduation progress */
+.dusd-prog-wrap { margin-bottom: 12px; }
+.dusd-prog-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.55rem;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+.dusd-prog-pct { font-family: var(--pixel); font-size: 0.6rem; color: var(--gold); }
+.dusd-prog-bar {
+  height: 8px;
+  background: var(--surface);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.dusd-prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #fbbf24, var(--green));
+  border-radius: 4px;
+  transition: width 0.6s;
+}
+.dusd-prog-fill.done { background: var(--green); }
+
+.dusd-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.dusd-stat {
+  background: var(--surface);
+  border-radius: 4px;
+  padding: 8px 10px;
+}
+.dusd-stat-lbl { font-size: 0.45rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.dusd-stat-val { font-size: 0.68rem; color: var(--text); font-weight: 700; margin-top: 2px; }
+.dusd-stat-sub { font-size: 0.48rem; color: var(--muted); margin-top: 1px; }
+
+.dusd-foot {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  font-size: 0.5rem;
+}
+.dusd-foot a { color: var(--gold); text-decoration: none; }
+.dusd-foot a:hover { text-decoration: underline; }
+.dusd-empty { text-align: center; padding: 28px; color: var(--muted); font-size: 0.65rem; }
+
+@media (max-width: 600px) {
+  .dusd-stats { grid-template-columns: 1fr 1fr; }
+  .src-toggle { max-width: 100%; }
+}
   </style>
 </head>
 <body>
@@ -4382,6 +4533,28 @@
   </div>
 
   <div id="launchUnlocked" style="display:none;">
+<div class="src-toggle">
+      <button class="src-toggle-btn active" id="srcPump" onclick="switchLaunchSource('pump')">🎯 PUMP.FUN</button>
+      <button class="src-toggle-btn" id="srcDusd" onclick="switchLaunchSource('dusd')">💵 DUSD.FUN</button>
+    </div>
+
+    <div id="dusdPanel" style="display:none;">
+      <div class="dusd-proto" id="dusdProto">
+        <div class="dusd-proto-item"><span class="dusd-proto-val" id="dpPrice">—</span><span class="dusd-proto-lbl">DUSD / USD</span></div>
+        <div class="dusd-proto-item"><span class="dusd-proto-val" id="dpSupply">—</span><span class="dusd-proto-lbl">Supply</span></div>
+        <div class="dusd-proto-item"><span class="dusd-proto-val" id="dpBurned">—</span><span class="dusd-proto-lbl">Burned</span></div>
+        <div class="dusd-proto-item"><span class="dusd-proto-val" id="dpMarkets">—</span><span class="dusd-proto-lbl">Markets</span></div>
+        <div class="dusd-proto-item"><span class="dusd-proto-val" id="dpGrad">—</span><span class="dusd-proto-lbl">Graduated</span></div>
+      </div>
+      <div class="dusd-grid" id="dusdGrid">
+        <div class="dusd-empty">Loading DUSD markets...</div>
+      </div>
+      <div style="text-align:center;margin-top:16px;">
+        <button class="sniff-fetch-btn" onclick="loadDusdMarkets()" style="font-size:8px;padding:10px 20px;">↻ REFRESH</button>
+      </div>
+    </div>
+
+    <div id="pumpPanel">
 
     <!-- Track record fejléc -->
     <div class="launch-track-header" id="launchTrackHeader" style="display:none;">
@@ -4413,6 +4586,7 @@
       <button class="sniff-fetch-btn" onclick="loadLaunchAlerts()" style="font-size:8px; padding:10px 20px;">↻ REFRESH SCANNER</button>
     </div>
   </div>
+    </div>
 </section>
 <!-- Smart Money Tracker -->
 <section class="sniff-section" id="smartMoney" data-view="tools">
@@ -10122,5 +10296,153 @@ if (origSwitchToolTab) {
 setTimeout(intelLoadDisputes, 1500);
 </script>
 <div class="intel-live-ticker" id="intelLiveTicker"></div>
+<script> blokként.
+     ══════════════════════════════════════════════════════════════ -->
+
+<script>
+// ── DUSD ECOSYSTEM PANEL ──────────────────────────────────────
+
+var dusdLoaded = false;
+
+function switchLaunchSource(src) {
+  var isDusd = src === 'dusd';
+  document.getElementById('srcPump').classList.toggle('active', !isDusd);
+  document.getElementById('srcDusd').classList.toggle('active', isDusd);
+  document.getElementById('pumpPanel').style.display = isDusd ? 'none' : '';
+  document.getElementById('dusdPanel').style.display = isDusd ? '' : 'none';
+  if (isDusd && !dusdLoaded) { dusdLoaded = true; loadDusdMarkets(); }
+}
+
+function dFmtUsd(v) {
+  if (v == null) return '—';
+  if (v >= 1e6) return '$' + (v / 1e6).toFixed(2) + 'M';
+  if (v >= 1e3) return '$' + (v / 1e3).toFixed(1) + 'K';
+  if (v >= 1) return '$' + v.toFixed(2);
+  if (v >= 0.01) return '$' + v.toFixed(4);
+  return '$' + v.toPrecision(3);
+}
+function dFmtD(v) {
+  if (v == null) return '—';
+  if (v >= 1e6) return (v / 1e6).toFixed(2) + 'M';
+  if (v >= 1e3) return (v / 1e3).toFixed(1) + 'K';
+  if (v >= 1) return v.toFixed(2);
+  return Number(v).toPrecision(3);
+}
+function dAgo(ts) {
+  if (!ts) return '—';
+  var m = Math.floor((Date.now() - ts) / 60000);
+  if (m < 60) return m + 'm';
+  if (m < 1440) return Math.floor(m / 60) + 'h';
+  return Math.floor(m / 1440) + 'd';
+}
+
+async function loadDusdMarkets() {
+  var grid = document.getElementById('dusdGrid');
+  if (!grid) return;
+  grid.innerHTML = '<div class="dusd-empty">Loading DUSD markets...</div>';
+
+  try {
+    var res = await fetch(RON_WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'dusd_markets' }),
+      signal: AbortSignal.timeout(15000),
+    });
+    var d = await res.json();
+    if (d.error) throw new Error(d.error);
+
+    var markets = d.markets || [];
+    var proto = d.protocol || {};
+
+    document.getElementById('dpPrice').textContent = proto.price_usd ? '$' + Number(proto.price_usd).toPrecision(3) : '—';
+    document.getElementById('dpSupply').textContent = proto.current_supply ? dFmtD(proto.current_supply) : '—';
+    document.getElementById('dpBurned').textContent = proto.burned_pct ? Number(proto.burned_pct).toFixed(1) + '%' : '—';
+    document.getElementById('dpMarkets').textContent = markets.length;
+    document.getElementById('dpGrad').textContent = markets.filter(function(m) { return m.graduated_at; }).length;
+
+    if (!markets.length) {
+      grid.innerHTML = '<div class="dusd-empty">No markets tracked yet — the cron picks them up every 2 minutes.</div>';
+      return;
+    }
+
+    grid.innerHTML = markets.map(function(m) {
+      var isGrad = !!m.graduated_at || m.status === 'GRADUATED';
+      var bps = m.last_progress_bps || 0;
+      var pct = Math.min(100, bps / 100);
+      var remaining = m.graduation_threshold_dusd && m.last_quote_reserve_dusd
+        ? Math.max(0, m.graduation_threshold_dusd - m.last_quote_reserve_dusd) : null;
+
+      var routeCls = m.creator_routing_mode === 'FULL_BURN' ? 'burn'
+        : m.creator_routing_mode === 'SPLIT' ? 'split' : 'revenue';
+      var routeLbl = m.creator_routing_mode === 'FULL_BURN' ? '🔥 FULL BURN'
+        : m.creator_routing_mode === 'SPLIT' ? '◐ SPLIT' : '◉ REVENUE';
+
+      var athMult = m.ath_mcap_dusd && m.last_mcap_dusd
+        ? (m.ath_mcap_dusd / m.last_mcap_dusd) : null;
+
+      return '<div class="dusd-card ' + (isGrad ? 'graduated' : 'curve') + '">' +
+        '<div class="dusd-head">' +
+          (m.image_url ? '<img class="dusd-img" src="' + m.image_url + '" alt="" onerror="this.style.display=\'none\'">' : '') +
+          '<div class="dusd-title">' +
+            '<div class="dusd-name">' + (m.name || 'Unknown') + '</div>' +
+            '<div class="dusd-sym">$' + (m.symbol || '???') + ' · ' + dAgo(m.created_at) + ' old</div>' +
+          '</div>' +
+          '<div class="dusd-badges">' +
+            '<span class="dusd-badge ' + (isGrad ? 'graduated' : 'curve') + '">' + (isGrad ? '✅ GRADUATED' : '📈 ON CURVE') + '</span>' +
+            '<span class="dusd-badge ' + routeCls + '">' + routeLbl + '</span>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="dusd-prog-wrap">' +
+          '<div class="dusd-prog-top">' +
+            '<span>Graduation progress</span>' +
+            '<span class="dusd-prog-pct">' + pct.toFixed(2) + '%</span>' +
+          '</div>' +
+          '<div class="dusd-prog-bar">' +
+            '<div class="dusd-prog-fill ' + (pct >= 100 ? 'done' : '') + '" style="width:' + pct + '%"></div>' +
+          '</div>' +
+          '<div class="dusd-prog-top" style="margin-top:5px;">' +
+            '<span>' + dFmtD(m.last_quote_reserve_dusd) + ' / ' + dFmtD(m.graduation_threshold_dusd) + ' DUSD</span>' +
+            '<span>' + (remaining != null && remaining > 0 ? dFmtD(remaining) + ' DUSD to go' : 'target reached') + '</span>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="dusd-stats">' +
+          '<div class="dusd-stat"><div class="dusd-stat-lbl">Price</div>' +
+            '<div class="dusd-stat-val">' + dFmtUsd(m.last_price_usd) + '</div>' +
+            '<div class="dusd-stat-sub">' + dFmtD(m.last_price_dusd) + ' DUSD</div></div>' +
+          '<div class="dusd-stat"><div class="dusd-stat-lbl">Market cap</div>' +
+            '<div class="dusd-stat-val">' + dFmtUsd(m.last_mcap_usd) + '</div>' +
+            '<div class="dusd-stat-sub">' + dFmtD(m.last_mcap_dusd) + ' DUSD</div></div>' +
+          '<div class="dusd-stat"><div class="dusd-stat-lbl">Vol 24h</div>' +
+            '<div class="dusd-stat-val">' + dFmtD(m.last_volume24h_dusd) + '</div>' +
+            '<div class="dusd-stat-sub">DUSD</div></div>' +
+          '<div class="dusd-stat"><div class="dusd-stat-lbl">Curve reserve</div>' +
+            '<div class="dusd-stat-val">' + dFmtD(m.last_quote_reserve_dusd) + '</div>' +
+            '<div class="dusd-stat-sub">DUSD in</div></div>' +
+          '<div class="dusd-stat"><div class="dusd-stat-lbl">Supply</div>' +
+            '<div class="dusd-stat-val">' + dFmtD(m.supply_total) + '</div>' +
+            '<div class="dusd-stat-sub">' + dFmtD(m.supply_curve) + ' on curve</div></div>' +
+          '<div class="dusd-stat"><div class="dusd-stat-lbl">ATH mcap</div>' +
+            '<div class="dusd-stat-val">' + dFmtD(m.ath_mcap_dusd) + '</div>' +
+            '<div class="dusd-stat-sub">' + (athMult ? athMult.toFixed(2) + 'x from now' : '—') + '</div></div>' +
+        '</div>' +
+
+        '<div class="dusd-foot">' +
+          '<a href="https://dusd.fun/markets" target="_blank" rel="noopener">💵 dusd.fun ↗</a>' +
+          '<a href="https://solscan.io/token/' + m.mint + '" target="_blank" rel="noopener">🔍 Solscan ↗</a>' +
+          (m.website_url ? '<a href="' + m.website_url + '" target="_blank" rel="noopener">🌐 Site ↗</a>' : '') +
+          (m.x_url ? '<a href="' + m.x_url + '" target="_blank" rel="noopener">𝕏 ↗</a>' : '') +
+          '<span style="color:var(--muted);">📋 <span style="cursor:pointer;text-decoration:underline;" onclick="navigator.clipboard.writeText(\'' + m.mint + '\');showToast(\'CA copied!\')">Copy CA</span></span>' +
+          '<span style="color:var(--muted);margin-left:auto;">' + (m.sample_count || 0) + ' samples · ' + dAgo(m.last_sample_at) + ' ago</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+  } catch (e) {
+    grid.innerHTML = '<div class="dusd-empty">Could not load DUSD markets: ' + e.message + '</div>';
+  }
+}
+</script>
 </body>
 </html>
