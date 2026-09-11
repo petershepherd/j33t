@@ -3818,6 +3818,25 @@
   .dusd-stats { grid-template-columns: 1fr 1fr; }
   .src-toggle { max-width: 100%; }
 }
+
+.ipub { max-width: 1100px; margin: 0 auto; padding: 80px 20px; }
+.ipub-top { text-align: center; margin-bottom: 40px; }
+.ipub-eyebrow { font-family: var(--pixel); font-size: 8px; color: var(--accent); letter-spacing: 4px; margin-bottom: 14px; }
+.ipub-title { font-family: var(--pixel); font-size: clamp(18px, 3vw, 30px); color: var(--gold); line-height: 1.5; margin-bottom: 16px; text-shadow: 0 0 20px rgba(245,200,66,0.3); }
+.ipub-lead { font-size: 13px; color: var(--muted); line-height: 1.9; max-width: 640px; margin: 0 auto; }
+.ipub-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 36px; }
+.ipub-stat { background: var(--surface); border: 1px solid rgba(245,200,66,0.12); border-radius: 8px; padding: 20px 14px; text-align: center; }
+.ipub-stat-v { font-family: var(--pixel); font-size: clamp(14px, 2.4vw, 22px); color: var(--gold); display: block; margin-bottom: 6px; }
+.ipub-stat-l { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; }
+.ipub-feat { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 36px; }
+.ipub-card { background: var(--surface); border: 1px solid rgba(255,255,255,0.06); border-left: 3px solid var(--accent); border-radius: 6px; padding: 20px; }
+.ipub-card-i { font-size: 22px; margin-bottom: 10px; }
+.ipub-card-t { font-family: var(--pixel); font-size: 9px; color: var(--gold); margin-bottom: 8px; letter-spacing: 1px; }
+.ipub-card-d { font-size: 11px; color: var(--muted); line-height: 1.75; }
+.ipub-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.ipub-note { text-align: center; font-size: 10px; color: var(--muted); margin-top: 22px; opacity: 0.75; }
+@media (max-width: 600px) { .ipub { padding: 56px 16px; } }
+
   </style>
 </head>
 <body>
@@ -3903,14 +3922,14 @@
   <p style="font-family:var(--mono);font-size:0.8rem;color:var(--muted);margin-bottom:20px;">Connect your wallet to unlock tier-based access.</p>
 </div>
 <div class="tools-tab-nav">
-  <button class="tools-tab-btn active" onclick="switchToolTab('liveFeed', this)">📡 Live Feed</button>
-  <button class="tools-tab-btn" onclick="switchToolTab('dailySniff', this)">👃 Daily Sniff</button>
-  <button class="tools-tab-btn" onclick="switchToolTab('launchScanner', this)">🚀 Launch Scanner</button>
-  <button class="tools-tab-btn" onclick="switchToolTab('smartMoney', this)">🧠 Smart Money</button>
-  <button class="tools-tab-btn" onclick="switchToolTab('fomoSection', this)">📊 FOMO Report</button>
+  <button class="tools-tab-btn active" data-tab="intel" onclick="switchToolTab('intelDashboard', this)">🧬 Intel</button>
   <button class="tools-tab-btn" onclick="switchToolTab('rugornotSection', this)">🔍 Rug or Not</button>
-  <button class="tools-tab-btn" onclick="switchToolTab('utility', this)">💎 Holder Utility</button>
-  <button class="tools-tab-btn" data-tab="intel" onclick="switchToolTab('intelDashboard', this)">🧬 Intel</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('launchScanner', this)">🚀 Launch Scanner</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('liveFeed', this)">📡 Live Feed</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('smartMoney', this)">🧠 Smart Money</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('dailySniff', this)">👃 Daily Sniff</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('fomoSection', this)">📊 FOMO Report</button>
+  <button class="tools-tab-btn" onclick="switchToolTab('utility', this)">💎 Holder</button>
 </div>
 
 
@@ -3966,6 +3985,58 @@
 
 <!-- About -->
 
+
+
+<!-- J33T INTEL — public landing section -->
+<section id="intelPublic" data-view="landing">
+  <div class="ipub">
+    <div class="ipub-top">
+      <div class="ipub-eyebrow">// OPEN SOURCE · NO WALLET REQUIRED TO READ</div>
+      <h2 class="ipub-title">J33T INTEL</h2>
+      <p class="ipub-lead">
+        An open-source engine that reads a Solana token's first minutes on-chain and scores it on
+        14 signals &mdash; bundle coordination, dev wallet behaviour, transaction timing, liquidity flow.
+        Every analysis contributed by the community makes the next one sharper.
+      </p>
+    </div>
+
+    <div class="ipub-stats">
+      <div class="ipub-stat"><span class="ipub-stat-v" id="ipubAnalyses">&mdash;</span><span class="ipub-stat-l">Analyses</span></div>
+      <div class="ipub-stat"><span class="ipub-stat-v" id="ipubTokens">&mdash;</span><span class="ipub-stat-l">Tokens scanned</span></div>
+      <div class="ipub-stat"><span class="ipub-stat-v" id="ipubContribs">&mdash;</span><span class="ipub-stat-l">Contributors</span></div>
+      <div class="ipub-stat"><span class="ipub-stat-v" id="ipubTracked">&mdash;</span><span class="ipub-stat-l">Tracked outcomes</span></div>
+    </div>
+
+    <div class="ipub-feat">
+      <div class="ipub-card">
+        <div class="ipub-card-i">&#128300;</div>
+        <div class="ipub-card-t">14 ON-CHAIN SIGNALS</div>
+        <div class="ipub-card-d">Bundle detection, dev wallet tracking, holder concentration, transaction timing. Rule-based scoring &mdash; no black box, every weight is in the repo.</div>
+      </div>
+      <div class="ipub-card">
+        <div class="ipub-card-i">&#9878;&#65039;</div>
+        <div class="ipub-card-t">TRUST SCORE</div>
+        <div class="ipub-card-d">Contributors are scored on accuracy. When a submission conflicts with the engine it goes to community vote. Bad data loses weight instead of poisoning the set.</div>
+      </div>
+      <div class="ipub-card">
+        <div class="ipub-card-i">&#128202;</div>
+        <div class="ipub-card-t">OUTCOME TRACKING</div>
+        <div class="ipub-card-d">Every analysed token is re-checked over time &mdash; peak, drawdown, rug or survival. Including a control group of tokens the filter rejected.</div>
+      </div>
+      <div class="ipub-card">
+        <div class="ipub-card-i">&#128187;</div>
+        <div class="ipub-card-t">RUN IT YOURSELF</div>
+        <div class="ipub-card-d">CLI or browser, your own API keys, nothing leaves your machine unless you opt in. MIT licensed, self-hostable.</div>
+      </div>
+    </div>
+
+    <div class="ipub-cta">
+      <button class="btn-primary" onclick="switchView('tools'); setTimeout(function(){switchToolTab('intelDashboard', document.querySelector('[data-tab=intel]'));},50);">OPEN INTEL &rarr;</button>
+      <a class="btn-secondary" href="https://github.com/petershepherd/j33t-intel" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block;">VIEW ON GITHUB &#8599;</a>
+    </div>
+    <div class="ipub-note">NFA &middot; DYOR &middot; A research tool, not a signal service.</div>
+  </div>
+</section>
 
 <section id="about" data-view="landing">
   <div class="about-grid">
@@ -4703,20 +4774,7 @@
     </div>
   </div>
 
-  <!-- HOLDER TOOLS PROMO -->
-  <div style="margin-top:60px; text-align:center; padding:40px 20px; border-top:1px solid rgba(245,200,66,0.1);">
-    <div style="font-family:var(--pixel);font-size:8px;color:var(--muted);letter-spacing:2px;margin-bottom:16px;">// FOR HOLDERS</div>
-    <h3 style="font-family:var(--pixel);font-size:clamp(0.8rem,2vw,1.1rem);color:var(--gold);margin-bottom:16px;">HOLDER TOOLS</h3>
-    <p style="font-family:var(--mono);font-size:0.85rem;color:var(--muted);max-width:560px;margin:0 auto 12px;line-height:1.7;">
-      The more $J33T you hold, the more you unlock. Real-time token launches, smart wallet tracking, daily sniff reports and more — all built for holders, by holders.
-    </p>
-    <div style="font-family:var(--mono);font-size:0.75rem;color:var(--muted);margin-bottom:28px;opacity:0.7;">
-      📡 Live Feed &nbsp;·&nbsp; 🚀 Launch Scanner &nbsp;·&nbsp; 🧠 Smart Money &nbsp;·&nbsp; 👃 Daily Sniff &nbsp;·&nbsp; 📊 FOMO Report
-    </div>
-    <button class="btn-primary" onclick="switchView('tools')" style="font-size:0.6rem;padding:14px 32px;letter-spacing:2px;">
-      OPEN HOLDER TOOLS →
-    </button>
-  </div>
+  
 
 </section>
 
@@ -10441,5 +10499,25 @@ async function loadDusdMarkets() {
   }
 }
 </script>
+
+<script>
+(function() {
+  var API = 'https://j33t-intel-api.juhasz-peter1986.workers.dev';
+  function set(id, v) { var e = document.getElementById(id); if (e && v != null) e.textContent = Number(v).toLocaleString(); }
+  fetch(API + '/api/leaderboard/stats').then(function(r){return r.json();}).then(function(d){
+    if (!d || !d.success) return;
+    set('ipubAnalyses', d.data.totalSubmissions);
+    set('ipubTokens', d.data.totalTokensAnalyzed);
+    set('ipubContribs', d.data.totalContributors);
+  }).catch(function(){});
+  fetch('https://j33t-proxy.juhasz-peter1986.workers.dev', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'tracking_stats' })
+  }).then(function(r){return r.json();}).then(function(d){
+    if (d && d.overall) set('ipubTracked', d.overall.total);
+  }).catch(function(){});
+})();
+</script>
+
 </body>
 </html>
