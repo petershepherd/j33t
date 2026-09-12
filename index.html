@@ -4189,13 +4189,13 @@
       </div>
       <div class="gate-card locked" id="card-whitelist" onclick="trackWindowShop('card-whitelist'); tryAccess('whitelist')">
         <div class="card-icon">📋</div>
-        <div class="card-title">EARLY ACCESS LIST</div>
+        <div class="card-title">EARLY ACCESS LIST <span style="color:var(--muted);font-size:6px;border:1px solid var(--muted);padding:2px 5px;margin-left:4px;">PLANNED</span></div>
         <div class="card-desc">Priority access to future J33T ecosystem drops, NFTs, and partner launches.</div>
         <div class="card-min">MIN: 500,000 $J33T</div>
       </div>
       <div class="gate-card locked" id="card-staking" onclick="trackWindowShop('card-staking'); tryAccess('staking')">
         <div class="card-icon">💎</div>
-        <div class="card-title">PAWS STAKING</div>
+        <div class="card-title">PAWS STAKING <span style="color:var(--muted);font-size:6px;border:1px solid var(--muted);padding:2px 5px;margin-left:4px;">PLANNED</span></div>
         <div class="card-desc">Stake your $J33T and earn passive rewards. The longer she waits, the more she approves.</div>
         <div class="card-min">MIN: 5,000,000 $J33T</div>
       </div>
@@ -4794,6 +4794,10 @@
 
     <div id="intelUnlocked" style="display:none;">
 
+      <div id="intelReadOnly" style="display:none;background:rgba(123,97,255,0.06);border:1px solid rgba(123,97,255,0.25);border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:0.6rem;color:var(--text);text-align:center;">
+        \u{1F441} <strong style="color:var(--accent);">Read-only view.</strong> Everything below is public \u2014 stats, leaderboard, disputes and the analyzer all work without a wallet.<br>
+        Connect one only when you want to contribute, build a streak and earn rewards.
+      </div>
       <div class="intel-airdrop-notice">
         ⚠️ <strong>Future airdrops and rewards will ONLY go to active Intel contributors.</strong><br>
         The longer your daily streak, the higher your reward multiplier. Start contributing today!
@@ -5906,8 +5910,8 @@ function tryAccess(type, minOverride, sectionId) {
     el.classList.toggle('visible');
     if (el.classList.contains('visible')) el.scrollIntoView({behavior:'smooth'});
   }
-  if (type === 'whitelist') showToast("You're on the list! 📋 Early access secured.");
-  if (type === 'staking') showToast('Staking coming soon! 💎 Diamond paws detected.');
+  if (type === 'whitelist') showToast("Early Access List is PLANNED — not live yet. Your tier is recorded. 📋");
+  if (type === 'staking') showToast('Paws Staking is PLANNED — not built yet. Nothing is staked. 💎');
 }
 
 // ============================================================
@@ -6947,8 +6951,8 @@ function getTierPerks(tier) {
   if (tier.min <= 10000)    perks.push('🎨 RUG RADAR (card gen)');
   if (tier.min <= 50000)    perks.push('🐾 J33T\u2019s Take');
   if (tier.min <= 100000)   perks.push('🔍 RUG OR NOT?', '👃 Daily Sniff (3×/day)');
-  if (tier.min <= 500000)   perks.push('📋 Early Access List');
-  if (tier.min <= 5000000)  perks.push('💎 Paws Staking');
+  if (tier.min <= 500000)   perks.push('📋 Early Access List (planned)');
+  if (tier.min <= 5000000)  perks.push('💎 Paws Staking (planned)');
   if (tier.limit > 1)       perks.push(`🃏 ${tier.limit === Infinity ? '∞' : tier.limit} cards/day`);
   return perks;
 }
@@ -8392,8 +8396,8 @@ const holderTiers = [
   { min: 10000,     label: 'FIRST SNIFF',   badge: 'FIRST SNIFF',    desc: 'You found the scent. Welcome to the kennel. RUG RADAR unlocked.',   limit: 1,  color: '#a8d5a2', icon: '🐽' },
   { min: 50000,     label: 'LOUD WOOFER',   badge: 'LOUD WOOFER',    desc: 'J33T hears you from three blocks away. J33T Take unlocked.',        limit: 2,  color: '#c084fc', icon: '📢' },
   { min: 100000,    label: 'NOSE CERTIFIED',badge: 'NOSE CERTIFIED',  desc: 'Certified sniffer. RUG OR NOT + Daily Sniff unlocked.',            limit: 2,  color: '#00ffaa', icon: '👃' },
-  { min: 500000,    label: 'PACK RUNNER',   badge: 'PACK RUNNER',    desc: 'Running with the pack now. Early Access unlocked.',                 limit: 3,  color: '#fbbf24', icon: '🏃' },
-  { min: 1000000,   label: 'PAWS OF STEEL', badge: 'PAWS OF STEEL',  desc: 'Bear markets tried. Bears lost. Paws Staking unlocked.',           limit: 4,  color: '#60a5fa', icon: '🦾' },
+  { min: 500000,    label: 'PACK RUNNER',   badge: 'PACK RUNNER',    desc: 'Running with the pack now. Early Access (planned) reserved for this tier.',                 limit: 3,  color: '#fbbf24', icon: '🏃' },
+  { min: 1000000,   label: 'PAWS OF STEEL', badge: 'PAWS OF STEEL',  desc: 'Bear markets tried. Bears lost. Paws Staking (planned) reserved for this tier.',           limit: 4,  color: '#60a5fa', icon: '🦾' },
   { min: 5000000,   label: 'TOP DOG',       badge: 'TOP DOG',        desc: 'The apex. The myth. J33T rolls over and shows her belly.',          limit: 5,  color: '#ff4466', icon: '🐺' },
 ];
 
@@ -9037,14 +9041,32 @@ function intelUpdateUI() {
   const unlocked = document.getElementById('intelUnlocked');
   if (!locked || !unlocked) return;
 
-  if (!walletConnected) {
-    locked.style.display = '';
-    unlocked.style.display = 'none';
-    return;
-  }
-
+  // Read-only for everyone: the data is a public good, the token gates
+  // capacity and rewards — not visibility.
   locked.style.display = 'none';
   unlocked.style.display = '';
+
+  var ro = document.getElementById('intelReadOnly');
+  if (ro) ro.style.display = walletConnected ? 'none' : '';
+
+  if (!walletConnected) {
+    intelApiKey = null;
+    var kd = document.getElementById('intelKeyDisplay');
+    if (kd) { kd.textContent = 'Connect a wallet to generate your key and start contributing.'; kd.classList.add('hidden-key'); }
+    ['intelGenBtn','intelCopyBtn','intelShowBtn','intelRevokeBtn'].forEach(function(id){
+      var e=document.getElementById(id); if(e) e.style.display='none';
+    });
+    ['intelTotalSubmissions','intelYourRank'].forEach(function(id){
+      var e=document.getElementById(id); if(e) e.textContent='\u2014';
+    });
+    var t=document.getElementById('intelTrustScore'); if(t){t.textContent='\u2014';t.style.color='var(--muted)';}
+    var sd=document.getElementById('intelStreakDays'); if(sd) sd.textContent='\u2014';
+    var sn=document.getElementById('intelStreakNext'); if(sn) sn.textContent='Connect a wallet to start a streak.';
+    var tl=document.getElementById('intelTokensList');
+    if(tl) tl.innerHTML='<div class="intel-empty">Connect a wallet to see your own analyses here.</div>';
+    intelLoadStats(); intelLoadLeaderboard(); intelLoadDisputes();
+    return;
+  }
 
   // Reset dashboard if no API key
   if (!walletFullAddr || !localStorage.getItem('j33t_intel_key_' + walletFullAddr)) {
