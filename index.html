@@ -3837,6 +3837,28 @@
 .ipub-note { text-align: center; font-size: 10px; color: var(--muted); margin-top: 22px; opacity: 0.75; }
 @media (max-width: 600px) { .ipub { padding: 56px 16px; } }
 
+
+.trk { max-width: 1100px; margin: 0 auto; padding: 72px 20px; }
+.trk-top { text-align: center; margin-bottom: 32px; }
+.trk-eyebrow { font-family: var(--pixel); font-size: 8px; color: var(--red); letter-spacing: 4px; margin-bottom: 14px; }
+.trk-title { font-family: var(--pixel); font-size: clamp(16px, 2.6vw, 26px); color: var(--gold); line-height: 1.5; margin-bottom: 14px; }
+.trk-lead { font-size: 12px; color: var(--muted); line-height: 1.9; max-width: 660px; margin: 0 auto; }
+.trk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 22px; }
+.trk-box { background: var(--surface); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 20px 14px; text-align: center; }
+.trk-box.peak { border-color: rgba(0,255,170,0.3); }
+.trk-box.now  { border-color: rgba(255,68,102,0.3); }
+.trk-v { font-family: var(--pixel); font-size: clamp(13px, 2.2vw, 20px); display: block; margin-bottom: 6px; }
+.trk-l { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; }
+.trk-note { background: rgba(245,200,66,0.04); border: 1px solid rgba(245,200,66,0.15); border-radius: 8px; padding: 16px 20px; font-size: 11px; color: var(--muted); line-height: 1.85; }
+.trk-note strong { color: var(--gold); }
+.tprev { max-width: 1100px; margin: 0 auto; padding: 40px 20px 80px; }
+.tprev-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.tprev-card { background: var(--surface); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 18px; cursor: pointer; transition: border-color .2s, transform .2s; }
+.tprev-card:hover { border-color: rgba(245,200,66,0.4); transform: translateY(-2px); }
+.tprev-i { font-size: 20px; margin-bottom: 8px; }
+.tprev-t { font-family: var(--pixel); font-size: 8px; color: var(--gold); margin-bottom: 7px; letter-spacing: 1px; }
+.tprev-d { font-size: 10.5px; color: var(--muted); line-height: 1.7; }
+@media (max-width: 600px) { .trk { padding: 52px 16px; } }
   </style>
 </head>
 <body>
@@ -3959,7 +3981,7 @@
 
   <div class="hero-cta">
     <button class="btn-primary" onclick="openWalletModal()">GET $J33T</button>
-    <button class="btn-secondary" onclick="switchView('tools')">HOLDER TOOLS</button>
+    <button class="btn-secondary" onclick="document.getElementById('intelPublic').scrollIntoView({behavior:'smooth'})">SEE J33T INTEL</button>
   </div>
 </div>
 
@@ -4035,6 +4057,56 @@
       <a class="btn-secondary" href="https://github.com/petershepherd/j33t-intel" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block;">VIEW ON GITHUB &#8599;</a>
     </div>
     <div class="ipub-note">NFA &middot; DYOR &middot; A research tool, not a signal service.</div>
+  </div>
+</section>
+
+<!-- TRACK RECORD -->
+<section id="trackRecord" data-view="landing">
+  <div class="trk">
+    <div class="trk-top">
+      <div class="trk-eyebrow">// THE PART NOBODY ELSE PUBLISHES</div>
+      <h2 class="trk-title">EVERY CALL WE EVER MADE</h2>
+      <p class="trk-lead">
+        <strong style="color:var(--text)">1,789 alerts</strong> went out between March and September 2026.
+        Here is what happened to them. Not the winners &mdash; all of them.
+      </p>
+    </div>
+    <div class="trk-grid">
+      <div class="trk-box peak"><span class="trk-v" id="trkPeak" style="color:var(--green)">&mdash;</span><span class="trk-l">Avg peak after call</span></div>
+      <div class="trk-box now"><span class="trk-v" id="trkNow" style="color:var(--red)">&mdash;</span><span class="trk-l">Avg if never sold</span></div>
+      <div class="trk-box"><span class="trk-v" id="trkN" style="color:var(--gold)">&mdash;</span><span class="trk-l">Tracked calls</span></div>
+      <div class="trk-box"><span class="trk-v" style="color:var(--muted)">1,789</span><span class="trk-l">Total alerts sent</span></div>
+    </div>
+    <div class="trk-note">
+      <strong>Read this honestly.</strong> The gap between those two numbers is the whole game.
+      Most of these tokens rose after the alert and then died &mdash; so buying and holding forever loses money,
+      while the peak was often well above entry. A number that only measures buy-and-never-sell is measuring
+      the absence of an exit rule, not the quality of the filter.<br><br>
+      That is exactly what J33T Intel is being built to fix: track every outcome, including the calls the
+      filter <em>rejected</em>, and work out where the exit actually belongs. NFA &middot; DYOR.
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS PREVIEW -->
+<section id="toolsPreview" data-view="landing">
+  <div class="tprev">
+    <div class="trk-top"><div class="trk-eyebrow">// THE TOOLBOX</div>
+      <h2 class="trk-title">WHAT ELSE IS IN HERE</h2></div>
+    <div class="tprev-grid">
+      <div class="tprev-card" onclick="switchView('tools'); setTimeout(function(){switchToolTab('rugornotSection', document.querySelectorAll('.tools-tab-btn')[1]);},50);">
+        <div class="tprev-i">&#128269;</div><div class="tprev-t">RUG OR NOT</div>
+        <div class="tprev-d">Paste any Solana address. On-chain data plus an AI read, in seconds.</div></div>
+      <div class="tprev-card" onclick="switchView('tools'); setTimeout(function(){switchToolTab('launchScanner', document.querySelectorAll('.tools-tab-btn')[2]);},50);">
+        <div class="tprev-i">&#128640;</div><div class="tprev-t">LAUNCH SCANNER</div>
+        <div class="tprev-d">New launches through a 3-stage filter, on pump.fun and dusd.fun.</div></div>
+      <div class="tprev-card" onclick="switchView('tools'); setTimeout(function(){switchToolTab('smartMoney', document.querySelectorAll('.tools-tab-btn')[4]);},50);">
+        <div class="tprev-i">&#129504;</div><div class="tprev-t">SMART MONEY</div>
+        <div class="tprev-d">Wallets that keep buying early, and what they are buying now.</div></div>
+      <div class="tprev-card" onclick="switchView('tools'); setTimeout(function(){switchToolTab('liveFeed', document.querySelectorAll('.tools-tab-btn')[3]);},50);">
+        <div class="tprev-i">&#128225;</div><div class="tprev-t">LIVE FEED</div>
+        <div class="tprev-d">Top scoring Solana tokens, refreshed every two minutes.</div></div>
+    </div>
   </div>
 </section>
 
@@ -9367,9 +9439,8 @@ async function intelLoadLeaderboard() {
         if (unlocked) unlocked.style.display = 'none';
       };
       // Ha már be van lépve, frissítsük
-      if (typeof walletConnected !== 'undefined' && walletConnected) {
-        intelUpdateUI();
-      }
+      // Always run: the dashboard is readable without a wallet.
+      intelUpdateUI();
     }
   }, 200);
 })();
@@ -10541,5 +10612,24 @@ async function loadDusdMarkets() {
 })();
 </script>
 
+<script>
+// Track record: peak vs buy-and-hold. The gap is where the exit rule lives.
+(function() {
+  fetch('https://j33t-proxy.juhasz-peter1986.workers.dev', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'launch_alerts' })
+  }).then(function(r){return r.json();}).then(function(d){
+    var t = (d && d.tokens) || [];
+    var pk = t.filter(function(x){return x.athMcapChange != null;}).map(function(x){return x.athMcapChange;});
+    var nw = t.filter(function(x){return x.mcapChange != null;}).map(function(x){return x.mcapChange;});
+    function avg(a){return a.length ? a.reduce(function(s,v){return s+v;},0)/a.length : null;}
+    function fmt(v){return v == null ? '\u2014' : (v > 0 ? '+' : '') + v.toFixed(1) + '%';}
+    var e;
+    if ((e = document.getElementById('trkPeak'))) e.textContent = fmt(avg(pk));
+    if ((e = document.getElementById('trkNow')))  e.textContent = fmt(avg(nw));
+    if ((e = document.getElementById('trkN')))    e.textContent = Math.max(pk.length, nw.length) || '\u2014';
+  }).catch(function(){});
+})();
+</script>
 </body>
 </html>
