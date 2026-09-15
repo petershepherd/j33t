@@ -3859,6 +3859,34 @@
 .tprev-t { font-family: var(--pixel); font-size: 8px; color: var(--gold); margin-bottom: 7px; letter-spacing: 1px; }
 .tprev-d { font-size: 10.5px; color: var(--muted); line-height: 1.7; }
 @media (max-width: 600px) { .trk { padding: 52px 16px; } }
+
+#about .about-grid { grid-template-columns: 1fr; max-width: 760px; margin: 0 auto; }
+.safety-grid.dyor-collapsed .safety-card:nth-child(n+5) { display: none; }
+
+.dl { max-width: 1100px; margin: 0 auto; padding: 72px 20px; }
+.dl-top { text-align: center; margin-bottom: 30px; }
+.dl-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 26px; }
+.dl-box { background: var(--surface); border: 1px solid rgba(0,255,170,0.15); border-radius: 8px; padding: 18px 14px; text-align: center; }
+.dl-v { font-family: var(--pixel); font-size: clamp(12px, 2vw, 17px); color: var(--green); display: block; margin-bottom: 6px; }
+.dl-l { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.4px; }
+.dl-conv { background: var(--surface2); border: 1px solid rgba(245,200,66,0.18); border-radius: 8px; padding: 22px 24px; max-width: 620px; margin: 0 auto 22px; }
+.dl-conv-t { font-family: var(--pixel); font-size: 8px; color: var(--gold); letter-spacing: 2px; margin-bottom: 16px; text-align: center; }
+.dl-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.dl-row label { font-family: var(--pixel); font-size: 7px; color: var(--muted); width: 54px; flex-shrink: 0; }
+.dl-in { flex: 1; min-width: 150px; background: var(--bg); border: 1px solid var(--surface2); border-radius: 4px; padding: 11px 13px; font-family: var(--mono); font-size: 13px; color: var(--text); outline: none; }
+.dl-in:focus { border-color: var(--gold); }
+.dl-rate { text-align: center; font-size: 10px; color: var(--muted); margin-top: 12px; }
+.dl-rate span { color: var(--gold); }
+.dl-mk { display: flex; flex-direction: column; gap: 8px; }
+.dl-mk-row { display: grid; grid-template-columns: 1fr 90px 90px 80px; gap: 8px; align-items: center; background: var(--surface); border-radius: 5px; padding: 11px 14px; font-size: 11px; }
+.dl-mk-row.head { color: var(--muted); font-size: 8px; text-transform: uppercase; letter-spacing: 1px; background: transparent; padding-bottom: 2px; }
+.dl-mk-sym { font-weight: 700; color: var(--text); }
+.dl-mk-n { text-align: right; font-family: var(--mono); }
+@media (max-width: 600px) {
+  .dl { padding: 52px 16px; }
+  .dl-mk-row { grid-template-columns: 1fr 80px 70px; }
+  .dl-mk-row > :nth-child(4) { display: none; }
+}
   </style>
 </head>
 <body>
@@ -4112,39 +4140,7 @@
 
 <section id="about" data-view="landing">
   <div class="about-grid">
-    <div class="about-photo">
-      <!-- J33T CARD GENERATOR -->
-      <div class="card-gen-wrap">
-        <div class="card-gen-label">// J33T CARD GENERATOR</div>
-
-        <!-- The card canvas -->
-        <div class="card-stage" id="cardStage">
-        <canvas id="cardCanvas" width="320" height="460"></canvas>
-          <div class="card-hologram" id="cardHologram"></div>
-        </div>
-
-        <!-- Controls -->
-        <div class="card-controls">
-          <!-- Daily limit status bar -->
-          <div class="card-limit-bar" id="cardLimitBar">
-            <div class="card-limit-info">
-              <span class="card-limit-icon" id="cardLimitIcon">🐾</span>
-              <span class="card-limit-text" id="cardLimitText">Loading...</span>
-            </div>
-            <div class="card-limit-pips" id="cardLimitPips"></div>
-          </div>
-          <!-- Holder tier bonus hint -->
-          <div class="card-tier-hint" id="cardTierHint"></div>
-          <input class="card-input" id="cardLine1" placeholder="YOUR TITLE (e.g. WOOF CERTIFIED)" maxlength="22">
-          <input class="card-input" id="cardLine2" placeholder="SUBTITLE IS AUTO — OR TYPE KEYWORD" maxlength="26" style="opacity:0.6;" disabled>
-          <div class="card-btn-row">
-            <button class="card-btn" id="cardGenBtn" onclick="generateCard()">⚡ GENERATE</button>
-            <button class="card-btn card-btn-alt" onclick="randomCard()">🎲 RANDOM</button>
-            <button class="card-btn card-btn-save" onclick="saveCard()">⬇ SAVE</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="about-photo" style="display:none;">    </div>
     <div>
       <div class="section-label">// ORIGIN STORY</div>
       <h2 class="section-title">THE OG<br>YORKSHIRE<br>TERRIER</h2>
@@ -4303,6 +4299,40 @@
     </div>
 
 
+    <div style="margin:32px 24px 0;">
+      <!-- J33T CARD GENERATOR -->
+      <div class="card-gen-wrap">
+        <div class="card-gen-label">// J33T CARD GENERATOR</div>
+
+        <!-- The card canvas -->
+        <div class="card-stage" id="cardStage">
+        <canvas id="cardCanvas" width="320" height="460"></canvas>
+          <div class="card-hologram" id="cardHologram"></div>
+        </div>
+
+        <!-- Controls -->
+        <div class="card-controls">
+          <!-- Daily limit status bar -->
+          <div class="card-limit-bar" id="cardLimitBar">
+            <div class="card-limit-info">
+              <span class="card-limit-icon" id="cardLimitIcon">🐾</span>
+              <span class="card-limit-text" id="cardLimitText">Loading...</span>
+            </div>
+            <div class="card-limit-pips" id="cardLimitPips"></div>
+          </div>
+          <!-- Holder tier bonus hint -->
+          <div class="card-tier-hint" id="cardTierHint"></div>
+          <input class="card-input" id="cardLine1" placeholder="YOUR TITLE (e.g. WOOF CERTIFIED)" maxlength="22">
+          <input class="card-input" id="cardLine2" placeholder="SUBTITLE IS AUTO — OR TYPE KEYWORD" maxlength="26" style="opacity:0.6;" disabled>
+          <div class="card-btn-row">
+            <button class="card-btn" id="cardGenBtn" onclick="generateCard()">⚡ GENERATE</button>
+            <button class="card-btn card-btn-alt" onclick="randomCard()">🎲 RANDOM</button>
+            <button class="card-btn card-btn-save" onclick="saveCard()">⬇ SAVE</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Recently Sniffed -->
     <div class="recently-sniffed" id="recentlySniffed">
       <div class="rs-header">
@@ -4430,7 +4460,7 @@
       J33T has survived 16+ years without being scammed. Here's her wisdom — free of charge.
     </p>
 
-    <div class="safety-grid">
+    <div class="safety-grid dyor-collapsed" id="safetyGrid">
       <div class="safety-card red-flag">
         <div class="safety-card-icon">🚩</div>
         <div class="safety-card-title">BUNDLED SNIPING AT LAUNCH</div>
@@ -4481,6 +4511,10 @@
         <div class="safety-card-title">ONLY INVEST WHAT YOU CAN LOSE</div>
         <div class="safety-card-desc">This is crypto. Even legit projects can go to zero. Even J33T could go to zero (she would be very sad about it). Never invest rent money. Never. Not even in $J33T.</div>
       </div>
+    </div>
+
+    <div style="text-align:center;margin-top:20px;">
+      <button class="btn-secondary" id="dyorToggle" onclick="dyorToggle()" style="font-size:8px;padding:12px 26px;">SHOW ALL 10 &darr;</button>
     </div>
 
     <div style="margin-top:32px; padding:20px 24px; border:1px solid rgba(245,200,66,0.15); background:rgba(245,200,66,0.03); font-size:11px; color:var(--muted); line-height:1.8; max-width:700px;">
@@ -4803,6 +4837,40 @@
   </div>
 </section>
 <!-- Tokenomics -->
+<!-- DUSD ECOSYSTEM -->
+<section id="dusdLanding" data-view="landing">
+  <div class="dl">
+    <div class="dl-top">
+      <div class="trk-eyebrow" style="color:var(--green)">// WHERE $J33T LIVES</div>
+      <h2 class="trk-title">THE DUSD ECOSYSTEM</h2>
+      <p class="trk-lead">
+        $J33T launched on <a href="https://dusd.fun" target="_blank" rel="noopener" style="color:var(--gold)">dusd.fun</a>,
+        where every market is priced in Deflationary USD instead of SOL. Mint authority is revoked at launch,
+        metadata is immutable and 40% of supply sits in a locked reserve until the curve graduates.
+      </p>
+    </div>
+
+    <div class="dl-stats">
+      <div class="dl-box"><span class="dl-v" id="dlPrice">&mdash;</span><span class="dl-l">DUSD / USD</span></div>
+      <div class="dl-box"><span class="dl-v" id="dlSupply">&mdash;</span><span class="dl-l">Circulating</span></div>
+      <div class="dl-box"><span class="dl-v" id="dlBurned">&mdash;</span><span class="dl-l">Burned</span></div>
+      <div class="dl-box"><span class="dl-v" id="dlMarkets">&mdash;</span><span class="dl-l">Live markets</span></div>
+    </div>
+
+    <div class="dl-conv">
+      <div class="dl-conv-t">&#128176; USD &harr; DUSD CONVERTER</div>
+      <div class="dl-row"><label>USD</label><input class="dl-in" id="dlUsd" type="number" placeholder="0.00" oninput="dlConv('usd')"></div>
+      <div class="dl-row"><label>DUSD</label><input class="dl-in" id="dlDusd" type="number" placeholder="0.00" oninput="dlConv('dusd')"></div>
+      <div class="dl-rate">Rate: <span id="dlRate">loading&hellip;</span> &middot; updated hourly &middot; not a quote</div>
+    </div>
+
+    <div class="dl-mk" id="dlMarketList">
+      <div class="dl-mk-row head"><div>Market</div><div class="dl-mk-n">MCap</div><div class="dl-mk-n">Vol 24h</div><div class="dl-mk-n">Curve</div></div>
+      <div style="text-align:center;padding:18px;color:var(--muted);font-size:11px;">Loading markets&hellip;</div>
+    </div>
+  </div>
+</section>
+
 <section id="tokenomics" data-view="landing">
   <div class="section-label">// THE REAL NUMBERS</div>
   <h2 class="section-title">$J33T ON-CHAIN</h2>
@@ -10628,6 +10696,67 @@ async function loadDusdMarkets() {
     if ((e = document.getElementById('trkPeak'))) e.textContent = fmt(avg(pk));
     if ((e = document.getElementById('trkNow')))  e.textContent = fmt(avg(nw));
     if ((e = document.getElementById('trkN')))    e.textContent = Math.max(pk.length, nw.length) || '\u2014';
+  }).catch(function(){});
+})();
+</script>
+<script>
+function dyorToggle() {
+  var g = document.getElementById('safetyGrid'), b = document.getElementById('dyorToggle');
+  if (!g || !b) return;
+  var open = g.classList.toggle('dyor-collapsed');
+  b.innerHTML = open ? 'SHOW ALL 10 \u2193' : 'SHOW LESS \u2191';
+}
+
+// DUSD landing: protocol stats, converter, market list
+var dlRate = null;
+function dlFmt(v, d) {
+  if (v == null) return '\u2014';
+  if (v >= 1e9) return (v/1e9).toFixed(2) + 'B';
+  if (v >= 1e6) return (v/1e6).toFixed(2) + 'M';
+  if (v >= 1e3) return (v/1e3).toFixed(1) + 'K';
+  return Number(v).toFixed(d == null ? 2 : d);
+}
+function dlConv(src) {
+  var u = document.getElementById('dlUsd'), d = document.getElementById('dlDusd');
+  if (!u || !d || !dlRate) return;
+  if (src === 'usd') {
+    var v = parseFloat(u.value);
+    d.value = isNaN(v) ? '' : (v / dlRate).toFixed(2);
+  } else {
+    var w = parseFloat(d.value);
+    u.value = isNaN(w) ? '' : (w * dlRate).toFixed(6);
+  }
+}
+(function() {
+  fetch('https://j33t-proxy.juhasz-peter1986.workers.dev', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'dusd_markets' })
+  }).then(function(r){return r.json();}).then(function(d){
+    var mk = (d && d.markets) || [], p = (d && d.protocol) || {};
+    var e;
+    if (p.price_usd) {
+      dlRate = Number(p.price_usd);
+      if ((e = document.getElementById('dlPrice'))) e.textContent = '$' + dlRate.toPrecision(3);
+      if ((e = document.getElementById('dlRate'))) e.textContent = '1 DUSD = $' + dlRate.toPrecision(4);
+    }
+    if ((e = document.getElementById('dlSupply'))) e.textContent = dlFmt(p.current_supply);
+    if ((e = document.getElementById('dlBurned'))) e.textContent = p.burned_pct != null ? Number(p.burned_pct).toFixed(1) + '%' : '\u2014';
+    if ((e = document.getElementById('dlMarkets'))) e.textContent = mk.length || '\u2014';
+
+    var list = document.getElementById('dlMarketList');
+    if (list && mk.length) {
+      list.innerHTML = '<div class="dl-mk-row head"><div>Market</div><div class="dl-mk-n">MCap</div><div class="dl-mk-n">Vol 24h</div><div class="dl-mk-n">Curve</div></div>' +
+        mk.slice(0, 10).map(function(m) {
+          var pct = Math.min(100, (m.last_progress_bps || 0) / 100);
+          var grad = m.graduated_at || m.status === 'GRADUATED';
+          return '<div class="dl-mk-row">' +
+            '<div><span class="dl-mk-sym">' + (m.symbol || '?') + '</span> <span style="color:var(--muted);font-size:9px;">' + (m.name || '') + '</span></div>' +
+            '<div class="dl-mk-n">$' + dlFmt(m.last_mcap_usd) + '</div>' +
+            '<div class="dl-mk-n">' + dlFmt(m.last_volume24h_dusd) + '</div>' +
+            '<div class="dl-mk-n" style="color:' + (grad ? 'var(--green)' : 'var(--gold)') + '">' + (grad ? 'DONE' : pct.toFixed(1) + '%') + '</div>' +
+          '</div>';
+        }).join('');
+    }
   }).catch(function(){});
 })();
 </script>
