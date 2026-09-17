@@ -3887,6 +3887,28 @@
   .dl-mk-row { grid-template-columns: 1fr 80px 70px; }
   .dl-mk-row > :nth-child(4) { display: none; }
 }
+
+.sm-tabs { display: flex; gap: 0; margin-bottom: 18px; border: 1px solid var(--surface2); border-radius: 4px; overflow: hidden; max-width: 420px; }
+.sm-tab { flex: 1; padding: 11px 14px; font-family: var(--pixel); font-size: 0.5rem; border: none; background: var(--surface); color: var(--muted); cursor: pointer; letter-spacing: 1px; transition: all .2s; }
+.sm-tab.active { background: rgba(245,200,66,0.12); color: var(--gold); }
+.sm-tab:hover:not(.active) { color: var(--text); }
+
+.tier-tag { font-family: var(--pixel); font-size: 0.4rem; padding: 3px 7px; border-radius: 3px; border: 1px solid; margin-left: 6px; white-space: nowrap; }
+.tier-tag.burst { border-color: #ff6644; color: #ff6644; background: rgba(255,102,68,0.1); }
+.tier-tag.conviction { border-color: var(--gold); color: var(--gold); background: rgba(245,200,66,0.08); }
+.tier-tag.single { border-color: var(--muted); color: var(--muted); }
+
+.ex-list { display: flex; flex-direction: column; gap: 10px; }
+.ex-card { background: var(--surface2); border: 1px solid rgba(255,255,255,0.06); border-left: 3px solid #ff6644; border-radius: 6px; padding: 14px 16px; }
+.ex-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 9px; flex-wrap: wrap; }
+.ex-name { font-size: 0.8rem; font-weight: 700; color: var(--text); }
+.ex-sym { font-family: var(--pixel); font-size: 0.45rem; color: var(--muted); margin-top: 3px; }
+.ex-ratio { font-family: var(--pixel); font-size: 0.6rem; color: #ff6644; white-space: nowrap; }
+.ex-bar { height: 6px; background: var(--surface); border-radius: 3px; overflow: hidden; margin-bottom: 9px; }
+.ex-fill { height: 100%; background: linear-gradient(90deg, #ff6644, #ff2244); border-radius: 3px; transition: width .5s; }
+.ex-meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.5rem; color: var(--muted); }
+.ex-meta a { color: var(--gold); text-decoration: none; }
+.ex-empty { text-align: center; padding: 26px; color: var(--muted); font-size: 0.62rem; line-height: 1.8; }
   </style>
 </head>
 <body>
@@ -4779,6 +4801,22 @@
   </div>
 
   <div id="smartUnlocked" style="display:none;">
+
+    <div class="sm-tabs">
+      <button class="sm-tab active" id="smTabIn" onclick="smSwitch('in')">&#128075; ENTRIES</button>
+      <button class="sm-tab" id="smTabOut" onclick="smSwitch('out')">&#128682; EXITS</button>
+    </div>
+
+    <div id="smartExits" style="display:none;">
+      <div class="ex-list" id="exList">
+        <div class="ex-empty">Loading exits&hellip;</div>
+      </div>
+      <div style="text-align:center;margin-top:14px;">
+        <button class="sniff-fetch-btn" onclick="loadSmartExits()" style="font-size:8px;padding:10px 20px;">&#8635; REFRESH</button>
+      </div>
+    </div>
+
+    <div id="smartEntries">
     <div class="smart-tier-banner" id="smartTierBanner"></div>
     <div class="smart-stats-bar" id="smartStatsBar">
       <div class="smart-stat-item">
@@ -4802,6 +4840,7 @@
       <button class="sniff-fetch-btn" onclick="loadSmartAlerts()" style="font-size:8px; padding:10px 20px;">↻ REFRESH FEED</button>
     </div>
   </div>
+    </div>
 </section>
 <!-- FOMO Calculator -->
 <section class="sniff-section" id="fomoSection" data-view="tools">
@@ -10759,6 +10798,68 @@ function dlConv(src) {
     }
   }).catch(function(){});
 })();
+</script>
+<script>
+// Smart Money: entries vs exits. Both matter — most tools only show entries.
+var smExitsLoaded = false;
+
+function smSwitch(which) {
+  var out = which === 'out';
+  document.getElementById('smTabIn').classList.toggle('active', !out);
+  document.getElementById('smTabOut').classList.toggle('active', out);
+  document.getElementById('smartEntries').style.display = out ? 'none' : '';
+  document.getElementById('smartExits').style.display = out ? '' : 'none';
+  if (out && !smExitsLoaded) { smExitsLoaded = true; loadSmartExits(); }
+}
+
+function exAgo(ts) {
+  if (!ts) return '';
+  var m = Math.floor((Date.now() - ts) / 60000);
+  if (m < 60) return m + 'm ago';
+  if (m < 1440) return Math.floor(m / 60) + 'h ago';
+  return Math.floor(m / 1440) + 'd ago';
+}
+
+async function loadSmartExits() {
+  var el = document.getElementById('exList');
+  if (!el) return;
+  el.innerHTML = '<div class="ex-empty">Loading exits&hellip;</div>';
+  try {
+    var res = await fetch(RON_WORKER, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'smart_exits' }),
+      signal: AbortSignal.timeout(15000)
+    });
+    var d = await res.json();
+    var ex = (d && d.exits) || [];
+    if (!ex.length) {
+      el.innerHTML = '<div class="ex-empty">No exits recorded yet.<br><br>' +
+        'Exits are only tracked for tokens alerted after this feature went live &mdash; ' +
+        'we need to know who entered before we can tell you who left.</div>';
+      return;
+    }
+    el.innerHTML = ex.map(function(x) {
+      var pct = x.entered ? Math.round(x.exited / x.entered * 100) : 0;
+      return '<div class="ex-card">' +
+        '<div class="ex-head">' +
+          '<div><div class="ex-name">' + (x.name || 'Unknown') + '</div>' +
+          '<div class="ex-sym">$' + (x.symbol || '???') + ' &middot; ' + exAgo(x.ts) + '</div></div>' +
+          '<div class="ex-ratio">' + x.exited + ' / ' + x.entered + ' OUT</div>' +
+        '</div>' +
+        '<div class="ex-bar"><div class="ex-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="ex-meta">' +
+          '<span>' + x.wallet + ' sold</span>' +
+          (x.solReceived ? '<span>&#128184; ' + x.solReceived + ' SOL out</span>' : '') +
+          (x.callMcap ? '<span>MCap at call: $' + Math.round(x.callMcap).toLocaleString() + '</span>' : '') +
+          '<a href="https://dexscreener.com/solana/' + x.address + '" target="_blank" rel="noopener">DexScreener &#8599;</a>' +
+          '<a href="https://solscan.io/token/' + x.address + '" target="_blank" rel="noopener">Solscan &#8599;</a>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  } catch (e) {
+    el.innerHTML = '<div class="ex-empty">Could not load exits: ' + e.message + '</div>';
+  }
+}
 </script>
 </body>
 </html>
