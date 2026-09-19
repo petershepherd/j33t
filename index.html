@@ -3909,6 +3909,32 @@
 .ex-meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.5rem; color: var(--muted); }
 .ex-meta a { color: var(--gold); text-decoration: none; }
 .ex-empty { text-align: center; padding: 26px; color: var(--muted); font-size: 0.62rem; line-height: 1.8; }
+
+.rc { max-width: 1180px; margin: 0 auto; padding: 72px 20px; }
+.rc-top { text-align: center; margin-bottom: 26px; }
+.rc-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.rc-s { background: var(--surface); border: 1px solid rgba(255,255,255,0.07); border-radius: 7px; padding: 15px 10px; text-align: center; }
+.rc-sv { font-family: var(--pixel); font-size: clamp(11px, 1.9vw, 17px); display: block; margin-bottom: 5px; }
+.rc-sl { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.2px; }
+.rc-ctl { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.rc-ctl label { font-family: var(--pixel); font-size: 7px; color: var(--muted); letter-spacing: 1px; }
+.rc-sel { background: var(--surface); border: 1px solid var(--surface2); border-radius: 4px; color: var(--text);
+  padding: 8px 10px; font-family: var(--mono); font-size: 11px; outline: none; cursor: pointer; }
+.rc-sel:focus { border-color: var(--gold); }
+.rc-chk { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--muted); cursor: pointer; }
+.rc-wrap { position: relative; background: var(--surface); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px; padding: 12px; }
+#rcCanvas { width: 100%; height: 460px; display: block; cursor: crosshair; }
+.rc-tip { position: absolute; pointer-events: none; background: var(--bg); border: 1px solid var(--gold);
+  border-radius: 5px; padding: 9px 11px; font-size: 10px; line-height: 1.6; color: var(--text);
+  display: none; z-index: 5; max-width: 250px; }
+.rc-tip b { color: var(--gold); }
+.rc-leg { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: 12px; font-size: 10px; color: var(--muted); }
+.rc-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+.rc-note { font-size: 10.5px; color: var(--muted); line-height: 1.85; margin-top: 16px;
+  background: rgba(245,200,66,0.04); border: 1px solid rgba(245,200,66,0.14); border-radius: 7px; padding: 14px 18px; }
+.rc-note strong { color: var(--gold); }
+@media (max-width: 600px) { .rc { padding: 50px 14px; } #rcCanvas { height: 340px; } }
   </style>
 </head>
 <body>
@@ -4877,6 +4903,58 @@
 </section>
 <!-- Tokenomics -->
 <!-- DUSD ECOSYSTEM -->
+<!-- RUG CLOUD -->
+<section id="rugCloud" data-view="landing">
+  <div class="rc">
+    <div class="rc-top">
+      <div class="trk-eyebrow" style="color:var(--red)">// THE SHAPE OF THE MARKET</div>
+      <h2 class="trk-title">THE RUG CLOUD</h2>
+      <p class="trk-lead">
+        Every token we have tracked, plotted by its on-chain fingerprint at the moment we saw it.
+        The dense mass is what a meme launch normally looks like. What we are hunting for is
+        anything that does <em>not</em> sit inside it.
+      </p>
+    </div>
+
+    <div class="rc-stats">
+      <div class="rc-s"><span class="rc-sv" id="rcTotal" style="color:var(--gold)">&mdash;</span><span class="rc-sl">Tracked</span></div>
+      <div class="rc-s"><span class="rc-sv" id="rcRug" style="color:var(--red)">&mdash;</span><span class="rc-sl">Rugged</span></div>
+      <div class="rc-s"><span class="rc-sv" id="rcDead" style="color:var(--muted)">&mdash;</span><span class="rc-sl">Dead</span></div>
+      <div class="rc-s"><span class="rc-sv" id="rcAlive" style="color:var(--green)">&mdash;</span><span class="rc-sl">Still alive</span></div>
+      <div class="rc-s"><span class="rc-sv" id="rc2x" style="color:var(--accent)">&mdash;</span><span class="rc-sl">Hit 2x</span></div>
+      <div class="rc-s"><span class="rc-sv" id="rcEnr" style="color:var(--text)">&mdash;</span><span class="rc-sl">Deep-scanned</span></div>
+    </div>
+
+    <div class="rc-ctl">
+      <label>X</label><select class="rc-sel" id="rcX" onchange="rcDraw()"></select>
+      <label>Y</label><select class="rc-sel" id="rcY" onchange="rcDraw()"></select>
+      <label class="rc-chk"><input type="checkbox" id="rcLog" checked onchange="rcDraw()"> log scale</label>
+      <label class="rc-chk"><input type="checkbox" id="rcOnlyPassed" onchange="rcDraw()"> filter-approved only</label>
+      <button class="sniff-fetch-btn" onclick="rcLoad()" style="font-size:7px;padding:8px 14px;margin-left:auto;">&#8635;</button>
+    </div>
+
+    <div class="rc-wrap">
+      <canvas id="rcCanvas"></canvas>
+      <div class="rc-tip" id="rcTip"></div>
+    </div>
+
+    <div class="rc-leg">
+      <span><i class="rc-dot" style="background:#ff4466"></i>Rugged</span>
+      <span><i class="rc-dot" style="background:#555"></i>Dead</span>
+      <span><i class="rc-dot" style="background:#00ffaa"></i>Alive</span>
+      <span><i class="rc-dot" style="background:#f5c842"></i>Reached 2x+</span>
+      <span><i class="rc-dot" style="background:#7b61ff"></i>Reached 5x+</span>
+    </div>
+
+    <div class="rc-note" id="rcNote">
+      <strong>How to read this.</strong> Each dot is one token. Red and grey are the ones that died &mdash;
+      the overwhelming majority. Gold and purple are the ones that ran. If the survivors sat in a
+      distinct region, that region would be worth something. So far they mostly sit inside the same
+      cloud as everything else, which is the honest answer and the reason we keep collecting.
+    </div>
+  </div>
+</section>
+
 <section id="dusdLanding" data-view="landing">
   <div class="dl">
     <div class="dl-top">
@@ -10860,6 +10938,183 @@ async function loadSmartExits() {
     el.innerHTML = '<div class="ex-empty">Could not load exits: ' + e.message + '</div>';
   }
 }
+</script>
+<script>
+// Rug cloud: every tracked token in feature space, coloured by outcome.
+var rcData = null, rcPts = [];
+var RC_AXES = [
+  ['call_mcap','MCap at call'], ['call_liq','Liquidity at call'],
+  ['call_score','Launch score'], ['call_age_min','Age at call (min)'],
+  ['buy_ratio','Buy ratio'], ['liq_ratio','Liquidity / MCap'],
+  ['holder_num','Holders'], ['trader_num','Traders'],
+  ['buy_num','Buys seen'], ['sell_num','Sells seen'],
+  ['first10_share','First 10 buyers share'], ['first20_share','First 20 buyers share'],
+  ['top10_buyer_share','Top 10 buyers share'], ['top10_holder_share','Top 10 holders share'],
+  ['bundle_share','Bundle share'], ['same_slot_pct','Same-slot buys'],
+  ['avg_buy_sol','Avg buy (SOL)'], ['max_buy_sol','Largest buy (SOL)'],
+  ['avg_gap_sec','Avg gap between buys'], ['stddev_gap_sec','Gap volatility'],
+  ['buys_first_60s','Buys in first 60s'], ['early10_sold_pct','Early 10 that sold'],
+  ['deployer_pnl_sol','Deployer PnL (SOL)'], ['ath_multiple','Peak multiple']
+];
+
+function rcVal(p, k) {
+  if (k === 'buy_ratio') {
+    var t = (p.call_buys || 0) + (p.call_sells || 0);
+    return t ? p.call_buys / t : null;
+  }
+  if (k === 'liq_ratio') return p.call_mcap ? (p.call_liq || 0) / p.call_mcap : null;
+  var v = p[k];
+  return (v === null || v === undefined || isNaN(v)) ? null : Number(v);
+}
+
+function rcColor(p) {
+  if (p.ath_multiple >= 5) return '#7b61ff';
+  if (p.ath_multiple >= 2) return '#f5c842';
+  if (p.status === 'rugged') return '#ff4466';
+  if (p.status === 'dead') return '#555';
+  return '#00ffaa';
+}
+
+async function rcLoad() {
+  try {
+    var res = await fetch(RON_WORKER, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'cloud_data' }), signal: AbortSignal.timeout(20000)
+    });
+    var d = await res.json();
+    if (d.error) throw new Error(d.error);
+    rcData = d;
+    var s = d.summary || {}, e = d.enrichment || {}, x;
+    function set(id, v) { if ((x = document.getElementById(id))) x.textContent = v == null ? '\u2014' : Number(v).toLocaleString(); }
+    set('rcTotal', s.total); set('rcRug', s.rugged); set('rcDead', s.dead);
+    set('rcAlive', s.active); set('rc2x', s.hit2x); set('rcEnr', e.enriched);
+
+    var sx = document.getElementById('rcX'), sy = document.getElementById('rcY');
+    if (sx && !sx.options.length) {
+      RC_AXES.forEach(function(a) {
+        sx.add(new Option(a[1], a[0])); sy.add(new Option(a[1], a[0]));
+      });
+      sx.value = 'call_mcap'; sy.value = 'call_liq';
+    }
+    rcDraw();
+  } catch (err) {
+    var n = document.getElementById('rcNote');
+    if (n) n.innerHTML = '<strong>Could not load the cloud:</strong> ' + err.message;
+  }
+}
+
+function rcDraw() {
+  var c = document.getElementById('rcCanvas');
+  if (!c || !rcData) return;
+  var dpr = window.devicePixelRatio || 1;
+  var w = c.clientWidth, hgt = c.clientHeight;
+  c.width = w * dpr; c.height = hgt * dpr;
+  var g = c.getContext('2d'); g.scale(dpr, dpr);
+  g.clearRect(0, 0, w, hgt);
+
+  var kx = document.getElementById('rcX').value, ky = document.getElementById('rcY').value;
+  var useLog = document.getElementById('rcLog').checked;
+  var onlyPassed = document.getElementById('rcOnlyPassed').checked;
+  var pad = { l: 58, r: 14, t: 14, b: 34 };
+
+  var pts = [];
+  (rcData.points || []).forEach(function(p) {
+    if (onlyPassed && p.was_rejected) return;
+    var a = rcVal(p, kx), b = rcVal(p, ky);
+    if (a === null || b === null) return;
+    if (useLog && (a <= 0 || b <= 0)) return;
+    pts.push({ p: p, a: useLog ? Math.log10(a) : a, b: useLog ? Math.log10(b) : b });
+  });
+
+  var lbl = function(k) { var f = RC_AXES.find(function(z){return z[0]===k;}); return f ? f[1] : k; };
+  if (!pts.length) {
+    g.fillStyle = '#6b7280'; g.font = '12px monospace'; g.textAlign = 'center';
+    g.fillText('No points with both values yet \u2014 keep collecting.', w/2, hgt/2);
+    rcPts = []; return;
+  }
+
+  var ax = pts.map(function(z){return z.a;}), ay = pts.map(function(z){return z.b;});
+  var x0 = Math.min.apply(null, ax), x1 = Math.max.apply(null, ax);
+  var y0 = Math.min.apply(null, ay), y1 = Math.max.apply(null, ay);
+  if (x1 === x0) { x1 = x0 + 1; } if (y1 === y0) { y1 = y0 + 1; }
+  var px = function(v) { return pad.l + (v - x0) / (x1 - x0) * (w - pad.l - pad.r); };
+  var py = function(v) { return hgt - pad.b - (v - y0) / (y1 - y0) * (hgt - pad.t - pad.b); };
+
+  g.strokeStyle = 'rgba(255,255,255,0.06)'; g.lineWidth = 1;
+  g.fillStyle = '#6b7280'; g.font = '9px monospace';
+  for (var i = 0; i <= 4; i++) {
+    var gy = pad.t + i * (hgt - pad.t - pad.b) / 4;
+    g.beginPath(); g.moveTo(pad.l, gy); g.lineTo(w - pad.r, gy); g.stroke();
+    var vv = y1 - i * (y1 - y0) / 4;
+    g.textAlign = 'right';
+    g.fillText(useLog ? rcFmt(Math.pow(10, vv)) : rcFmt(vv), pad.l - 6, gy + 3);
+    var gx = pad.l + i * (w - pad.l - pad.r) / 4;
+    g.beginPath(); g.moveTo(gx, pad.t); g.lineTo(gx, hgt - pad.b); g.stroke();
+    var vh = x0 + i * (x1 - x0) / 4;
+    g.textAlign = 'center';
+    g.fillText(useLog ? rcFmt(Math.pow(10, vh)) : rcFmt(vh), gx, hgt - pad.b + 14);
+  }
+  g.fillStyle = '#9ca3af'; g.font = '10px monospace'; g.textAlign = 'center';
+  g.fillText(lbl(kx) + (useLog ? ' (log)' : ''), w/2, hgt - 4);
+  g.save(); g.translate(12, hgt/2); g.rotate(-Math.PI/2);
+  g.fillText(lbl(ky) + (useLog ? ' (log)' : ''), 0, 0); g.restore();
+
+  rcPts = [];
+  // Losers first so the rare survivors are never hidden underneath them.
+  pts.sort(function(m, z) {
+    var rank = function(q) { return q.p.ath_multiple >= 5 ? 3 : q.p.ath_multiple >= 2 ? 2 : q.p.status === 'active' ? 1 : 0; };
+    return rank(m) - rank(z);
+  });
+  pts.forEach(function(z) {
+    var X = px(z.a), Y = py(z.b), col = rcColor(z.p);
+    var big = z.p.ath_multiple >= 2;
+    g.beginPath(); g.arc(X, Y, big ? 4 : 2.5, 0, 6.2832);
+    g.fillStyle = col; g.globalAlpha = big ? 0.95 : 0.5; g.fill();
+    if (big) { g.globalAlpha = 1; g.strokeStyle = col; g.lineWidth = 1; g.stroke(); }
+    g.globalAlpha = 1;
+    rcPts.push({ x: X, y: Y, p: z.p });
+  });
+}
+
+function rcFmt(v) {
+  if (v == null || isNaN(v)) return '';
+  var a = Math.abs(v);
+  if (a >= 1e6) return (v/1e6).toFixed(1) + 'M';
+  if (a >= 1e3) return (v/1e3).toFixed(0) + 'K';
+  if (a >= 10) return v.toFixed(0);
+  if (a >= 1) return v.toFixed(1);
+  if (a >= 0.01) return v.toFixed(3);
+  return v.toPrecision(2);
+}
+
+(function() {
+  var c = document.getElementById('rcCanvas'), tip = document.getElementById('rcTip');
+  if (!c || !tip) return;
+  c.addEventListener('mousemove', function(ev) {
+    var r = c.getBoundingClientRect(), mx = ev.clientX - r.left, my = ev.clientY - r.top;
+    var best = null, bd = 100;
+    rcPts.forEach(function(q) {
+      var d = (q.x-mx)*(q.x-mx) + (q.y-my)*(q.y-my);
+      if (d < bd) { bd = d; best = q; }
+    });
+    if (!best) { tip.style.display = 'none'; return; }
+    var p = best.p;
+    tip.innerHTML = '<b>$' + (p.symbol || '???') + '</b> ' + (p.name || '') +
+      '<br>MCap at call: $' + rcFmt(p.call_mcap) +
+      '<br>Liquidity: $' + rcFmt(p.call_liq) +
+      (p.holder_num ? '<br>Holders: ' + p.holder_num : '') +
+      (p.first10_share ? '<br>First 10 hold: ' + (p.first10_share*100).toFixed(0) + '%' : '') +
+      (p.bundle_share ? '<br>Bundled: ' + (p.bundle_share*100).toFixed(0) + '%' : '') +
+      '<br>Peak: ' + (p.ath_multiple ? Number(p.ath_multiple).toFixed(2) + 'x' : 'n/a') +
+      '<br>Status: ' + (p.status || '?') + (p.was_rejected ? ' (rejected)' : ' (passed)');
+    tip.style.display = 'block';
+    tip.style.left = Math.min(mx + 14, c.clientWidth - 250) + 'px';
+    tip.style.top = Math.max(0, my - 10) + 'px';
+  });
+  c.addEventListener('mouseleave', function() { tip.style.display = 'none'; });
+  window.addEventListener('resize', function() { if (rcData) rcDraw(); });
+  rcLoad();
+})();
 </script>
 </body>
 </html>
