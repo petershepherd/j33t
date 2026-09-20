@@ -3948,6 +3948,9 @@
 #rcCanvas.spin { cursor: grab; }
 #rcCanvas.spin:active { cursor: grabbing; }
 .rc-hint { font-size: 9px; color: var(--muted); opacity: 0.7; margin-left: 4px; }
+
+.price-widget { transition: border-color .2s, transform .2s; }
+.price-widget:hover { border-color: var(--gold) !important; transform: translateY(-1px); }
   </style>
 </head>
 <body>
@@ -3980,7 +3983,7 @@
 </div>
 
 <!-- Live price widget -->
-<div class="price-widget" id="priceWidget">
+<div class="price-widget" id="priceWidget" onclick="navTo('tokenomics')" title="View $J33T tokenomics" style="cursor:pointer;">
   <div class="price-widget-label">$J33T / USD</div>
   <div class="price-widget-price" id="pwPrice">LOADING...</div>
   <div class="price-widget-change" id="pwChange">—</div>
@@ -5725,6 +5728,32 @@ function getDemoData() {
   };
 }
 
+// $J33T trades on dusd.fun, priced in DUSD. DexScreener does not fill in
+// priceUsd, liquidity or marketCap for curve-phase pairs, which is why the
+// widget kept falling through to placeholder numbers.
+async function fetchDusdMarket() {
+  try {
+    const res = await fetch(RON_WORKER, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'dusd_markets' }),
+      signal: AbortSignal.timeout(12000)
+    });
+    const d = await res.json();
+    const m = (d.markets || []).find(function(x) { return x.mint === CONFIG.TOKEN_MINT; });
+    if (!m || m.last_price_usd == null) return null;
+    const rate = d.protocol && d.protocol.price_usd ? Number(d.protocol.price_usd) : null;
+    return {
+      price: Number(m.last_price_usd),
+      change24h: null,                       // no reliable 24h series on the curve yet
+      mcap: m.last_mcap_usd != null ? Number(m.last_mcap_usd) : null,
+      volume24h: rate && m.last_volume24h_dusd != null ? Number(m.last_volume24h_dusd) * rate : null,
+      liquidity: rate && m.last_quote_reserve_dusd != null ? Number(m.last_quote_reserve_dusd) * rate : null,
+      progressBps: m.last_progress_bps,
+      source: 'dusd.fun'
+    };
+  } catch (e) { return null; }
+}
+
 async function refreshPriceData() {
   const dotEl = document.getElementById('pwDot');
   const srcEl = document.getElementById('pwSource');
@@ -5735,7 +5764,8 @@ async function refreshPriceData() {
 
   if (!IS_DEMO_MODE) {
     dbg('--- Starting live price fetch ---');
-    data = await fetchDexScreener();
+    data = await fetchDusdMarket();
+    if (!data) data = await fetchDexScreener();
     if (!data) {
       dbg('DexScreener returned null, trying Jupiter...');
       data = await fetchJupiter();
@@ -5750,7 +5780,10 @@ async function refreshPriceData() {
     dbg('ℹ️ Running in DEMO MODE', 'To go live: set CONFIG.TOKEN_MINT to your real $J33T mint address');
   }
 
-  if (!data) data = getDemoData();
+  // Never invent numbers. A site arguing for honest data cannot ship a
+  // widget that quietly shows placeholders styled as live figures.
+  if (!data) data = { price: null, change24h: null, mcap: null,
+                      volume24h: null, liquidity: null, source: 'no data' };
   data.lastUpdate = Date.now();
   priceData = data;
   updatePriceUI(data);
@@ -5764,25 +5797,31 @@ function updatePriceUI(d) {
   const dot = document.getElementById('pwDot');
   const src = document.getElementById('pwSource');
 
-  if (pw) pw.textContent = fmtPrice(d.price);
+  if (pw) pw.textContent = d.price == null ? '—' : fmtPrice(d.price);
   if (pc) {
-    const chg = fmtChange(d.change24h);
-    pc.textContent = chg ? `24h ${chg}` : '24h —';
-    pc.className = 'price-widget-change ' + (d.change24h > 0 ? 'up' : 'down');
+    if (d.change24h == null) {
+      pc.textContent = d.progressBps != null
+        ? 'curve ' + (d.progressBps / 100).toFixed(1) + '%'
+        : '24h —';
+      pc.className = 'price-widget-change';
+    } else {
+      pc.textContent = '24h ' + fmtChange(d.change24h);
+      pc.className = 'price-widget-change ' + (d.change24h > 0 ? 'up' : 'down');
+    }
   }
-  if (pm) pm.textContent = 'MCap: ' + fmtBig(d.mcap);
+  if (pm) pm.textContent = 'MCap: ' + (d.mcap == null ? '—' : fmtBig(d.mcap));
   if (dot) dot.className = 'price-dot';
-  if (src) src.textContent = `live · ${d.source}`;
+  if (src) src.textContent = (d.source === 'no data' ? 'no data' : 'live · ' + d.source);
 
   // Tokenomics grid live values
   const lp2 = document.getElementById('livePrice2');
   const lv = document.getElementById('liveVol');
   const ll = document.getElementById('liveLiq');
   const lm2 = document.getElementById('liveMcap2');
-  if (lp2) lp2.textContent = fmtPrice(d.price);
-  if (lv) lv.textContent = fmtBig(d.volume24h);
-  if (ll) ll.textContent = fmtBig(d.liquidity);
-  if (lm2) lm2.textContent = fmtBig(d.mcap);
+  if (lp2) lp2.textContent = d.price == null ? '—' : fmtPrice(d.price);
+  if (lv) lv.textContent = d.volume24h == null ? '—' : fmtBig(d.volume24h);
+  if (ll) ll.textContent = d.liquidity == null ? '—' : fmtBig(d.liquidity);
+  if (lm2) lm2.textContent = d.mcap == null ? '—' : fmtBig(d.mcap);
 
   // Live ticker update
   updateTicker(d);
@@ -5790,13 +5829,13 @@ function updatePriceUI(d) {
 
 function updateTicker(d) {
   const items = document.querySelectorAll('.ticker-item');
-  const priceStr = fmtPrice(d.price);
-  const mcapStr = fmtBig(d.mcap);
-  const chg = fmtChange(d.change24h);
+  const priceStr = d.price == null ? '—' : fmtPrice(d.price);
+  const mcapStr = d.mcap == null ? '—' : fmtBig(d.mcap);
+  const chg = d.change24h == null ? null : fmtChange(d.change24h);
   // Update first and duplicate items (indexes 0 and 7 = price, 1 and 8 = mcap)
   items.forEach((item, i) => {
     const idx = i % 7;
-    if (idx === 0) { item.innerHTML = `$J33T <span>${chg || '+—'}</span>`; item.classList.add('updated'); setTimeout(() => item.classList.remove('updated'), 1000); }
+    if (idx === 0) { item.innerHTML = `$J33T <span>${chg || priceStr}</span>`; item.classList.add('updated'); setTimeout(() => item.classList.remove('updated'), 1000); }
     if (idx === 1) { item.innerHTML = `MARKET CAP <span>${mcapStr}</span>`; }
   });
 }
