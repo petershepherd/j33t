@@ -3951,6 +3951,35 @@
 
 .price-widget { transition: border-color .2s, transform .2s; }
 .price-widget:hover { border-color: var(--gold) !important; transform: translateY(-1px); }
+
+.rc-s { cursor: pointer; transition: border-color .2s, transform .2s; }
+.rc-s:hover { border-color: rgba(245,200,66,0.45); transform: translateY(-2px); }
+.rc-s.on { border-color: var(--gold); background: rgba(245,200,66,0.06); }
+.rc-list { display: none; margin-top: 16px; background: var(--surface); border: 1px solid rgba(245,200,66,0.2);
+  border-radius: 8px; overflow: hidden; }
+.rc-list-head { display: flex; justify-content: space-between; align-items: center;
+  padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.rc-list-t { font-family: var(--pixel); font-size: 8px; color: var(--gold); letter-spacing: 1.5px; }
+.rc-list-x { background: none; border: none; color: var(--muted); font-size: 16px; cursor: pointer; line-height: 1; }
+.rc-list-x:hover { color: var(--text); }
+.rc-list-body { max-height: 420px; overflow-y: auto; }
+.rc-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr 0.9fr 1.5fr; gap: 10px; align-items: center;
+  padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 11px; }
+.rc-row:last-child { border-bottom: none; }
+.rc-row.head { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px;
+  position: sticky; top: 0; background: var(--surface2); z-index: 1; }
+.rc-row:hover:not(.head) { background: rgba(255,255,255,0.02); }
+.rc-sym { font-weight: 700; color: var(--text); }
+.rc-ca { font-family: var(--mono); font-size: 9px; color: var(--muted); cursor: pointer; }
+.rc-ca:hover { color: var(--gold); }
+.rc-num { font-family: var(--mono); text-align: right; }
+.rc-badge { font-family: var(--pixel); font-size: 6px; padding: 3px 6px; border-radius: 3px; border: 1px solid; }
+.rc-links a { color: var(--gold); text-decoration: none; font-size: 9px; margin-right: 9px; }
+.rc-links a:hover { text-decoration: underline; }
+@media (max-width: 700px) {
+  .rc-row { grid-template-columns: 1.2fr 1fr 1fr; }
+  .rc-row > :nth-child(4), .rc-row > :nth-child(5) { display: none; }
+}
   </style>
 </head>
 <body>
@@ -4937,12 +4966,12 @@
     </div>
 
     <div class="rc-stats">
-      <div class="rc-s"><span class="rc-sv" id="rcTotal" style="color:var(--gold)">&mdash;</span><span class="rc-sl">Tracked</span></div>
-      <div class="rc-s"><span class="rc-sv" id="rcRug" style="color:var(--red)">&mdash;</span><span class="rc-sl">Rugged</span></div>
-      <div class="rc-s"><span class="rc-sv" id="rcDead" style="color:var(--muted)">&mdash;</span><span class="rc-sl">Dead</span></div>
-      <div class="rc-s"><span class="rc-sv" id="rcAlive" style="color:var(--green)">&mdash;</span><span class="rc-sl">Still alive</span></div>
-      <div class="rc-s"><span class="rc-sv" id="rc2x" style="color:var(--accent)">&mdash;</span><span class="rc-sl">Hit 2x</span></div>
-      <div class="rc-s"><span class="rc-sv" id="rcEnr" style="color:var(--text)">&mdash;</span><span class="rc-sl">Deep-scanned</span></div>
+      <div class="rc-s" id="card_all" onclick="rcShowList('all')"><span class="rc-sv" id="rcTotal" style="color:var(--gold)">&mdash;</span><span class="rc-sl">Tracked</span></div>
+      <div class="rc-s" id="card_rugged" onclick="rcShowList('rugged')"><span class="rc-sv" id="rcRug" style="color:var(--red)">&mdash;</span><span class="rc-sl">Rugged</span></div>
+      <div class="rc-s" id="card_dead" onclick="rcShowList('dead')"><span class="rc-sv" id="rcDead" style="color:var(--muted)">&mdash;</span><span class="rc-sl">Dead</span></div>
+      <div class="rc-s" id="card_active" onclick="rcShowList('active')"><span class="rc-sv" id="rcAlive" style="color:var(--green)">&mdash;</span><span class="rc-sl">Still alive</span></div>
+      <div class="rc-s" id="card_hit2x" onclick="rcShowList('hit2x')"><span class="rc-sv" id="rc2x" style="color:var(--accent)">&mdash;</span><span class="rc-sl">Hit 2x</span></div>
+      <div class="rc-s" id="card_enriched" onclick="rcShowList('enriched')"><span class="rc-sv" id="rcEnr" style="color:var(--text)">&mdash;</span><span class="rc-sl">Deep-scanned</span></div>
     </div>
 
     <div class="rc-ctl">
@@ -4963,6 +4992,14 @@
     <div class="rc-wrap">
       <canvas id="rcCanvas"></canvas>
       <div class="rc-tip" id="rcTip"></div>
+    </div>
+
+    <div class="rc-list" id="rcList">
+      <div class="rc-list-head">
+        <span class="rc-list-t" id="rcListTitle">TOKENS</span>
+        <button class="rc-list-x" onclick="rcHideList()">&times;</button>
+      </div>
+      <div class="rc-list-body" id="rcListBody"></div>
     </div>
 
     <div class="rc-leg">
@@ -11338,6 +11375,83 @@ function navTo(id) {
     var el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 60);
+}
+</script>
+<script>
+// Clicking a counter opens the tokens behind it — newest first, with the
+// contract address, so a claim on this page can always be checked on-chain.
+var rcListKey = null;
+
+var RC_FILTERS = {
+  all:      { t: 'ALL TRACKED TOKENS',   f: function(p) { return true; } },
+  rugged:   { t: 'RUGGED',               f: function(p) { return p.status === 'rugged'; } },
+  dead:     { t: 'DEAD (NO TRADING)',    f: function(p) { return p.status === 'dead'; } },
+  active:   { t: 'STILL ALIVE',          f: function(p) { return p.status === 'active'; } },
+  hit2x:    { t: 'REACHED 2x OR MORE',   f: function(p) { return p.ath_multiple >= 2; } },
+  enriched: { t: 'DEEP-SCANNED',         f: function(p) { return p.holder_num != null; } }
+};
+
+function rcHideList() {
+  var el = document.getElementById('rcList');
+  if (el) el.style.display = 'none';
+  rcListKey = null;
+  ['all','rugged','dead','active','hit2x','enriched'].forEach(function(k) {
+    var c = document.getElementById('card_' + k);
+    if (c) c.classList.remove('on');
+  });
+}
+
+function rcCopy(ca) {
+  navigator.clipboard.writeText(ca);
+  if (typeof showToast === 'function') showToast('CA copied');
+}
+
+function rcShowList(key) {
+  if (rcListKey === key) return rcHideList();
+  if (!rcData) return;
+  rcListKey = key;
+  ['all','rugged','dead','active','hit2x','enriched'].forEach(function(k) {
+    var c = document.getElementById('card_' + k);
+    if (c) c.classList.toggle('on', k === key);
+  });
+
+  var cfg = RC_FILTERS[key] || RC_FILTERS.all;
+  var rows = (rcData.points || []).filter(cfg.f);
+
+  document.getElementById('rcListTitle').textContent = cfg.t + ' \u00b7 ' + rows.length + ' shown';
+  var body = document.getElementById('rcListBody');
+
+  if (!rows.length) {
+    body.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);font-size:11px;">Nothing in this bucket yet.</div>';
+  } else {
+    body.innerHTML =
+      '<div class="rc-row head"><div>Token</div><div class="rc-num">MCap at call</div>' +
+      '<div class="rc-num">Peak</div><div>Status</div><div>Links</div></div>' +
+      rows.slice(0, 300).map(function(p) {
+        var st = p.status || '?';
+        var col = st === 'rugged' ? '#ff4466' : st === 'dead' ? '#777' : '#00ffaa';
+        var mult = p.ath_multiple ? Number(p.ath_multiple).toFixed(2) + 'x' : '\u2014';
+        var mcol = p.ath_multiple >= 5 ? '#7b61ff' : p.ath_multiple >= 2 ? '#f5c842' : 'var(--muted)';
+        return '<div class="rc-row">' +
+          '<div><div class="rc-sym">$' + (p.symbol || '???') + '</div>' +
+            '<div class="rc-ca" onclick="rcCopy(\'' + p.address + '\')" title="Copy contract address">' +
+              p.address.slice(0, 5) + '\u2026' + p.address.slice(-5) + ' \u29c9</div></div>' +
+          '<div class="rc-num">$' + rcFmt(p.call_mcap) + '</div>' +
+          '<div class="rc-num" style="color:' + mcol + '">' + mult + '</div>' +
+          '<div><span class="rc-badge" style="border-color:' + col + ';color:' + col + '">' + st.toUpperCase() + '</span>' +
+            (p.was_rejected ? '' : '<span class="rc-badge" style="border-color:var(--gold);color:var(--gold);margin-left:4px;">PASS</span>') + '</div>' +
+          '<div class="rc-links">' +
+            '<a href="https://dexscreener.com/solana/' + p.address + '" target="_blank" rel="noopener">DEX</a>' +
+            '<a href="https://solscan.io/token/' + p.address + '" target="_blank" rel="noopener">SCAN</a>' +
+          '</div>' +
+        '</div>';
+      }).join('') +
+      (rows.length > 300 ? '<div style="padding:12px;text-align:center;color:var(--muted);font-size:10px;">Showing the 300 most recent of ' + rows.length + '.</div>' : '');
+  }
+
+  var el = document.getElementById('rcList');
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 </script>
 </body>
